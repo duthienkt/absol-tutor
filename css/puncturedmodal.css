@@ -1,0 +1,28 @@
+.atr-punctured-modal{
+    position: fixed;
+    z-index: 100000000;
+    background-color: inherit;
+}
+
+.atr-punctured-modal-a{
+    left: 0;
+    top: 0;
+}
+
+.atr-punctured-modal-b{
+    right: 0;
+    top: 0;
+}
+
+.atr-punctured-modal-c{
+    right: 0;
+    bottom: 0;
+}
+
+.atr-punctured-modal-d{
+    left: 0;
+    bottom: 0;
+}
+
+
+
