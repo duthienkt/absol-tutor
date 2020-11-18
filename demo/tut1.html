@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tut1</title>
+    <script src="../dist/absol-tutor.js?<?php  echo stat('../dist/absol-tutor.js')['mtime'];?>"></script>
+    <link rel="icon" href="//absol.cf/favicon.ico">
+</head>
+<body>
+<script>
+    var _ = absol._;
+    var $ = absol.$;
+</script>
+<script>
+    var modal = _({
+        tag: 'puncturedmodal',
+        style:{
+            backgroundColor:'rgba(250, 0, 0, 0.2)'
+        }
+    }).addTo(document.body);
+
+    var t1 = _({
+        style:{
+            height: '80vh'
+        }
+    }).addTo(document.body);
+
+    var button = _({
+        tag:'button',
+        style:{
+            marginLeft: '30vw'
+        },
+        child:{text: 'FollowMe'}
+    }).addTo(document.body);
+
+    var t2 = _({
+        style:{
+            height: '80vh'
+        }
+    }).addTo(document.body);
+
+    modal.follow(button);
+
+</script>
+</body>
+</html>
