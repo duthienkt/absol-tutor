@@ -1,0 +1,51 @@
+
+.atr-click-icon-arrow {
+    fill: #04c7ff;
+    stroke: black;
+    stroke-width: 5;
+
+}
+
+.atr-click-icon-arrow {
+    animation:atr-click-arrow-anim 2s linear infinite;
+}
+
+.atr-click-icon-effect {
+    animation: atr-click-effect-anim 2s linear infinite;
+}
+
+@keyframes atr-click-effect-anim {
+    0%{
+        opacity: 0;
+    }
+    90%{
+        opacity: 0;
+    }
+    95%{
+        opacity: 1;
+    }
+    99%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}
+
+@keyframes atr-click-arrow-anim {
+    0%{
+        fill: #04c7ff;
+    }
+    90%{
+        fill: #04c7ff;
+    }
+    95%{
+        fill: #b6dbff;
+    }
+    99%{
+        fill: #b6dbff;
+    }
+    100%{
+        fill: #04c7ff;
+    }
+}

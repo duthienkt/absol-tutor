@@ -1,0 +1,52 @@
+.atr-scroll-bar-icon {
+
+}
+
+.atr-scroll-bar-icon-bar,
+.atr-scroll-bar-icon-btn-down,
+.atr-scroll-bar-icon-btn-up {
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+}
+
+.atr-scroll-bar-icon.atr-down .atr-scroll-bar-icon-bar {
+    animation-name: atr-scroll-bar-icon-bar-down-anim;
+}
+
+.atr-scroll-bar-icon.atr-up .atr-scroll-bar-icon-bar {
+    animation-name: atr-scroll-bar-icon-bar-up-anim;
+}
+
+
+.atr-scroll-bar-icon.atr-down .atr-scroll-bar-icon-btn-down,
+.atr-scroll-bar-icon.atr-up .atr-scroll-bar-icon-btn-up {
+    animation-name: atr-scroll-bar-icon-btn-anim;
+}
+
+
+@keyframes atr-scroll-bar-icon-bar-down-anim {
+    0%, 10% {
+        transform: translateY(0px);
+    }
+    30%, 100% {
+        transform: translateY(100px);
+    }
+}
+
+@keyframes atr-scroll-bar-icon-bar-up-anim {
+    0%, 10% {
+        transform: translateY(30px);
+    }
+    30%, 100% {
+        transform: translateY(-70px);
+    }
+}
+
+@keyframes atr-scroll-bar-icon-btn-anim {
+    10%, 29% {
+        fill: red;
+    }
+    30%, 100% {
+        fill: black;
+    }
+}
