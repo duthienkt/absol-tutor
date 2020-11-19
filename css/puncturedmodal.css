@@ -1,28 +1,45 @@
-.atr-punctured-modal{
+:root{
+    --punctured-x: 0px;
+    --punctured-y: 0px;
+    --punctured-width: 0px;
+    --punctured-height: 0px;
+}
+.atr-punctured-modal {
     position: fixed;
     z-index: 100000000;
     background-color: inherit;
+
 }
 
-.atr-punctured-modal-a{
+.atr-punctured-modal-a {
     left: 0;
     top: 0;
+    width: calc(var(--punctured-x) + var(--punctured-width));
+    height: var(--punctured-y);
 }
 
-.atr-punctured-modal-b{
+.atr-punctured-modal-b {
     right: 0;
     top: 0;
+    left: calc(var(--punctured-x) + var(--punctured-width));
+    height: calc(var(--punctured-y) + var(--punctured-height));
 }
 
-.atr-punctured-modal-c{
+.atr-punctured-modal-c {
     right: 0;
     bottom: 0;
+    top: calc(var(--punctured-y) + var(--punctured-height));
+    left: var(--punctured-x);
 }
 
-.atr-punctured-modal-d{
+.atr-punctured-modal-d {
     left: 0;
     bottom: 0;
+    width: var(--punctured-x);
+    top: var(--punctured-y);
 }
 
 
-
+.atr-punctured-modal >:not(.atr-punctured-modal){
+    pointer-events: none;
+}

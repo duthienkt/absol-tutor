@@ -2,6 +2,7 @@ import '../../css/puncturedmodal.css';
 import AElement from "absol/src/HTML5/AElement";
 import Core, {_} from "./Core";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import {ClickIco, ScrollBarIco} from "./Icon";
 
 
 /***
@@ -26,9 +27,51 @@ PuncturedModal.render = function () {
         extendEvent: 'positionchange',
         class: ['atr-punctured-modal', 'atr-punctured-modal-a'],
         child: [
-            '.atr-punctured-modal.atr-punctured-modal-b',
-            '.atr-punctured-modal.atr-punctured-modal-c',
+            {
+                class: ['atr-punctured-modal', 'atr-punctured-modal-b'],
+                child: {
+                    style: {
+                        position: 'absolute',
+                        right: '10px',
+                        top: '10px'
+                    },
+                    child: [
+                        $(ScrollBarIco.cloneNode(true)).addStyle({
+                            'width': '17px',
+                            height: 'auto'
+                        }).addClass('atr-up'),
+                    ]
+                }
+            },
             '.atr-punctured-modal.atr-punctured-modal-d',
+            {
+                class: ['atr-punctured-modal', 'atr-punctured-modal-c'],
+                child: [{
+                    style: {
+                        position: 'absolute',
+                        left: 'calc(var(--punctured-width) - 20px)',
+                        top: '-20px',
+                    },
+                    child: $(ClickIco.cloneNode(true)).addStyle({
+                        width: '30px',
+                        height: '30px'
+                    })
+                },
+                    {
+                        style: {
+                            position: 'absolute',
+                            right: '10px',
+                            bottom: '10px'
+                        },
+                        child: [
+                            $(ScrollBarIco.cloneNode(true)).addStyle({
+                                'width': '17px',
+                                height: 'auto'
+                            }).addClass('atr-down'),
+                        ]
+                    }
+                ]
+            },
             'attachhook'
         ]
     });
@@ -75,22 +118,29 @@ PuncturedModal.prototype.stopTrackPosition = function () {
 PuncturedModal.prototype._handlePositionChange = function (event) {
     if (!this.$target) return;
     var bound = this.$target.getBoundingClientRect();
-    this.$a.addStyle({
-        width: bound.left + bound.width + 'px',
-        height: bound.top + 'px'
+    this.addStyle({
+        '--punctured-x': bound.left + 'px',
+        '--punctured-y': bound.top + 'px',
+        '--punctured-width': bound.width + 'px',
+        '--punctured-height': bound.height + 'px'
     });
-    this.$b.addStyle({
-        left: bound.left + bound.width + 'px',
-        height: bound.top + bound.height + 'px'
-    });
-    this.$c.addStyle({
-        left: bound.left + 'px',
-        top: bound.top + bound.height + 'px'
-    });
-    this.$d.addStyle({
-        width: bound.left + 'px',
-        top: bound.top + 'px'
-    });
+    //
+    // this.$a.addStyle({
+    //     width: bound.left + bound.width + 'px',
+    //     height: bound.top + 'px'
+    // });
+    // this.$b.addStyle({
+    //     left: bound.left + bound.width + 'px',
+    //     height: bound.top + bound.height + 'px'
+    // });
+    // this.$c.addStyle({
+    //     left: bound.left + 'px',
+    //     top: bound.top + bound.height + 'px'
+    // });
+    // this.$d.addStyle({
+    //     width: bound.left + 'px',
+    //     top: bound.top + 'px'
+    // });
 
     this.emit('positionchange', { target: this, bound: bound }, this);
 };
