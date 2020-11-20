@@ -1,7 +1,9 @@
 import install from "./js/dom/install";
-
-console.log("OK")
 import "absol/src/absol";
 import 'absol-acomp/dev';
-
+import  tutor from '.';
 install(absol.coreDom);
+
+
+absol.tutor = tutor;
+
