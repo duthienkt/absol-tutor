@@ -1,6 +1,6 @@
 import '../../css/puncturedmodal.css';
 import AElement from "absol/src/HTML5/AElement";
-import Core, {_} from "./Core";
+import Core, {_, $} from "./Core";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import {ClickIco, ScrollBarIco} from "./Icon";
 
@@ -27,58 +27,15 @@ PuncturedModal.render = function () {
         extendEvent: 'positionchange',
         class: ['atr-punctured-modal', 'atr-punctured-modal-a'],
         child: [
-            {
-                class: ['atr-punctured-modal', 'atr-punctured-modal-b'],
-                child: {
-                    style: {
-                        position: 'absolute',
-                        right: '10px',
-                        top: '10px'
-                    },
-                    child: [
-                        $(ScrollBarIco.cloneNode(true)).addStyle({
-                            'width': '17px',
-                            height: 'auto'
-                        }).addClass('atr-up'),
-                    ]
-                }
-            },
+            '.atr-punctured-modal.atr-punctured-modal-b',
             '.atr-punctured-modal.atr-punctured-modal-d',
-            {
-                class: ['atr-punctured-modal', 'atr-punctured-modal-c'],
-                child: [{
-                    style: {
-                        position: 'absolute',
-                        left: 'calc(var(--punctured-width) - 20px)',
-                        top: '-20px',
-                    },
-                    child: $(ClickIco.cloneNode(true)).addStyle({
-                        width: '30px',
-                        height: '30px'
-                    })
-                },
-                    {
-                        style: {
-                            position: 'absolute',
-                            right: '10px',
-                            bottom: '10px'
-                        },
-                        child: [
-                            $(ScrollBarIco.cloneNode(true)).addStyle({
-                                'width': '17px',
-                                height: 'auto'
-                            }).addClass('atr-down'),
-                        ]
-                    }
-                ]
-            },
-            'attachhook'
-        ]
+            '.atr-punctured-modal.atr-punctured-modal-c',
+            'attachhook']
+
     });
 };
 
 PuncturedModal.prototype.follow = function (targetElt) {
-    ResizeSystem.add(this.$attachhook);
     if (this.$trackScrollParents.length > 0)
         this.stopTrackPosition();
     this.$target = targetElt || null;
@@ -100,6 +57,13 @@ PuncturedModal.prototype.follow = function (targetElt) {
         document.attachEvent('onscroll', this._handlePositionChange, false);
     }
     this.$trackScrollParents.push(document);
+    if (this.isDescendantOf(document.body)) {
+        this._handlePositionChange();
+    }
+    else {
+        this.$attachhook.resetState();
+        ResizeSystem.add(this.$attachhook);
+    }
 };
 
 PuncturedModal.prototype.stopTrackPosition = function () {
@@ -124,28 +88,19 @@ PuncturedModal.prototype._handlePositionChange = function (event) {
         '--punctured-width': bound.width + 'px',
         '--punctured-height': bound.height + 'px'
     });
-    //
-    // this.$a.addStyle({
-    //     width: bound.left + bound.width + 'px',
-    //     height: bound.top + 'px'
-    // });
-    // this.$b.addStyle({
-    //     left: bound.left + bound.width + 'px',
-    //     height: bound.top + bound.height + 'px'
-    // });
-    // this.$c.addStyle({
-    //     left: bound.left + 'px',
-    //     top: bound.top + bound.height + 'px'
-    // });
-    // this.$d.addStyle({
-    //     width: bound.left + 'px',
-    //     top: bound.top + 'px'
-    // });
 
     this.emit('positionchange', { target: this, bound: bound }, this);
+};
+
+PuncturedModal.prototype.reset = function () {
+    this.removeStyle({
+        '--punctured-x': null,
+        '--punctured-y': null,
+        '--punctured-width': null,
+        '--punctured-height': null
+    });
 };
 
 Core.install(PuncturedModal);
 
 export default PuncturedModal;
-
