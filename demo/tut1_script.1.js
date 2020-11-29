@@ -1,0 +1,2 @@
+explain('#login_form','Đây là form đăng nhập', or(PRESS_ANY_KEY , CLICK_ANY_WHERE, TIME_OUT(5000)));
+explain("#login_form #close_btn", "Nhấn vào đây để thoát",  (PRESS_ANY_KEY , CLICK_ANY_WHERE, TIME_OUT(5000)));

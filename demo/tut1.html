@@ -1,260 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Tut1</title>
     <script src="../dist/absol-tutor.js?<?php  echo stat('../dist/absol-tutor.js')['mtime'];?>"></script>
     <link rel="icon" href="//absol.cf/favicon.ico">
 </head>
+
 <body>
-<style>
-    body {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        background: Silver;
-        transform: translate(-50%, -50%);
-    }
+    <style>
+        body {
+            min-height: 90vh;
+            font-size: 14px;
+        }
 
-    .login-container {
-        width: 640px;
-        height: 400px;
-        display: flex;
-    }
+        .preview {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: calc(100% - 550px);
+            overflow: auto;
+            text-align: center;
+        }
 
-    .field-text, .login-container-content .login-form .field > label, .login-container-content .login-form .field > a, .login-container-content .login-form .parting-line {
-        font-size: 5px;
-        color: #a7a7a7;
-    }
+        .preview::before {
+            content: "";
+            height: 100%;
+            display: inline-block;
+            vertical-align: middle;
+        }
 
-    .login-container-content {
-        flex: 50%;
-        background: white;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        border-top-right-radius: 15px;
-        border-bottom-right-radius: 15px;
-    }
+        .play-btn {
+            position: fixed;
+            top: 10px;
+            right: 560px;
+            z-index: 100;
+            color: red;
+        }
 
-    .login-container-content .login-form {
-        padding: 2px;
-        width: 100%;
-    }
+        .editor-ctn {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 550px;
+        }
 
-    .login-container-content .login-form .buttonX {
-        position: absolute;
-        right: 2%;
-        top: 2%;
-        border: none;
-        background: transparent;
-        outline: none;
-    }
+        .editor-ctn>pre {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
 
-    .login-container-content .login-form h1 {
-        letter-spacing: 1rem;
-        color: transparent;
-        -webkit-background-clip: text;
-        background-clip: text;
-        background-image: linear-gradient(45deg, #6767ed 45%, #4daef2 75%);
-        font-family: "Aguafina Script", Arial, Helvetica, sans-serif;
-    }
 
-    .login-container-content .login-form .field {
-        margin: 10px auto;
-        padding: 5px;
-        width: 75%;
-        height: 25%;
-        display: grid;
-        grid-row-gap: 0.2rem;
-    }
 
-    .login-container-content .login-form .field > label, .login-container-content .login-form .field > input {
-        text-align: left;
-    }
+        .login-container {
+            width: 640px;
+            height: 400px;
+            display: flex;
+            position: relative;
+        }
 
-    .login-container-content .login-form .field > input {
-        outline: none;
-        border-top: none;
-        border-left: none;
-        border-right: none;
-        border-bottom: 1px solid grey;
-    }
+        .field-text,
+        .login-container-content .login-form .field>label,
+        .login-container-content .login-form .field>a,
+        .login-container-content .login-form .parting-line {
+            font-size: 5px;
+            color: #a7a7a7;
+        }
 
-    .login-container-content .login-form .field > input:focus {
-        border-bottom-color: #1838e7;
-    }
+        .login-container-content {
+            flex: 50%;
+            background: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
 
-    .login-container-content .login-form .field > a {
-        text-align: right;
-        text-decoration: none;
-    }
+        .login-container-content .login-form {
+            padding: 2px;
+            width: 100%;
+        }
 
-    .login-container-content .login-form > .submitBtn {
-        width: 75%;
-        height: 2rem;
-        position: relative;
-        background: linear-gradient(135deg, rgba(60, 231, 123, 1) 0%, rgba(0, 142, 255, 1) 70%);
-        color: white;
-        outline: none;
-        border-style: none;
-        border-radius: 15px;
-        transition: 0.3s ease-in-out;
-    }
+        .login-container-content .login-form .buttonX {
+            position: absolute;
+            right: 2%;
+            top: 2%;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
 
-    .login-container-content .login-form > .submitBtn:hover {
-        filter: hue-rotate(45deg);
-    }
+        .login-container-content .login-form h1 {
+            letter-spacing: 1rem;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            background-image: linear-gradient(45deg, #6767ed 45%, #4daef2 75%);
+            font-family: "Aguafina Script", Arial, Helvetica, sans-serif;
+        }
 
-    .login-container-content .login-form .parting-line {
-        position: relative;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        margin-left: 2.5rem;
-        margin-right: 2.5rem;
-        overflow: hidden;
-    }
+        .login-container-content .login-form .field {
+            margin: 10px auto;
+            padding: 5px;
+            width: 75%;
+            height: 25%;
+            display: grid;
+            grid-row-gap: 0.2rem;
+        }
 
-    .login-container-content .login-form .parting-line::before, .login-container-content .login-form .parting-line::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        width: 45%;
-        display: block;
-        text-align: center;
-        border-top: 1px solid;
-    }
+        .login-container-content .login-form .field>label,
+        .login-container-content .login-form .field>input {
+            text-align: left;
+        }
 
-    .login-container-content .login-form .parting-line::before {
-        right: 55%;
-    }
+        .login-container-content .login-form .field>input {
+            outline: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-bottom: 1px solid grey;
+        }
 
-    .login-container-content .login-form .parting-line::after {
-        right: 0%;
-    }
+        .login-container-content .login-form .field>input:focus {
+            border-bottom-color: #1838e7;
+        }
 
-    .login-container-img {
-        flex: 50%;
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-        background: url('https://i.picsum.photos/id/790/640/480.jpg?hmac=36IMkSyZ2xG_tyQHUuwXSuGHOHgBHLuzD3_9rHM3SSk');
-        background-size: cover;
-        border-top-left-radius: 15px;
-        border-bottom-left-radius: 15px;
-    }
+        .login-container-content .login-form .field>a {
+            text-align: right;
+            text-decoration: none;
+        }
 
-    .login-container-img > h1 {
-        display: grid;
-        text-align: center;
-        color: white;
-        margin-top: 50%;
-        padding-left: 20px;
-        padding-right: 20px;
-        letter-spacing: 2px;
-        margin-bottom: 10px;
-    }
+        .login-container-content .login-form>.submitBtn {
+            width: 75%;
+            height: 2rem;
+            position: relative;
+            background: linear-gradient(135deg, rgba(60, 231, 123, 1) 0%, rgba(0, 142, 255, 1) 70%);
+            color: white;
+            outline: none;
+            border-style: none;
+            border-radius: 15px;
+            transition: 0.3s ease-in-out;
+        }
 
-    .login-container-img > h1 > span {
-        text-align: center;
-        font-size: 16px;
-    }
+        .login-container-content .login-form>.submitBtn:hover {
+            filter: hue-rotate(45deg);
+        }
 
-    .container {
-        box-shadow: 0 0 15px 5px;
-        border-radius: 15px;
-    }
+        .login-container-content .login-form .parting-line {
+            position: relative;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            margin-left: 2.5rem;
+            margin-right: 2.5rem;
+            overflow: hidden;
+        }
 
-    .google-icon {
-        position: relative;
-        max-width: 1.5rem;
-        max-height: 1.5rem;
-        height: 1.5rem;
-        width: 1.5rem;
-        top: 0px;
-        left: 9px;
-        background-image: url('data:image/svg+xml; base64,PHN2ZyBpZD0iQ2FwYV8xIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHdpZHRoPSI1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZD0ibTEyMCAyNTZjMC0yNS4zNjcgNi45ODktNDkuMTMgMTkuMTMxLTY5LjQ3N3YtODYuMzA4aC04Ni4zMDhjLTM0LjI1NSA0NC40ODgtNTIuODIzIDk4LjcwNy01Mi44MjMgMTU1Ljc4NXMxOC41NjggMTExLjI5NyA1Mi44MjMgMTU1Ljc4NWg4Ni4zMDh2LTg2LjMwOGMtMTIuMTQyLTIwLjM0Ny0xOS4xMzEtNDQuMTEtMTkuMTMxLTY5LjQ3N3oiIGZpbGw9IiNmYmJkMDAiLz48cGF0aCBkPSJtMjU2IDM5Mi02MCA2MCA2MCA2MGM1Ny4wNzkgMCAxMTEuMjk3LTE4LjU2OCAxNTUuNzg1LTUyLjgyM3YtODYuMjE2aC04Ni4yMTZjLTIwLjUyNSAxMi4xODYtNDQuMzg4IDE5LjAzOS02OS41NjkgMTkuMDM5eiIgZmlsbD0iIzBmOWQ1OCIvPjxwYXRoIGQ9Im0xMzkuMTMxIDMyNS40NzctODYuMzA4IDg2LjMwOGM2Ljc4MiA4LjgwOCAxNC4xNjcgMTcuMjQzIDIyLjE1OCAyNS4yMzUgNDguMzUyIDQ4LjM1MSAxMTIuNjM5IDc0Ljk4IDE4MS4wMTkgNzQuOTh2LTEyMGMtNDkuNjI0IDAtOTMuMTE3LTI2LjcyLTExNi44NjktNjYuNTIzeiIgZmlsbD0iIzMxYWE1MiIvPjxwYXRoIGQ9Im01MTIgMjU2YzAtMTUuNTc1LTEuNDEtMzEuMTc5LTQuMTkyLTQ2LjM3N2wtMi4yNTEtMTIuMjk5aC0yNDkuNTU3djEyMGgxMjEuNDUyYy0xMS43OTQgMjMuNDYxLTI5LjkyOCA0Mi42MDItNTEuODg0IDU1LjYzOGw4Ni4yMTYgODYuMjE2YzguODA4LTYuNzgyIDE3LjI0My0xNC4xNjcgMjUuMjM1LTIyLjE1OCA0OC4zNTItNDguMzUzIDc0Ljk4MS0xMTIuNjQgNzQuOTgxLTE4MS4wMnoiIGZpbGw9IiMzYzc5ZTYiLz48cGF0aCBkPSJtMzUyLjE2NyAxNTkuODMzIDEwLjYwNiAxMC42MDYgODQuODUzLTg0Ljg1Mi0xMC42MDYtMTAuNjA2Yy00OC4zNTItNDguMzUyLTExMi42MzktNzQuOTgxLTE4MS4wMi03NC45ODFsLTYwIDYwIDYwIDYwYzM2LjMyNiAwIDcwLjQ3OSAxNC4xNDYgOTYuMTY3IDM5LjgzM3oiIGZpbGw9IiNjZjJkNDgiLz48cGF0aCBkPSJtMjU2IDEyMHYtMTIwYy02OC4zOCAwLTEzMi42NjcgMjYuNjI5LTE4MS4wMiA3NC45OC03Ljk5MSA3Ljk5MS0xNS4zNzYgMTYuNDI2LTIyLjE1OCAyNS4yMzVsODYuMzA4IDg2LjMwOGMyMy43NTMtMzkuODAzIDY3LjI0Ni02Ni41MjMgMTE2Ljg3LTY2LjUyM3oiIGZpbGw9IiNlYjQxMzIiLz48L2c+PC9zdmc+');
-        background-size: cover;
-        z-index: 2;
-    }
+        .login-container-content .login-form .parting-line::before,
+        .login-container-content .login-form .parting-line::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            display: block;
+            text-align: center;
+            border-top: 1px solid;
+        }
 
-    .google-background {
-        padding: 5px;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        margin-left: 2.5rem;
-        margin-right: 2.5rem;
-        position: relative;
-        height: 1.5rem;
-        background: #46a3ff;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1;
-    }
+        .login-container-content .login-form .parting-line::before {
+            right: 55%;
+        }
 
-    .google-background::before {
-        content: '';
-        position: absolute;
-        top: calc(0px + 3px);
-        left: calc(9px + 3px);
-        width: calc(1.5rem + 0.3rem);
-        height: calc(1.5rem + 0.3rem);
-        background: white;
-        border-radius: 15px;
-        z-index: -1;
-    }
+        .login-container-content .login-form .parting-line::after {
+            right: 0%;
+        }
 
-    .google-background > p {
-        flex: 50%;
-        color: white;
-    }
+        .login-container-img {
+            flex: 50%;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            background: url('https://i.picsum.photos/id/790/640/480.jpg?hmac=36IMkSyZ2xG_tyQHUuwXSuGHOHgBHLuzD3_9rHM3SSk');
+            background-size: cover;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
 
-    .google-background:hover {
-        background: #0072e3;
-    }
+        .login-container-img>h1 {
+            display: grid;
+            text-align: center;
+            color: white;
+            margin-top: 50%;
+            padding-left: 20px;
+            padding-right: 20px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
 
-</style>
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Aguafina+Script" />
-<body>
-<div class="container">
-    <div class="login-container">
-        <div class="login-container-img">
-            <h1>Welcome to
-                <span>codepen</span>
-            </h1>
-        </div>
-        <div class="login-container-content">
-            <form action="" class="login-form" data-tutor-id="login_form">
-                <button type="button" class="buttonX">X</button>
-                <h1>Login</h1>
-                <p class="field">
-                    <label>Users name or Email</label>
-                    <input type="text" name="username" placeholder="user" data-tutor-id="login_user_name"/>
-                </p>
-                <p class="field">
-                    <label>Password</label>
-                    <input type="password" name="password" placeholder="password" data-tutor-id="login_password"/>
-                    <a href="" data-tutor-id="forgot_password">forget password?</a>
-                </p>
-                <button type="submit" class="submitBtn" data-tutor-id="sign_in_btn">Sign in</button>
-                <div class="parting-line"><span>or</span></div>
-                <div class="google-background" data-tutor-id="google_sign_in_btn">
-                    <div class="google-icon"></div>
-                    <p>Sign in with Google</p>
+        .login-container-img>h1>span {
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .container {
+            box-shadow: 0 0 15px 5px;
+            border-radius: 15px;
+            display: inline-block;
+            vertical-align: middle;
+            margin: auto;
+            text-align: left;
+        }
+
+        .google-icon {
+            position: relative;
+            max-width: 1.5rem;
+            max-height: 1.5rem;
+            height: 1.5rem;
+            width: 1.5rem;
+            top: 0px;
+            left: 9px;
+            background-image: url('data:image/svg+xml; base64,PHN2ZyBpZD0iQ2FwYV8xIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHdpZHRoPSI1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZD0ibTEyMCAyNTZjMC0yNS4zNjcgNi45ODktNDkuMTMgMTkuMTMxLTY5LjQ3N3YtODYuMzA4aC04Ni4zMDhjLTM0LjI1NSA0NC40ODgtNTIuODIzIDk4LjcwNy01Mi44MjMgMTU1Ljc4NXMxOC41NjggMTExLjI5NyA1Mi44MjMgMTU1Ljc4NWg4Ni4zMDh2LTg2LjMwOGMtMTIuMTQyLTIwLjM0Ny0xOS4xMzEtNDQuMTEtMTkuMTMxLTY5LjQ3N3oiIGZpbGw9IiNmYmJkMDAiLz48cGF0aCBkPSJtMjU2IDM5Mi02MCA2MCA2MCA2MGM1Ny4wNzkgMCAxMTEuMjk3LTE4LjU2OCAxNTUuNzg1LTUyLjgyM3YtODYuMjE2aC04Ni4yMTZjLTIwLjUyNSAxMi4xODYtNDQuMzg4IDE5LjAzOS02OS41NjkgMTkuMDM5eiIgZmlsbD0iIzBmOWQ1OCIvPjxwYXRoIGQ9Im0xMzkuMTMxIDMyNS40NzctODYuMzA4IDg2LjMwOGM2Ljc4MiA4LjgwOCAxNC4xNjcgMTcuMjQzIDIyLjE1OCAyNS4yMzUgNDguMzUyIDQ4LjM1MSAxMTIuNjM5IDc0Ljk4IDE4MS4wMTkgNzQuOTh2LTEyMGMtNDkuNjI0IDAtOTMuMTE3LTI2LjcyLTExNi44NjktNjYuNTIzeiIgZmlsbD0iIzMxYWE1MiIvPjxwYXRoIGQ9Im01MTIgMjU2YzAtMTUuNTc1LTEuNDEtMzEuMTc5LTQuMTkyLTQ2LjM3N2wtMi4yNTEtMTIuMjk5aC0yNDkuNTU3djEyMGgxMjEuNDUyYy0xMS43OTQgMjMuNDYxLTI5LjkyOCA0Mi42MDItNTEuODg0IDU1LjYzOGw4Ni4yMTYgODYuMjE2YzguODA4LTYuNzgyIDE3LjI0My0xNC4xNjcgMjUuMjM1LTIyLjE1OCA0OC4zNTItNDguMzUzIDc0Ljk4MS0xMTIuNjQgNzQuOTgxLTE4MS4wMnoiIGZpbGw9IiMzYzc5ZTYiLz48cGF0aCBkPSJtMzUyLjE2NyAxNTkuODMzIDEwLjYwNiAxMC42MDYgODQuODUzLTg0Ljg1Mi0xMC42MDYtMTAuNjA2Yy00OC4zNTItNDguMzUyLTExMi42MzktNzQuOTgxLTE4MS4wMi03NC45ODFsLTYwIDYwIDYwIDYwYzM2LjMyNiAwIDcwLjQ3OSAxNC4xNDYgOTYuMTY3IDM5LjgzM3oiIGZpbGw9IiNjZjJkNDgiLz48cGF0aCBkPSJtMjU2IDEyMHYtMTIwYy02OC4zOCAwLTEzMi42NjcgMjYuNjI5LTE4MS4wMiA3NC45OC03Ljk5MSA3Ljk5MS0xNS4zNzYgMTYuNDI2LTIyLjE1OCAyNS4yMzVsODYuMzA4IDg2LjMwOGMyMy43NTMtMzkuODAzIDY3LjI0Ni02Ni41MjMgMTE2Ljg3LTY2LjUyM3oiIGZpbGw9IiNlYjQxMzIiLz48L2c+PC9zdmc+');
+            background-size: cover;
+            z-index: 2;
+        }
+
+        .google-background {
+            padding: 5px;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            margin-left: 2.5rem;
+            margin-right: 2.5rem;
+            position: relative;
+            height: 1.5rem;
+            background: #46a3ff;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .google-background::before {
+            content: '';
+            position: absolute;
+            top: calc(0px + 3px);
+            left: calc(9px + 3px);
+            width: calc(1.5rem + 0.3rem);
+            height: calc(1.5rem + 0.3rem);
+            background: white;
+            border-radius: 15px;
+            z-index: -1;
+        }
+
+        .google-background>p {
+            flex: 50%;
+            color: white;
+        }
+
+        .google-background:hover {
+            background: #0072e3;
+        }
+
+        .example-select-ctn {
+            position: fixed;
+            z-index: 100;
+            left: 5px;
+            top: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Aguafina+Script" />
+
+    <body>
+        <div class="preview as-bscroller">
+            <div class="container">
+                <div class="login-container">
+                    <div class="login-container-img">
+                        <h1>Welcome to
+                            <span>codepen</span>
+                        </h1>
+                    </div>
+                    <div class="login-container-content">
+                        <form action="" class="login-form" data-tutor-id="login_form">
+                            <button type="button" class="buttonX" data-tutor-id="close_btn">X</button>
+                            <h1>Login</h1>
+                            <p class="field">
+                                <label>Users name or Email</label>
+                                <input type="text" name="username" placeholder="user" data-tutor-id="login_user_name" />
+                            </p>
+                            <p class="field">
+                                <label>Password</label>
+                                <input type="password" name="password" placeholder="password" data-tutor-id="login_password" />
+                                <a href="" data-tutor-id="forgot_password">forget password?</a>
+                            </p>
+                            <button type="submit" class="submitBtn" data-tutor-id="sign_in_btn">Sign in</button>
+                            <div class="parting-line"><span>or</span></div>
+                            <div class="google-background" data-tutor-id="google_sign_in_btn">
+                                <div class="google-icon"></div>
+                                <p>Sign in with Google</p>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
-</body>
-<script>
-    var _ = absol._;
-    var $ = absol.$;
-</script>
-<script>
-    absol.tutor.runTutorScript();
+        <div class="editor-ctn">
+            <pre id="code-editor" data-tutor-id="script-editor"></pre>
+        </div>
+    </body>
+    <script>
+        var _ = absol._;
+        var $ = absol.$;
+    </script>
+    <button class="play-btn" onclick="playScript();" data-tutor-id="play-script-button"><span class="mdi mdi-play"></span></button>
+    <div class="example-select-ctn"></div>
+    <script>
+        var editor = AbsolBrace.ace.edit('code-editor');
+        editor.getSession().setMode("ace/mode/javascript");
+        var playBtn = $('.play-btn');
+
+        function loadTutScript(url) {
+            fetch(url).then(res => res.text()).then(text => {
+                editor.setValue(text);
+            });
+        }
+
+        loadTutScript('./tut1_script.js');
+
+        var menu = _({
+            tag: 'ribbonbutton',
+            attr:{
+                'data-tutor-id':'select-tutor-script'
+            },
+            props: {
+                text: 'Chọn ví dụ',
+                icon: 'span.mdi.mdi-code-braces',
+                items: [{
+                        text: "Đơn giản",
+                        url: './tut1_script.js'
+                    },
+                    {
+                        text: "Hỗn hợp",
+                        url: './tut2_script.js'
+                    }
+                ]
+            },
+            on: {
+                select: function(event) {
+                    var item = event.item;
+                    loadTutScript(item.url);
+                    console.log(event);
+                }
+            }
+        });
+
+        $('.example-select-ctn').addChild(menu);
 
 
-</script>
+
+        function playScript() {
+            var view = $('.container');
+            try {
+                var tutor = new absol.tutor.Tutor(view, editor.getValue());
+                playBtn.disabled = true;
+                menu.disabled = true;
+                tutor.exec().then(function() {
+                    playBtn.disabled = false;
+                    menu.disabled = false;
+                });
+
+            }
+            catch (err) {
+                absol.require('snackbar').show(err.message)
+            }
+        }
+
+        absol.tutor.runScriptFromUrl('./tut1_help.js')
+
+    </script>
 </body>
+
 </html>
