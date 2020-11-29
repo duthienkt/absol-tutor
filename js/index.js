@@ -1,5 +1,7 @@
-import runTutorScript from "./scriptor/runTutorScript";
+import Tutor from './Tutor';
+import runScriptFromUrl from "./runScriptFromUrl";
 
 export default {
-    runTutorScript: runTutorScript
+    Tutor: Tutor,
+    runScriptFromUrl: runScriptFromUrl
 }
