@@ -19,7 +19,7 @@ BaseCommand.prototype.$transparentModal = _('.atr-transparent-modal');
  * @returns {Promise}
  *
  **/
-BaseCommand.prototype.exec = function (tutor) {
+BaseCommand.prototype.exec = function () {
     return Promise.resolve();
 };
 
