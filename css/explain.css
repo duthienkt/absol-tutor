@@ -1,7 +1,8 @@
-.atr-explain-modal{
+.atr-explain-modal {
     background-color: rgba(169, 169, 169, 0.5);
 }
 
-.atr-explain-text{
+.atr-explain-text {
     color: white;
+    font-size: 1.25em;
 }
