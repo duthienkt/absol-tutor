@@ -8,6 +8,10 @@ import findNode from './util/findNode';
 function Tutor(view, script, option) {
     this.$view = view;
     this.script = [];
+
+    this.memory = {
+        variables: {}
+    };
     this._compile(script);
 }
 
@@ -57,7 +61,6 @@ Tutor.prototype._compile = function (script) {
 };
 
 Tutor.prototype.exec = function () {
-    this.values = {};
     return this.script.reduce(function (ac, cr) {
         return ac.then(function () {
             return cr.exec();
