@@ -8,8 +8,17 @@ import Earliest from './Earliest';
 import Latest from './Latest';
 import SnackBar from './SnackBar';
 import Appear from "./Appear";
+import Alternate from "./Alternate";
+import Declare from "./Declare";
+import Var from "./Var";
+import Assign from "./Assign";
+import QuerySelector from "./QuerySelector";
+import UserClick from "./UserClick";
 
 var commandList = [
+    Declare,
+    Var,
+    Assign,
     Explain,
     Timeout,
     PressAnyKey,
@@ -19,7 +28,10 @@ var commandList = [
     Earliest,
     Latest,
     SnackBar,
-    Appear
+    Appear,
+    Alternate,
+    QuerySelector,
+    UserClick
 ];
 
 
