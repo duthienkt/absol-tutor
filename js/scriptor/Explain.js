@@ -16,7 +16,9 @@ function Explain() {
 OOP.mixClass(Explain, BaseCommand);
 
 Explain.prototype.exec = function () {
-    return wrapAsync(this.args.text).then(function (text) {
+    return Promise.all([this.asyncGetElt(this.args.eltPath), wrapAsync(this.args.text)]).then(function (result) {
+        var targetElt = result[0];
+        var text = result[1];
         if (!this.$puncturedModal.isDescendantOf(document.body)) {
             this.$puncturedModal.addTo(document.body);
         }
@@ -29,7 +31,6 @@ Explain.prototype.exec = function () {
             class: 'atr-explain-text',
             child: { text: text }
         });
-        var targetElt = $(this.tutor.findNode(this.args.eltPath));
         var token = ToolTip.show(targetElt, contentElt, 'auto');
         this.$puncturedModal.follow(targetElt);
 
@@ -39,7 +40,6 @@ Explain.prototype.exec = function () {
             ToolTip.closeTooltip(token);
         }.bind(this));
     }.bind(this));
-
 };
 
 
