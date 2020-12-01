@@ -1,6 +1,7 @@
-import  '../../css/basecommand.css';
-import {_} from "../dom/Core";
+import '../../css/basecommand.css';
+import {$, _} from "../dom/Core";
 import Explain from "./Explain";
+import wrapAsync from "../util/wrapAsync";
 
 function BaseCommand(tutor, args) {
     this.tutor = tutor;
@@ -38,6 +39,20 @@ BaseCommand.prototype.depthClone = function () {
 
     return new this.constructor(this.tutor, newArgs);
 
+};
+
+BaseCommand.prototype.asyncGetElt = function (val) {
+    var res;
+    if (typeof val === "string") {
+        res = wrapAsync(this.tutor.findNode(val));
+    }
+    else {
+        res = wrapAsync(val);
+    }
+    return res.then(function (result) {
+        if (result) return $(result);
+        return result;
+    });
 };
 
 
