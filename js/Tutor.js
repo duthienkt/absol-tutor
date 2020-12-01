@@ -10,7 +10,8 @@ function Tutor(view, script, option) {
     this.script = [];
 
     this.memory = {
-        variables: {}
+        variables: {},
+        share: {}
     };
     this._compile(script);
 }
