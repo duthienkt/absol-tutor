@@ -62,7 +62,9 @@ Tutor.prototype._compile = function (script) {
 };
 
 Tutor.prototype.exec = function () {
-    return this.script.reduce(function (ac, cr) {
+    return this.script.map(function (st) {
+        return st.depthClone();
+    }).reduce(function (ac, cr) {
         return ac.then(function () {
             return cr.exec();
         });
