@@ -10,10 +10,62 @@ function BaseCommand(tutor, args) {
 
 BaseCommand.prototype.$puncturedModal = _({
     tag: 'puncturedmodal',
-    class: 'atr-explain-modal'
+});
+
+BaseCommand.prototype.$highlightModal = _({
+    tag: 'puncturedmodal',
+    class: ['atr-explain-modal', 'as-non-interact', 'as-animation']
+});
+
+BaseCommand.prototype.$puncturedModal = _({
+    tag: 'puncturedmodal',
+    class: 'as-transparent',
+    style: {
+        background: 'red'
+    }
 });
 
 BaseCommand.prototype.$transparentModal = _('.atr-transparent-modal');
+
+BaseCommand.prototype.preventInteract = function (flag) {
+    if (!this.$transparentModal.parentElement) {
+        document.body.appendChild(this.$transparentModal);
+    }
+    if (flag) {
+        this.$transparentModal.addClass('as-hidden');
+    }
+    else {
+        this.$puncturedModal.removeClass('as-hidden');
+    }
+};
+
+BaseCommand.prototype.highlightElt = function (elt) {
+    if (!this.$highlightModal.parentElement) {
+        document.body.appendChild(this.$highlightModal);
+    }
+    this.$highlightModal.follow(elt);
+    if (elt) {
+        this.$highlightModal.removeClass('as-transparent');
+    }
+    else {
+        this.$highlightModal.addClass('as-transparent');
+        this.$highlightModal.reset();
+    }
+};
+
+BaseCommand.prototype.onlyInteractWith = function (elt) {
+    if (!this.$puncturedModal.parentElement) {
+        document.body.appendChild(this.$puncturedModal);
+    }
+    this.$puncturedModal.follow(elt);
+    if (elt) {
+        this.$puncturedModal.removeClass('as-hidden');
+    }
+    else {
+        this.$puncturedModal.addClass('as-hidden');
+
+    }
+};
 
 
 /***
@@ -42,6 +94,7 @@ BaseCommand.prototype.depthClone = function () {
 };
 
 BaseCommand.prototype.asyncGetElt = function (val) {
+    console.log(val)
     var res;
     if (typeof val === "string") {
         res = wrapAsync(this.tutor.findNode(val));
