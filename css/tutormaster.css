@@ -1,0 +1,63 @@
+.atr-tutor-master {
+    position: fixed;
+    z-index: 1000000000;
+    left: calc(50% - 50px);
+    top: calc(100% - 50px);
+    background-color: white;
+    transition: top 0.2s;
+    padding-left: 40px;
+    height: 40px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    min-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.atr-tutor-master-head {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    text-align: center;
+    border-right: 1px solid #ddd;
+    box-sizing: border-box;
+    background-color: rgba(169, 169, 169, 0.15);
+}
+
+.atr-tutor-master-head > svg {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.atr-tutor-master-head > svg path {
+    fill: #04c7ff;
+}
+
+.atr-tutor-master-cmd-ctn {
+    height: 40px;
+    width: 40px;
+}
+
+
+.atr-tutor-master-head::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.atr-tutor-master .as-from-tool-button{
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 0;
+}
+
+.atr-tutor-master .as-from-tool-button.as-active{
+    color: #4f72f5;
+}
