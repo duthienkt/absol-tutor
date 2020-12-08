@@ -14,7 +14,7 @@ function FlagManager() {
     this.flag = {
         FLAG_MANAGER_STARTUP: false,
         ABSOL_DEBUG: false,
-        TUTOR_START_UP: false
+        TUTOR_STARTUP: false
     };
     this.readSetting();
 }
