@@ -4,7 +4,7 @@
   "description": "Tutorial Script tool",
   "main": "js/index.js",
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.config.js --public frame.absol.cf",
+    "dev": "webpack-dev-server --config webpack.config.js --public https://frame.absol.cf",
     "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production"
   },
   "repository": {
@@ -25,9 +25,10 @@
   "dependencies": {
     "@babel/parser": "^7.12.7",
     "@babel/types": "^7.12.7",
-    "absol": "^1.15.16",
-    "absol-acomp": "^0.9.54",
-    "absol-brace": "^0.9.1"
+    "absol": "github:duthienkt/absol",
+    "absol-acomp": "github:duthienkt/absol-acomp",
+    "absol-brace": "^0.9.1",
+    "absol-form": "github:duthienkt/absol-form"
   },
   "devDependencies": {
     "@babel/core": "7.2.2",

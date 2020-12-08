@@ -41,44 +41,47 @@
 </div>
 </body>
 <script>
-    var _ = absol._;
-    var $ = absol.$;
+
 </script>
 <div class="example-select-ctn"></div>
 <script>
-    var master = new absol.tutor.TutorMaster();
-    master.start();
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
 
-    var previewDiv = $('.preview');
-    fetch('https://absol.cf/absol-tutor/demo_page.html').then(res => res.text()).then(html => {
-        previewDiv.innerHTML = html;
-        var oldSelectMenu = document.getElementsByTagName('selecttreemenu')[0];
-        var contructMenuDesc = absol.Dom.getConstructDescriptor(oldSelectMenu);
-        contructMenuDesc.props = contructMenuDesc.props || {};
-        contructMenuDesc.props.enableSearch = true;
-        fetch('https://absol.cf/absol-tutor/demo_items.json').then(res => res.json()).then(items => contructMenuDesc.props.items = items)
-            .then(() => {
-                var realSelectMenu = absol._(contructMenuDesc);
-                oldSelectMenu.parentElement.replaceChild(realSelectMenu, oldSelectMenu)
-            });
-        absol.require('checkboxinput').autoReplace();
-        absol.$('.card-icon-cover', false, function (elt) {
-            absol.require('quickmenu').toggleWhenClick(elt, {
-                getMenuProps: function () {
-                    return {
-                        items: [{ "text": "Sửa", "icon": "<i class=\"material-icons\">mode_edit</i>" }, {
-                            "text": "Xóa",
-                            "icon": "<i class=\"material-icons\">delete</i>"
-                        }, {
-                            "text": "Thêm mục tiêu chiến lược con",
-                            "icon": "<i class=\"material-icons\">add_circle_outline</i>"
-                        }]
+        var master = new absol.tutor.TutorMaster();
+        master.start();
+
+        var previewDiv = $('.preview');
+        fetch('https://absol.cf/absol-tutor/demo_page.html').then(res => res.text()).then(html => {
+            previewDiv.innerHTML = html;
+            var oldSelectMenu = document.getElementsByTagName('selecttreemenu')[0];
+            var contructMenuDesc = absol.Dom.getConstructDescriptor(oldSelectMenu);
+            contructMenuDesc.props = contructMenuDesc.props || {};
+            contructMenuDesc.props.enableSearch = true;
+            fetch('https://absol.cf/absol-tutor/demo_items.json').then(res => res.json()).then(items => contructMenuDesc.props.items = items)
+                .then(() => {
+                    var realSelectMenu = absol._(contructMenuDesc);
+                    oldSelectMenu.parentElement.replaceChild(realSelectMenu, oldSelectMenu)
+                });
+            absol.require('checkboxinput').autoReplace();
+            absol.$('.card-icon-cover', false, function (elt) {
+                absol.require('quickmenu').toggleWhenClick(elt, {
+                    getMenuProps: function () {
+                        return {
+                            items: [{ "text": "Sửa", "icon": "<i class=\"material-icons\">mode_edit</i>" }, {
+                                "text": "Xóa",
+                                "icon": "<i class=\"material-icons\">delete</i>"
+                            }, {
+                                "text": "Thêm mục tiêu chiến lược con",
+                                "icon": "<i class=\"material-icons\">add_circle_outline</i>"
+                            }]
+                        }
                     }
-                }
-            });
-        })
-    });
-
+                });
+            })
+        });
+    })();
 </script>
 </body>
 
