@@ -8,9 +8,6 @@ function BaseCommand(tutor, args) {
     this.args = args;
 }
 
-BaseCommand.prototype.$puncturedModal = _({
-    tag: 'puncturedmodal',
-});
 
 BaseCommand.prototype.$highlightModal = _({
     tag: 'puncturedmodal',
@@ -22,6 +19,14 @@ BaseCommand.prototype.$puncturedModal = _({
     class: 'as-transparent',
     style: {
         background: 'red'
+    },
+    props: {
+        onInteractOut: null,
+    },
+    on: {
+        click: function (event) {
+            this.onInteractOut && this.onInteractOut(event);
+        }
     }
 });
 
@@ -53,17 +58,19 @@ BaseCommand.prototype.highlightElt = function (elt) {
     }
 };
 
-BaseCommand.prototype.onlyInteractWith = function (elt) {
+BaseCommand.prototype.onlyInteractWith = function (elt, onInteractOut) {
     if (!this.$puncturedModal.parentElement) {
         document.body.appendChild(this.$puncturedModal);
     }
-    this.$puncturedModal.follow(elt);
     if (elt) {
+        this.$puncturedModal.follow(elt);
         this.$puncturedModal.removeClass('as-hidden');
+        this.$puncturedModal.onInteractOut = onInteractOut;
     }
     else {
+        this.$puncturedModal.follow(null);
         this.$puncturedModal.addClass('as-hidden');
-
+        this.$puncturedModal.onInteractOut = null;
     }
 };
 
@@ -94,7 +101,6 @@ BaseCommand.prototype.depthClone = function () {
 };
 
 BaseCommand.prototype.asyncGetElt = function (val) {
-    console.log(val)
     var res;
     if (typeof val === "string") {
         res = wrapAsync(this.tutor.findNode(val));
