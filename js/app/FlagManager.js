@@ -25,7 +25,11 @@ FlagManager.prototype.STORE_KEY = "ABSOL_FLAG"
 
 FlagManager.prototype.readSetting = function () {
     var flagText = localStorage.getItem(this.STORE_KEY) || '{}';
-    var newFlag = {};
+    var newFlag = {
+        FLAG_MANAGER_STARTUP: false,
+        ABSOL_DEBUG: false,
+        TUTOR_STARTUP: false
+    };
     try {
         newFlag = JSON.parse(flagText);
     } catch (err) {
