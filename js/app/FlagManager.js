@@ -11,7 +11,11 @@ import OnScreenWindow from "absol-acomp/js/OnsScreenWindow";
  */
 function FlagManager() {
     Fragment.call(this);
-    this.flag = {};
+    this.flag = {
+        FLAG_MANAGER_STARTUP: false,
+        ABSOL_DEBUG: false,
+        TUTOR_START_UP: false
+    };
     this.readSetting();
 }
 
@@ -120,6 +124,8 @@ FlagManager.prototype.createView = function () {
     for (var key in this.flag) {
         this.addRow(key, this.flag[key]);
     }
+    this.$view.$minimizeBtn.addStyle('display', 'none');
+    this.$view.$dockBtn.addStyle('display', 'none');
     this.$view.$closeBtn.on('click', this.stop.bind(this));
 };
 
