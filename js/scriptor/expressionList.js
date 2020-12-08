@@ -14,8 +14,13 @@ import Var from "./Var";
 import Assign from "./Assign";
 import QuerySelector from "./QuerySelector";
 import UserClick from "./UserClick";
+import CurrentInputText from "./CurrentInputText";
+import UserCheckbox from "./UserCheckbox";
+import UserInputText from "./UserInputText";
+import SetRootView from "./SetRootView";
 
 var commandList = [
+    SetRootView,
     Declare,
     Var,
     Assign,
@@ -31,7 +36,10 @@ var commandList = [
     Appear,
     Alternate,
     QuerySelector,
-    UserClick
+    UserClick,
+    UserCheckbox,
+    CurrentInputText,
+    UserInputText
 ];
 
 
