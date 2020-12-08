@@ -1,29 +1,55 @@
-:root{
+:root {
     --punctured-x: 0px;
     --punctured-y: 0px;
     --punctured-width: 100vw;
     --punctured-height: 100vh;
 }
+
+
 .atr-punctured-modal {
     position: fixed;
     z-index: 100000000;
     background-color: inherit;
-
 }
+
+.atr-punctured-modal.as-non-interact {
+    pointer-events: none;
+}
+
+.atr-punctured-modal.as-transparent {
+    opacity: 0;
+}
+
+.atr-punctured-modal.as-hidden {
+    visibility: hidden;
+}
+
+.atr-punctured-modal.as-animation {
+    transition: opacity 0.2s;
+}
+
 
 .atr-punctured-modal-a {
     left: 0;
     top: 0;
     width: calc(var(--punctured-x) + var(--punctured-width));
     height: var(--punctured-y);
+}
+
+
+.atr-punctured-modal-a.as-animation {
     transition: width 0.2s, height 0.2s;
 }
+
 
 .atr-punctured-modal-b {
     right: 0;
     top: 0;
     left: calc(var(--punctured-x) + var(--punctured-width));
     height: calc(var(--punctured-y) + var(--punctured-height));
+}
+
+.atr-punctured-modal.as-animation .atr-punctured-modal-b {
     transition: left 0.2s, height 0.2s;
 }
 
@@ -32,6 +58,10 @@
     bottom: 0;
     top: calc(var(--punctured-y) + var(--punctured-height));
     left: var(--punctured-x);
+}
+
+
+.atr-punctured-modal.as-animation .atr-punctured-modal-c {
     transition: top 0.2s, left 0.2s;
 }
 
@@ -40,10 +70,13 @@
     bottom: 0;
     width: var(--punctured-x);
     top: var(--punctured-y);
+}
+
+.atr-punctured-modal.as-animation .atr-punctured-modal-d {
     transition: top 0.2s, width 0.2s;
 }
 
 
-.atr-punctured-modal >:not(.atr-punctured-modal){
+.atr-punctured-modal > :not(.atr-punctured-modal) {
     pointer-events: none;
 }
