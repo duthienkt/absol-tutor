@@ -15,31 +15,32 @@ function UserClick() {
 OOP.mixClass(UserClick, BaseCommand);
 
 UserClick.prototype.exec = function () {
-    var eltAsync = this.asyncGetElt(this.args.eltPah);
+    var eltAsync = this.asyncGetElt(this.args.eltPath);
     var messageAsync = wrapAsync(this.args.message);
+    var thisC = this;
     return Promise.all([eltAsync, messageAsync]).then(function (result) {
         var elt = result[0];
+        thisC.highlightElt(elt);
+        thisC.onlyInteractWith(elt);
         var message = result[1];
-        this.$puncturedModal.removeStyle('visibility', 'hidden');
         var contentElt = _({
             class: 'atr-explain-text',
             child: { text: message }
         });
         var token = ToolTip.show(elt, contentElt, 'auto');
-        this.$puncturedModal.follow(elt);
         return new Promise(function (resolve) {
             elt.once('click', resolve);
-        }).then(function (){
-            this.$puncturedModal.follow(undefined);
-            this.$puncturedModal.addStyle('visibility', 'hidden');
+        }).then(function () {
+            thisC.highlightElt(undefined);
+            thisC.onlyInteractWith(undefined);
             ToolTip.closeTooltip(token);
         }.bind(this));
     }.bind(this));
 };
 
 UserClick.attachEnv = function (tutor, env) {
-    env.USER_CLICK = function (eltPah, message) {
-        return new UserClick(tutor, { eltPah: eltPah, message: message });
+    env.USER_CLICK = function (eltPath, message) {
+        return new UserClick(tutor, { eltPath: eltPath, message: message });
     };
 };
 
