@@ -18,7 +18,7 @@ var tutorSrc = document.currentScript.src;
 function TutorMaster() {
     Fragment.call(this);
     this.script = '';
-    this.broadcast = new Broadcast("DEFAULT_CHANNEL", randomIdent(24));
+    this.broadcast = new Broadcast(randomIdent(24), randomIdent(24));
     this.broadcast.on('response_editor', this.ev_response_editor.bind(this))
         .on('play_script', this.ev_play_script.bind(this));
 
@@ -36,6 +36,9 @@ TutorMaster.prototype.createView = function () {
             },
             {
                 tag: 'button',
+                attr: {
+                    title: 'Import File Script'
+                },
                 class: ['as-from-tool-button', 'atr-import-btn'],
                 child: 'span.mdi.mdi-file-import'
 
@@ -67,7 +70,7 @@ TutorMaster.prototype.createView = function () {
             {
                 tag: 'button',
                 attr: {
-                    title: 'DownloadScript'
+                    title: 'Download Script'
                 },
                 class: ['as-from-tool-button', 'atr-download-btn'],
                 child: 'span.mdi.mdi-cloud-download'
@@ -205,7 +208,10 @@ TutorMaster.prototype.ev_play_script = function (event) {
     this.script = event.script;
     this.$editWindow.addStyle('visibility', 'hidden');
     this.$playBtn.disabled = true;
-    var onFinish = function () {
+    var onFinish = function (err) {
+        if (err instanceof Error){
+            console.error(err)
+        }
         this.$playBtn.disabled = false;
         if (this.$editScriptBtn.containsClass('as-active')) {
             this.$editWindow.removeStyle('visibility');
