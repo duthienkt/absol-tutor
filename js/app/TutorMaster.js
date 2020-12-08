@@ -8,6 +8,7 @@ import Fragment from "absol/src/AppPattern/Fragment";
 import {TutorIco} from "../dom/Icon";
 import '../../css/tutormaster.css';
 import {openFileDialog} from "absol-acomp/js/utils";
+import {_, $} from '../dom/Core';
 
 var tutorSrc = document.currentScript.src;
 
@@ -209,7 +210,7 @@ TutorMaster.prototype.ev_play_script = function (event) {
     this.$editWindow.addStyle('visibility', 'hidden');
     this.$playBtn.disabled = true;
     var onFinish = function (err) {
-        if (err instanceof Error){
+        if (err instanceof Error) {
             console.error(err)
         }
         this.$playBtn.disabled = false;

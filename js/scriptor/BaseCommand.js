@@ -1,6 +1,5 @@
 import '../../css/basecommand.css';
 import {$, _} from "../dom/Core";
-import Explain from "./Explain";
 import wrapAsync from "../util/wrapAsync";
 
 function BaseCommand(tutor, args) {
