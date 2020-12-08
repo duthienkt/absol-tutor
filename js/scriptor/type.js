@@ -60,6 +60,16 @@
  * @returns {UserClick}
  */
 
+/***
+ * @global
+ * @function
+ * @name USER_CHECKBOX
+ * @param {string|QuerySelector} query
+ * @param {boolean|BaseCommand} checked
+ * @param {string|BaseCommand} message
+ * @returns {UserCheckbox}
+ */
+
 
 
 
