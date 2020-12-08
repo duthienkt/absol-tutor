@@ -10,6 +10,16 @@
  */
 
 /***
+ * @exports window
+ * @global
+ * @function
+ * @name SNACK_BAR
+ * @param text
+ * @param until
+ * @returns {SnackBar}
+ */
+
+/***
  * @global
  * @function
  * @name TIME_OUT
@@ -67,10 +77,35 @@
  * @param {string|QuerySelector} query
  * @param {boolean|BaseCommand} checked
  * @param {string|BaseCommand} message
+ * @param {string|BaseCommand} wrongMessage
  * @returns {UserCheckbox}
  */
 
 
 
+/***
+ * @global
+ * @function
+ * @name USER_INPUT_TEXT
+ * @param {string|QuerySelector} query
+ * @param {RegExp|BaseCommand} match
+ * @param {string|BaseCommand} message
+ * @param {string|BaseCommand} wrongMessage
+ * @returns {UserCheckbox}
+ */
 
 
+/***
+ * @global
+ * @var
+ * @type {CurrentInputText}
+ * @name CURRENT_INPUT_TEXT
+ */
+
+/***
+ * @global
+ * @function
+ * @name SET_ROOT_VIEW
+ * @param {string|QuerySelector} query
+ * @returns {SetRootView}
+ */
