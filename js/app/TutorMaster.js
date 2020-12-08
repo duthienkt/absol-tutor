@@ -7,6 +7,7 @@ import Tutor from "../Tutor";
 import Fragment from "absol/src/AppPattern/Fragment";
 import {TutorIco} from "../dom/Icon";
 import '../../css/tutormaster.css';
+import {openFileDialog} from "absol-acomp/js/utils";
 
 var tutorSrc = document.currentScript.src;
 
@@ -35,6 +36,12 @@ TutorMaster.prototype.createView = function () {
             },
             {
                 tag: 'button',
+                class: ['as-from-tool-button', 'atr-import-btn'],
+                child: 'span.mdi.mdi-file-import'
+
+            },
+            {
+                tag: 'button',
                 attr: {
                     title: 'Edit Script'
                 },
@@ -51,17 +58,50 @@ TutorMaster.prototype.createView = function () {
             },
             {
                 tag: 'button',
-                class: 'as-from-tool-button',
+                attr: {
+                    title: 'Engine not support stop script'
+                },
+                class: ['as-from-tool-button', 'atr-stop-btn'],
                 child: 'span.mdi.mdi-stop'
+            },
+            {
+                tag: 'button',
+                attr: {
+                    title: 'DownloadScript'
+                },
+                class: ['as-from-tool-button', 'atr-download-btn'],
+                child: 'span.mdi.mdi-cloud-download'
+            },
+            {
+                tag: 'a',
+                class: 'atr-download-link',
+                attr: {
+                    download: 'tutor_script.js'
+                },
+                style: {
+                    display: 'none'
+                }
             }
+
         ]
     });
+
+    this.$importBtn = $('.atr-import-btn', this.$view)
+        .on('click', this.importFromFileDialog.bind(this));
 
     this.$editScriptBtn = $('.atr-edit-script-btn', this.$view)
         .on('click', this.ev_clickEditScript.bind(this));
 
     this.$playBtn = $('.atr-play-btn', this.$view)
         .on('click', this.ev_clickPlayBtn.bind(this));
+
+    this.$stopBtn = $('.atr-stop-btn', this.$view)
+    // .on('click');
+    this.$stopBtn.disabled = true;
+
+    this.$stopBtn = $('.atr-download-btn', this.$view)
+        .on('click', this.downloadScript.bind(this));
+    this.$downloadLink = $('a.atr-download-link', this.$view);
 
     var htmlCode = editorText.replace('"EDITOR_CHANNEL_STRING"', JSON.stringify(this.broadcast.channel))
         .replace('"ABSOL_URL_STRING"', JSON.stringify(tutorSrc));
@@ -88,8 +128,23 @@ TutorMaster.prototype.createView = function () {
     this.$editWindow.windowTitle = 'Tutor';
     this.$editWindow.addChild(this.$editIframe);
     this.$editWindow.addTo(document.body);
+    this.$editWindow.$closeBtn.on('click', this.ev_clickCloseScript.bind(this));
 };
 
+TutorMaster.prototype.importFromFileDialog = function () {
+    var thisTM = this;
+    openFileDialog({
+        accept: ".js"
+    }).then(function (files) {
+        if (files.length > 0) {
+            var fileReader = new FileReader();
+            fileReader.onload = function (event) {
+                thisTM.setScript(event.target.result);
+            };
+            fileReader.readAsText(files[0]);
+        }
+    });
+};
 
 TutorMaster.prototype.onResume = function () {
     if (this._createNewTimeout > 0) {
@@ -112,7 +167,6 @@ TutorMaster.prototype.onResume = function () {
 
 TutorMaster.prototype.onStart = function () {
     var view = this.getView();
-    console.log(view)
     if (!view.parentElement) {
         view.addTo(document.body);
     }
@@ -130,7 +184,17 @@ TutorMaster.prototype._createNewSplitEditor = function () {
 TutorMaster.prototype.setScript = function (script) {
     this.script = script || '';
     this.broadcast.emit('set_script', { data: this.script });
-}
+};
+
+TutorMaster.prototype.downloadScript = function () {
+    var thisTM = this;
+    this.broadcast.emit('request_script', {});
+    this.broadcast.once('script', function (ev) {
+        var blob = new Blob([ev.data], { type: 'text/plain' })
+        thisTM.$downloadLink.href = URL.createObjectURL(blob);
+        thisTM.$downloadLink.click();
+    });
+};
 
 
 TutorMaster.prototype.ev_response_editor = function () {
@@ -140,13 +204,12 @@ TutorMaster.prototype.ev_response_editor = function () {
 TutorMaster.prototype.ev_play_script = function (event) {
     this.script = event.script;
     this.$editWindow.addStyle('visibility', 'hidden');
+    this.$playBtn.disabled = true;
     var onFinish = function () {
         this.$playBtn.disabled = false;
         if (this.$editScriptBtn.containsClass('as-active')) {
             this.$editWindow.removeStyle('visibility');
         }
-
-
     }.bind(this);
     this.tutor = new Tutor(document.body, this.script);
     return this.tutor.exec().catch(onFinish).then(onFinish)
@@ -163,6 +226,14 @@ TutorMaster.prototype.ev_clickEditScript = function () {
         this.$editScriptBtn.addClass('as-active');
     }
 };
+
+TutorMaster.prototype.ev_clickCloseScript = function () {
+    if (this.$editScriptBtn.containsClass('as-active')) {
+        this.$editScriptBtn.removeClass('as-active');
+        this.$editWindow.addStyle('visibility', 'hidden');
+    }
+};
+
 
 TutorMaster.prototype.ev_clickPlayBtn = function () {
     this.broadcast.emit('request_play_script', {});

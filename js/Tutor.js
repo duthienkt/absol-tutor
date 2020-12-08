@@ -11,7 +11,9 @@ function Tutor(view, script, option) {
 
     this.memory = {
         variables: {},
-        share: {}
+        share: {
+            getCurrentInputText: null
+        }
     };
     this._compile(script);
 }

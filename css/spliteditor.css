@@ -1,0 +1,25 @@
+.atr-split-editor {
+
+}
+
+.atr-split-editor-ace {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    /*height: calc(100% - 25px);*/
+}
+
+.atr-split-editor .as-form-cmd-tool {
+    border-bottom: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.attr-split-editor-window .absol-onscreen-window-head-bar-button-minimize,
+.attr-split-editor-window .absol-onscreen-window-head-bar-button-dock {
+    display: none;
+}
+
+.attr-split-editor-window {
+    z-index: 1000000000;
+}
+

@@ -22,6 +22,7 @@ function SplitEditor(channel, id) {
         .on('playing', this.ev_playinng.bind(this))
         .on('stopped', this.ev_stopped.bind(this))
         .on('request_play_script', this.ev_request_play_script.bind(this))
+        .on('request_script', this.ev_request_script.bind(this))
     ;
 }
 
@@ -32,21 +33,6 @@ SplitEditor.prototype.createView = function () {
     this.$view = _({
         class: "atr-split-editor",
         child: [
-            // {
-            //     class: 'as-form-cmd-tool',
-            //     child: [
-            //         {
-            //             class: 'as-from-tool-group-buttons',
-            //             child: [
-            //                 {
-            //                     tag: 'button',
-            //                     class: ['as-from-tool-button', 'atr-play-btn'],
-            //                     child: 'span.mdi.mdi-play'
-            //                 }
-            //             ]
-            //         }
-            //     ]
-            // },
             'p.atr-split-editor-ace'
         ]
     });
@@ -76,6 +62,11 @@ SplitEditor.prototype.ev_stopped = function (ev) {
 SplitEditor.prototype.ev_request_play_script = function () {
     this.emit('play_script', { script: this.editor.getValue() });
 };
+
+SplitEditor.prototype.ev_request_script = function (){
+    this.emit('script', { data: this.editor.getValue() });
+};
+
 
 export default SplitEditor;
 
