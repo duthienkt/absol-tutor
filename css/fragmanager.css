@@ -1,0 +1,15 @@
+.atr-flag-manager .as-property-editor {
+    overflow: auto;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+input.atr-flag-name {
+    outline: none;
+    border: 1px solid #dddddd;
+    height: 30px;
+    box-sizing: border-box;
+    width: 220px;
+}
