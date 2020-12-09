@@ -11,11 +11,7 @@ import OnScreenWindow from "absol-acomp/js/OnsScreenWindow";
  */
 function FlagManager() {
     Fragment.call(this);
-    this.flag = {
-        FLAG_MANAGER_STARTUP: false,
-        ABSOL_DEBUG: false,
-        TUTOR_STARTUP: false
-    };
+    this.flag = {};
     this.readSetting();
 }
 
@@ -25,11 +21,7 @@ FlagManager.prototype.STORE_KEY = "ABSOL_FLAG"
 
 FlagManager.prototype.readSetting = function () {
     var flagText = localStorage.getItem(this.STORE_KEY) || '{}';
-    var newFlag = {
-        FLAG_MANAGER_STARTUP: false,
-        ABSOL_DEBUG: false,
-        TUTOR_STARTUP: false
-    };
+    var newFlag = {};
     try {
         newFlag = JSON.parse(flagText);
     } catch (err) {
@@ -124,9 +116,9 @@ FlagManager.prototype.createView = function () {
         ]
     });
     this.$tbody = $('.as-property-editor tbody', this.$view);
-    this.$addRow = $('.atr-add-flag-row', this.$view).on('click', this.addRow.bind(this, '', false));
+    this.$addRow = $('.atr-add-flag-row', this.$view).on('click', this._addRow.bind(this, '', false));
     for (var key in this.flag) {
-        this.addRow(key, this.flag[key]);
+        this._addRow(key, this.flag[key]);
     }
     this.$view.$minimizeBtn.addStyle('display', 'none');
     this.$view.$dockBtn.addStyle('display', 'none');
@@ -172,7 +164,7 @@ FlagManager.prototype._getFlagFromInput = function () {
     return res;
 }
 
-FlagManager.prototype.addRow = function (key, value) {
+FlagManager.prototype._addRow = function (key, value) {
     var thisFM = this;
     var newRow = _({
         tag: 'tr',
@@ -214,11 +206,29 @@ FlagManager.prototype.addRow = function (key, value) {
     this._updateInputColor();
 };
 
+
 FlagManager.prototype.onPause = function () {
     var view = this.getView();
     if (view.isDescendantOf(document.body)) {
         view.remove();
     }
+};
+
+/***
+ *
+ * @param {string} key
+ * @param {boolean=} value
+ */
+FlagManager.prototype.add = function (key, value) {
+    if (!key || (typeof (key) != 'string')) return;
+    if (key in this.flag) return;
+    if (typeof (value) != "boolean") {
+        value = !!window[key];
+    }
+    window[key] = value;
+    this.flag[key] = value;
+    this.saveSetting();
+    if (this.$view) this._addRow(key, value);
 };
 
 export default new FlagManager();
