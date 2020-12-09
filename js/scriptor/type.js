@@ -102,6 +102,21 @@
  * @name CURRENT_INPUT_TEXT
  */
 
+
+/***
+ * @global
+ * @function
+ * @name USER_SELECT_MENU
+ * @param {string|QuerySelector} query
+ * @param {any|BaseCommand} value
+ * @param {string|BaseCommand} message
+ * @param {string|BaseCommand} wrongMessage
+ * @param {string|BaseCommand} searchMessage
+ * @returns {UserSelectMenu}
+ */
+
+
+
 /***
  * @global
  * @function
@@ -109,3 +124,5 @@
  * @param {string|QuerySelector} query
  * @returns {SetRootView}
  */
+
+
