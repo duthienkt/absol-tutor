@@ -18,6 +18,7 @@ import CurrentInputText from "./CurrentInputText";
 import UserCheckbox from "./UserCheckbox";
 import UserInputText from "./UserInputText";
 import SetRootView from "./SetRootView";
+import UserSelectMenu from "./UserSelectMenu";
 
 var commandList = [
     SetRootView,
@@ -39,7 +40,8 @@ var commandList = [
     UserClick,
     UserCheckbox,
     CurrentInputText,
-    UserInputText
+    UserInputText,
+    UserSelectMenu,
 ];
 
 
