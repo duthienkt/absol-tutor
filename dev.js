@@ -10,6 +10,8 @@ import TutorMaster from "./js/app/TutorMaster";
 install(absol.coreDom);
 absol.tutor = tutor;
 absol.FlagManager = FlagManager;
+FlagManager.add('FLAG_MANAGER_STARTUP');
+FlagManager.add('TUTOR_STARTUP');
 
 Dom.documentReady.then(function () {
     if (window.FLAG_MANAGER_STARTUP && window.self === window.top)
