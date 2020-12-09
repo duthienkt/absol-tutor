@@ -9,8 +9,10 @@ import {TutorIco} from "../dom/Icon";
 import '../../css/tutormaster.css';
 import {openFileDialog} from "absol-acomp/js/utils";
 import {_, $} from '../dom/Core';
+import FlagManager from "./FlagManager";
 
 var tutorSrc = document.currentScript.src;
+FlagManager.add('TUTOR_LOCAL_SAVE', true);
 
 /***
  * @extends Context
@@ -18,11 +20,10 @@ var tutorSrc = document.currentScript.src;
  */
 function TutorMaster() {
     Fragment.call(this);
-    this.script = '';
+    this.script = (window['TUTOR_LOCAL_SAVE'] && localStorage.getItem('TUTOR_MASTER_SCRIPT')) || '';
     this.broadcast = new Broadcast(randomIdent(24), randomIdent(24));
     this.broadcast.on('response_editor', this.ev_response_editor.bind(this))
         .on('play_script', this.ev_play_script.bind(this));
-
 }
 
 OOP.mixClass(TutorMaster, Fragment);
