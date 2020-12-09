@@ -39,7 +39,22 @@ SplitEditor.prototype.createView = function () {
     this.$editor = $('p.atr-split-editor-ace', this.$view);
     this.editor = AbsolBrace.ace.edit(this.$editor);
     this.editor.getSession().setMode("ace/mode/javascript");
+    if (window['TUTOR_LOCAL_SAVE']){
+        this.editor.on('change', this.localSaveDelay.bind(this))
+    }
     // this.$playBtn = $('.atr-play-btn', this.$view).on('click', this.playScript.bind(this));
+};
+
+SplitEditor.prototype.localSaveDelay = function () {
+    var thisSE = this;
+    if (this._saveTimeout >= 0) {
+        clearTimeout(this._saveTimeout);
+    }
+    this._saveTimeout = setTimeout(function () {
+        var script = thisSE.editor.getValue();
+        localStorage.setItem('TUTOR_MASTER_SCRIPT', script);
+    }, 1000);
+
 };
 
 SplitEditor.prototype.onResume = function () {
@@ -63,7 +78,7 @@ SplitEditor.prototype.ev_request_play_script = function () {
     this.emit('play_script', { script: this.editor.getValue() });
 };
 
-SplitEditor.prototype.ev_request_script = function (){
+SplitEditor.prototype.ev_request_script = function () {
     this.emit('script', { data: this.editor.getValue() });
 };
 
