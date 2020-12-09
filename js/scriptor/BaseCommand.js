@@ -1,6 +1,7 @@
 import '../../css/basecommand.css';
 import {$, _} from "../dom/Core";
 import wrapAsync from "../util/wrapAsync";
+import ToolTip from "absol-acomp/js/Tooltip";
 
 function BaseCommand(tutor, args) {
     this.tutor = tutor;
@@ -30,6 +31,11 @@ BaseCommand.prototype.$puncturedModal = _({
 });
 
 BaseCommand.prototype.$transparentModal = _('.atr-transparent-modal');
+
+BaseCommand.prototype.$tooltipContent = _({
+    class: 'atr-explain-text',
+    child: { text: '' }
+});
 
 BaseCommand.prototype.preventInteract = function (flag) {
     if (!this.$transparentModal.parentElement) {
@@ -70,6 +76,18 @@ BaseCommand.prototype.onlyInteractWith = function (elt, onInteractOut) {
         this.$puncturedModal.follow(null);
         this.$puncturedModal.addClass('as-hidden');
         this.$puncturedModal.onInteractOut = null;
+    }
+};
+
+BaseCommand.prototype.showTooltip = function (elt, message) {
+    this.$tooltipContent.firstChild.data = message;
+    this.tooltipToken = ToolTip.show(elt, this.$tooltipContent, 'auto');
+    ToolTip.$holder.addClass('atr-on-top-1');
+};
+
+BaseCommand.prototype.closeTooltip = function () {
+    if (this.tooltipToken) {
+        ToolTip.closeTooltip(this.tooltipToken);
     }
 };
 
