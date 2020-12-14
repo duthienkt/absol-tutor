@@ -16,7 +16,20 @@
  * @name SNACK_BAR
  * @param text
  * @param until
- * @returns {SnackBar}
+ * @returns {ShowSnackBar}
+ */
+
+/***
+ * @exports window
+ * @global
+ * @function
+ * @name TOAST_MESSAGE
+ * @param {string} title
+ * @param {string} text
+ * @param {number=} disappearTimeout
+ * @param {BaseCommand=} until
+ * @param {string=} variant
+ * @returns {ShowSnackBar}
  */
 
 /***
