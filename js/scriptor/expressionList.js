@@ -6,7 +6,7 @@ import Or from './Or';
 import And from './And';
 import Earliest from './Earliest';
 import Latest from './Latest';
-import SnackBar from './SnackBar';
+import ShowSnackBar from './ShowSnackBar';
 import Appear from "./Appear";
 import Alternate from "./Alternate";
 import Declare from "./Declare";
@@ -19,6 +19,7 @@ import UserCheckbox from "./UserCheckbox";
 import UserInputText from "./UserInputText";
 import SetRootView from "./SetRootView";
 import UserSelectMenu from "./UserSelectMenu";
+import ShowToastMessage from "./ShowToastMessage";
 
 var commandList = [
     SetRootView,
@@ -33,7 +34,7 @@ var commandList = [
     And,
     Earliest,
     Latest,
-    SnackBar,
+    ShowSnackBar,
     Appear,
     Alternate,
     QuerySelector,
@@ -42,6 +43,7 @@ var commandList = [
     CurrentInputText,
     UserInputText,
     UserSelectMenu,
+    ShowToastMessage
 ];
 
 
