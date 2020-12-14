@@ -2,6 +2,7 @@ import '../../css/basecommand.css';
 import {$, _} from "../dom/Core";
 import wrapAsync from "../util/wrapAsync";
 import ToolTip from "absol-acomp/js/Tooltip";
+import Toast from "absol-acomp/js/Toast";
 
 function BaseCommand(tutor, args) {
     this.tutor = tutor;
@@ -83,6 +84,16 @@ BaseCommand.prototype.showTooltip = function (elt, message) {
     this.$tooltipContent.firstChild.data = message;
     this.tooltipToken = ToolTip.show(elt, this.$tooltipContent, 'auto');
     ToolTip.$holder.addClass('atr-on-top-1');
+};
+
+BaseCommand.prototype.showToast = function (message) {
+    return Toast.make({
+        props: {
+            message: message,
+            htitle: 'Tutor',
+            disappearTimeout: 12000
+        }
+    });
 };
 
 BaseCommand.prototype.closeTooltip = function () {
