@@ -51,13 +51,17 @@
     height: 100%;
 }
 
-.atr-tutor-master .as-from-tool-button{
+.atr-tutor-master .as-from-tool-button {
     width: 40px;
     height: 40px;
     font-size: 20px;
     border-radius: 0;
 }
 
-.atr-tutor-master .as-from-tool-button.as-active{
+.atr-tutor-master .as-from-tool-button.as-active {
     color: #4f72f5;
+}
+
+.atr-has-tutor-master .as-toast-list.as-se {
+    bottom: 50px;
 }

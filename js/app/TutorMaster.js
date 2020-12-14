@@ -168,6 +168,11 @@ TutorMaster.prototype.onResume = function () {
     }.bind(this);
     this.broadcast.on('response_editor', onResponse);
     this.broadcast.emit("request_editor", {});
+    document.body.classList.add('atr-has-tutor-master');
+};
+
+Tutor.prototype.onPause = function (){
+    document.body.classList.remove('atr-has-tutor-master');
 };
 
 TutorMaster.prototype.onStart = function () {
