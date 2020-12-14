@@ -30,10 +30,10 @@ UserInputText.prototype.exec = function () {
         }
 
         thisC.showToast(message);
-
+        var changed = false;
         thisC.onlyInteractWith(elt, function () {
             verify().then(function (result) {
-                if (!result) {
+                if (!result || !changed) {
                     thisC.highlightElt(elt);
                 }
             });
@@ -72,10 +72,13 @@ UserInputText.prototype.exec = function () {
             }
 
             elt.on('keyup', verify)
-                .on('change', onChange);
+                .on('change', onChange)
+                .once('change', function () {
+                    changed = true;
+                });
         });
 
-    }).then(function (){
+    }).then(function () {
         thisC.onlyInteractWith(undefined);
         thisC.highlightElt(undefined);
         thisC.closeTooltip();
