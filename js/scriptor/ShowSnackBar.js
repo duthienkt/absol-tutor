@@ -5,22 +5,22 @@ import SnackbarElt from 'absol-acomp/js/Snackbar';
 /***
  * @extends {BaseCommand}
  */
-function SnackBar() {
+function ShowSnackBar() {
     BaseCommand.apply(this, arguments);
 }
 
-OOP.mixClass(SnackBar, BaseCommand);
+OOP.mixClass(ShowSnackBar, BaseCommand);
 
 
-SnackBar.prototype.exec = function () {
+ShowSnackBar.prototype.exec = function () {
     SnackbarElt.show(this.args.text);
     return this.args.until.exec();
 };
 
-SnackBar.attachEnv = function (tutor, env) {
+ShowSnackBar.attachEnv = function (tutor, env) {
     env.SNACK_BAR = function (text, until) {
-        return new SnackBar(tutor, { text: text, until: until });
+        return new ShowSnackBar(tutor, { text: text, until: until });
     };
 };
 
-export default SnackBar;
+export default ShowSnackBar;
