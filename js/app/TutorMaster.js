@@ -10,6 +10,7 @@ import '../../css/tutormaster.css';
 import {openFileDialog} from "absol-acomp/js/utils";
 import {_, $} from '../dom/Core';
 import FlagManager from "./FlagManager";
+import Toast from "absol-acomp/js/Toast";
 
 var tutorSrc = document.currentScript.src;
 FlagManager.add('TUTOR_LOCAL_SAVE', true);
@@ -171,7 +172,7 @@ TutorMaster.prototype.onResume = function () {
     document.body.classList.add('atr-has-tutor-master');
 };
 
-Tutor.prototype.onPause = function (){
+Tutor.prototype.onPause = function () {
     document.body.classList.remove('atr-has-tutor-master');
 };
 
@@ -217,6 +218,14 @@ TutorMaster.prototype.ev_play_script = function (event) {
     this.$playBtn.disabled = true;
     var onFinish = function (err) {
         if (err instanceof Error) {
+            Toast.make({
+                props: {
+                    message: err.message,
+                    variant: 'error',
+                    htitle: "Tutor Runtime Error!",
+                    disappearTimeout: 20000
+                }
+            });
             console.error(err)
         }
         this.$playBtn.disabled = false;
@@ -224,8 +233,26 @@ TutorMaster.prototype.ev_play_script = function (event) {
             this.$editWindow.removeStyle('visibility');
         }
     }.bind(this);
-    this.tutor = new Tutor(document.body, this.script);
-    return this.tutor.exec().catch(onFinish).then(onFinish)
+    try {
+        this.tutor = new Tutor(document.body, this.script);
+        return this.tutor.exec().catch(onFinish).then(onFinish)
+    }
+    catch (err){
+        this.$playBtn.disabled = false;
+        if (this.$editScriptBtn.containsClass('as-active')) {
+            this.$editWindow.removeStyle('visibility');
+        }
+        Toast.make({
+            props:{
+                variant: 'error',
+                htitle: 'Script Error!',
+                message: err.message,
+                disappearTimeout: 20000
+            }
+        })
+        console.error(err);
+    }
+
 };
 
 

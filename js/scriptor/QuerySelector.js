@@ -15,6 +15,7 @@ OOP.mixClass(QuerySelector, BaseCommand);
 
 QuerySelector.prototype.exec = function () {
     var elt = $(this.args.query, this.tutor.$view);
+    if (!elt) throw new Error('Can not query element \"'+ this.args.query+'"');
     return Promise.resolve(elt);
 };
 

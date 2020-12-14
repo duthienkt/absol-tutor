@@ -74,7 +74,9 @@ Tutor.prototype.exec = function () {
 };
 
 Tutor.prototype.findNode = function (query) {
-    return findNode(query, this.$view);
+    var elt = findNode(query, this.$view);
+    if (!elt) throw new Error('Can not find element with data-tutor-id="' + query + '"');
+    return elt;
 };
 
 
