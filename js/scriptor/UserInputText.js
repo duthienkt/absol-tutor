@@ -1,9 +1,6 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
-import {_} from "../dom/Core";
-import ToolTip from "absol-acomp/js/Tooltip";
-import SnackbarElt from "absol-acomp/js/Snackbar";
 
 /***
  * @extends BaseCommand
@@ -32,15 +29,8 @@ UserInputText.prototype.exec = function () {
             return elt.value || elt.text || '';
         }
 
-        var messageElt = _({
-            class: 'atr-explain-text',
-            child: { text: message }
-        });
+        thisC.showToast(message);
 
-        var wrongMessageElt = wrongMessage && _({
-            class: 'atr-explain-text',
-            child: { text: wrongMessage }
-        });
         thisC.onlyInteractWith(elt, function () {
             verify().then(function (result) {
                 if (!result) {
@@ -59,16 +49,15 @@ UserInputText.prototype.exec = function () {
             }
             return isMatchedAsync.then(function (matched) {
                 if (!matched && wrongMessage) {
-                    tooltipToken = ToolTip.show(elt, wrongMessageElt, 'auto');
+                    thisC.showTooltip(elt, wrongMessage);
                 }
                 else if (matched && tooltipToken) {
-                    ToolTip.closeTooltip(tooltipToken);
+                    thisC.closeTooltip();
                 }
                 return matched;
             });
         }
 
-        tooltipToken = ToolTip.show(elt, messageElt, 'auto');
 
         return new Promise(function (resolve) {
             function onChange() {
@@ -79,13 +68,17 @@ UserInputText.prototype.exec = function () {
                         thisC.tutor.memory.share.getCurrentInputText = null;
                         resolve();
                     }
-                })
+                });
             }
 
             elt.on('keyup', verify)
                 .on('change', onChange);
         });
 
+    }).then(function (){
+        thisC.onlyInteractWith(undefined);
+        thisC.highlightElt(undefined);
+        thisC.closeTooltip();
     });
 };
 

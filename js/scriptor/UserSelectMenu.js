@@ -113,7 +113,7 @@ UserSelectMenu.prototype.exec = function () {
         var message = args[2];
         var wrongMessage = args[3];
         var searchMessage = args[4];
-        thisC.showTooltip(elt, message);
+        thisC.showToast(message);
         return thisC._afterSelect(elt, value, wrongMessage, searchMessage);
     }).then(function () {
         thisC.highlightElt(null);
