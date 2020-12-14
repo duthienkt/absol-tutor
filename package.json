@@ -25,8 +25,8 @@
   "dependencies": {
     "@babel/parser": "^7.12.7",
     "@babel/types": "^7.12.7",
-    "absol": "github:duthienkt/absol",
-    "absol-acomp": "github:duthienkt/absol-acomp",
+    "absol": "^1.15.20",
+    "absol-acomp": "^0.9.56",
     "absol-brace": "^0.9.1",
     "absol-form": "github:duthienkt/absol-form"
   },
