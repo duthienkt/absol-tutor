@@ -15,16 +15,9 @@ ShowToastMessage.attachEnv = function (tutor, env) {
         });
         return until();
     }
-
-    env.delay = function (millis) {
-        return new Promise(function (resolve) {
-            setTimeout(resolve, millis || 1);
-        });
-    }
 };
 
 FunctionKeyManager.addAsync('showToastMessage');
-FunctionKeyManager.addAsync('delay');
 
 
 export default ShowToastMessage;

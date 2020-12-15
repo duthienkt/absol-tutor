@@ -19,8 +19,14 @@ Timeout.attachEnv = function (tutor, env) {
             });
         }
     };
+    env.delay = function (millis) {
+        return new Promise(function (resolve) {
+            setTimeout(resolve, millis || 1);
+        });
+    }
 };
 
-FunctionKeyManager.addSync('untilTimeout');
+FunctionKeyManager.addSync('untilTimeout')
+    .addSync('delay');
 
 export default Timeout;
