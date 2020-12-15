@@ -3,7 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
 import ToolTip from "absol-acomp/js/Tooltip";
 import {_} from "../dom/Core";
-import SnackbarElt from "absol-acomp/js/Snackbar";
+import FunctionNameManager from "./FunctionNameManager";
 
 /***
  * @extends BaseCommand
@@ -64,15 +64,18 @@ UserCheckbox.prototype.exec = function () {
 };
 
 UserCheckbox.attachEnv = function (tutor, env) {
-    env.USER_CHECKBOX = function (eltPath, checked, message, wrongMessage) {
+    env.userCheckbox = function (eltPath, checked, message, wrongMessage) {
         return new UserCheckbox(tutor, {
             eltPath: eltPath,
             checked: checked,
             message: message,
             wrongMessage: wrongMessage
-        });
+        }).exec();
     }
+
 };
+
+FunctionNameManager.addAsync('userCheckbox');
 
 
 export default UserCheckbox;

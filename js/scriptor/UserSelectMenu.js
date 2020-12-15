@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
 import SelectTreeMenu from "absol-acomp/js/SelectTreeMenu";
 import '../../css/basecommand.css';
+import FunctionNameManager from "./FunctionNameManager";
 
 /***
  * @extends BaseCommand
@@ -123,12 +124,14 @@ UserSelectMenu.prototype.exec = function () {
 };
 
 UserSelectMenu.attachEnv = function (tutor, env) {
-    env.USER_SELECT_MENU = function (eltPath, value, message, wrongMessage, searchMessage) {
+    env.userSelectMenu = function (eltPath, value, message, wrongMessage, searchMessage) {
         return new UserSelectMenu(tutor, {
             eltPath: eltPath, value: value, message: message, wrongMessage: wrongMessage, searchMessage: searchMessage
-        });
+        }).exec();
     };
 };
+
+FunctionNameManager.addAsync('userSelectMenu');
 
 
 export default UserSelectMenu;
