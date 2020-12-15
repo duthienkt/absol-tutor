@@ -14,7 +14,7 @@ function PressAnyKey() {
 OOP.mixClass(PressAnyKey, BaseCommand);
 
 PressAnyKey.prototype.exec = function () {
-    if (this._isRunning) throw new Error("Violation exec!");
+    if (this._isRunning) throw new Error("Trigger PRESS_ANY_KEY is not finished before stared again!");
     this._isRunning = true;
     document.addEventListener('keydown', this.ev_keyPress);
     return new Promise(function (rs) {
@@ -23,10 +23,6 @@ PressAnyKey.prototype.exec = function () {
         this.cancel();
     }.bind(this));
 
-};
-
-PressAnyKey.prototype.isFinished = function () {
-    return !this._isRunning;
 };
 
 PressAnyKey.prototype.cancel = function () {
