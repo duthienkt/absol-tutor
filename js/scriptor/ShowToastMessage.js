@@ -13,7 +13,9 @@ ShowToastMessage.attachEnv = function (tutor, env) {
                 variant: variant
             }
         });
-        return until();
+        if (typeof until === "function")
+            return until();
+        if (until.exec) return until.exec();
     }
 };
 
