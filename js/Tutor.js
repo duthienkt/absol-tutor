@@ -21,8 +21,6 @@ function Tutor(view, script, option) {
 
 Tutor.prototype._compile = function (script) {
     this.script = buildTutorJavaScript(script);
-    console.log(this.script)
-
 };
 
 Tutor.prototype.exec = function () {
