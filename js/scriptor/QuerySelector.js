@@ -1,6 +1,7 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import {$} from "../dom/Core";
+import FunctionNameManager from "./FunctionNameManager";
 
 /***
  * @extends BaseCommand
@@ -20,11 +21,14 @@ QuerySelector.prototype.exec = function () {
 };
 
 QuerySelector.attachEnv = function (tutor, env) {
-    env.QUERY_SELECTOR = function (query) {
-        return new QuerySelector(tutor, { query: query });
+    env.querySelector = function (query){
+        return new QuerySelector(tutor, {query: query}).exec();
     };
-    env.$ = env.QUERY_SELECTOR;
+    env.$ = $;
 };
 
+
+FunctionNameManager.addSync('$')
+    .addSync('querySelector');
 
 export default QuerySelector;

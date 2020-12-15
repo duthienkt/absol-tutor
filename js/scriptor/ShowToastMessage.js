@@ -1,53 +1,30 @@
-import BaseCommand from "./BaseCommand";
-import OOP from "absol/src/HTML5/OOP";
-import wrapAsync from "../util/wrapAsync";
 import Toast from "absol-acomp/js/Toast";
+import FunctionKeyManager from "./FunctionNameManager";
 
-/***
- * @extends BaseCommand
- * @constructor
- */
-function ShowToastMessage() {
-    BaseCommand.apply(this, arguments);
-}
+var ShowToastMessage = {};
 
-OOP.mixClass(ShowToastMessage, BaseCommand);
-
-ShowToastMessage.prototype.exec = function () {
-    var thisC = this;
-    return Promise.all([
-        wrapAsync(this.args.title),
-        wrapAsync(this.args.text),
-        wrapAsync(this.args.disappearTimeout),
-        wrapAsync(this.args.variant)
-    ]).then(function (args) {
-        var title = args[0];
-        var text = args[1];
-        var timeout = args[2];
-        var variant = args[3];
+ShowToastMessage.attachEnv = function (tutor, env) {
+    env.showToastMessage = function (title, text, disappearTimeout, until, variant) {
         Toast.make({
             props: {
                 htitle: title,
                 message: text,
-                disappearTimeout: timeout,
+                disappearTimeout: disappearTimeout,
                 variant: variant
             }
         });
-        return wrapAsync(thisC.args.until);
-    });
+        return until();
+    }
+
+    env.delay = function (millis) {
+        return new Promise(function (resolve) {
+            setTimeout(resolve, millis || 1);
+        });
+    }
 };
 
-ShowToastMessage.attachEnv = function (tutor, env) {
-    env.TOAST_MESSAGE = function (title, text, disappearTimeout, until, variant) {
-        return new ShowToastMessage(tutor, {
-            title: title,
-            text: text,
-            disappearTimeout: disappearTimeout || 0,
-            until: until,
-            variant: variant
-        });
-    };
-};
+FunctionKeyManager.addAsync('showToastMessage');
+FunctionKeyManager.addAsync('delay');
 
 
 export default ShowToastMessage;

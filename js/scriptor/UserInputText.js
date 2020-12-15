@@ -1,6 +1,7 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
+import FunctionKeyManager from "./FunctionNameManager";
 
 /***
  * @extends BaseCommand
@@ -94,7 +95,18 @@ UserInputText.attachEnv = function (tutor, env) {
             wrongMessage: wrongMessage
         });
     };
+
+    env.userInputText = function (eltPath, match, message, wrongMessage){
+        return new UserInputText(tutor, {
+            eltPath: eltPath,
+            match: match,
+            message: message,
+            wrongMessage: wrongMessage
+        }).exec();
+    }
 };
+
+FunctionKeyManager.addAsync('userInputText');
 
 
 export default UserInputText;
