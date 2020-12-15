@@ -1,5 +1,6 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
+import FunctionNameManager from "./FunctionNameManager";
 
 /***
  * @extends {BaseCommand}
@@ -15,8 +16,8 @@ Earliest.prototype.exec = function () {
     return Promise.any(expressions.map(function (exp) {
         return exp.exec();
     })).then(function (result) {
-        expressions.forEach(function (expession) {
-            expession.cancel && expession.cancel();
+        expressions.forEach(function (expression) {
+            expression.cancel && expression.cancel();
         });
         return result;
     });
@@ -26,6 +27,12 @@ Earliest.attachEnv = function (tutor, env) {
     env.EARLIEST = function () {
         return new Earliest(tutor, { expressions: Array.prototype.slice.call(arguments) });
     };
+
+    env.waitEarliest = function () {
+        return new Earliest(tutor, { expressions: Array.prototype.slice.call(arguments) }).exec();
+    };
 };
+
+FunctionNameManager.addAsync('waitEarliest');
 
 export default Earliest;
