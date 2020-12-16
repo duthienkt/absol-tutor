@@ -5,7 +5,7 @@ import regeneratorRuntime from "regenerator-runtime/runtime";
 import traverse from "@babel/traverse";
 import generate from "@babel/generator";
 import * as babelTypes from "@babel/types";
-import FunctionKeyManager from "./scriptor/FunctionNameManager";
+import FunctionKeyManager from "./scriptor/TutorNameManager";
 import Tutor from "./Tutor";
 
 
