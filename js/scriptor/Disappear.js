@@ -23,7 +23,7 @@ Disappear.prototype.exec = function () {
         var eltBound;
         var intervalIdx = setInterval(function () {
             if (!elt) {
-                elt = tutor.findNode(eltPath);
+                elt = tutor.findNode(eltPath) || $(eltPath);
             }
             if (elt) {
                 eltBound = elt.getBoundingClientRect();
