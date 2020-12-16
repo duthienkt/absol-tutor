@@ -1,5 +1,5 @@
 import Toast from "absol-acomp/js/Toast";
-import FunctionKeyManager from "./FunctionNameManager";
+import FunctionKeyManager from "./TutorNameManager";
 
 var ShowToastMessage = {};
 
@@ -15,7 +15,7 @@ ShowToastMessage.attachEnv = function (tutor, env) {
         });
         if (typeof until === "function")
             return until();
-        if (until.exec) return until.exec();
+        if (until && until.exec && until.depthClone) return until.depthClone().exec();
     }
 };
 
