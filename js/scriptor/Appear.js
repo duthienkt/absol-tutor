@@ -16,26 +16,26 @@ Appear.prototype.exec = function () {
     var eltPath = this.args.eltPath;
     return new Promise(function (resolve) {
         var elt;
-       var timeoutIdx = setTimeout(function (){
-           resolve(false);
-           clearInterval(intervalIdx);
-       }.bind(this));
-       var eltBound;
-       var intervalIdx = setInterval(function () {
-           if  (!elt){
-               elt = tutor.findNode(eltPath);
-           }
-           if(elt){
-               eltBound = elt.getBoundingClientRect();
-               if (eltBound.width >0 || eltBound.height>0){
-                   if ($(eltBound).getComputedStyleValue('visibility') !== 'hidden'){
-                       clearTimeout(timeoutIdx);
-                       clearInterval(intervalIdx);
-                       resolve(true);
-                   }
-               }
-           }
-       }, 200);
+        var timeoutIdx = setTimeout(function () {
+            resolve(false);
+            clearInterval(intervalIdx);
+        }.bind(this));
+        var eltBound;
+        var intervalIdx = setInterval(function () {
+            if (!elt) {
+                elt = tutor.findNode(eltPath, true) || $(eltPath);
+            }
+            if (elt) {
+                eltBound = elt.getBoundingClientRect();
+                if (eltBound.width > 0 || eltBound.height > 0) {
+                    if ($(eltBound).getComputedStyleValue('visibility') !== 'hidden') {
+                        clearTimeout(timeoutIdx);
+                        clearInterval(intervalIdx);
+                        resolve(true);
+                    }
+                }
+            }
+        }, 200);
     });
 };
 
