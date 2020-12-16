@@ -33,6 +33,7 @@ Earliest.attachEnv = function (tutor, env) {
     };
 };
 
-FunctionNameManager.addAsync('waitEarliest');
+FunctionNameManager.addAsync('waitEarliest')
+    .addSync('EARLIEST');
 
 export default Earliest;

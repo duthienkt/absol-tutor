@@ -1,5 +1,6 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
+import TutorNameManager from "./TutorNameManager";
 
 /***
  * @extends {BaseCommand}
@@ -26,10 +27,6 @@ ClickAnyWhere.prototype.exec = function () {
 
 };
 
-ClickAnyWhere.prototype.isFinished = function () {
-    return !this._isRunning;
-};
-
 ClickAnyWhere.prototype.cancel = function () {
     document.removeEventListener('click', this.ev_click);
     this._isRunning = false;
@@ -47,5 +44,7 @@ ClickAnyWhere.prototype.ev_click = function (event) {
 ClickAnyWhere.attachEnv = function (tutor, env) {
     env.CLICK_ANY_WHERE = new ClickAnyWhere(tutor, {});
 };
+
+TutorNameManager.addConst('CLICK_ANY_WHERE');
 
 export default ClickAnyWhere;
