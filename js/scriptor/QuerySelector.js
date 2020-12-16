@@ -5,7 +5,7 @@ var  QuerySelector =  {};
 
 QuerySelector.attachEnv = function (tutor, env) {
     env.querySelector = function (query, root){
-        var elt = $(query, root || tutor.$view);
+        var elt = $(query, root || tutor.$view) || tutor.findNode(query, true);
         if (!elt) throw new Error('Can not query element \"'+ query+'"');
     };
     env.$ = env.querySelector;
