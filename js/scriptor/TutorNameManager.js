@@ -1,45 +1,45 @@
-function FunctionNameManager() {
+function TutorNameManager() {
     this.sync = {};
     this.async = {};
     this._cacheSync = null;
     this._cacheAsync = null;
 }
 
-FunctionNameManager.prototype.addAsync = function (key) {
+TutorNameManager.prototype.addAsync = function (key) {
     this.async[key] = true;
     this._cacheAsync = null;
     return this;
 };
 
-FunctionNameManager.prototype.addSync = function (key) {
+TutorNameManager.prototype.addSync = function (key) {
     this.sync[key] = true;
     this._cacheSync = null;
     return this;
 };
 
 
-FunctionNameManager.prototype.getAllSync = function () {
+TutorNameManager.prototype.getAllSync = function () {
     if (!this._cacheSync) this._cacheSync = Object.keys(this.sync);
     ;
     return this._cacheSync;
 };
 
-FunctionNameManager.prototype.getAllAsync = function () {
+TutorNameManager.prototype.getAllAsync = function () {
     if (!this._cacheAsync) this._cacheAsync = Object.keys(this.async);
     ;
     return this._cacheAsync;
 };
 
-FunctionNameManager.prototype.getAll = function () {
+TutorNameManager.prototype.getAll = function () {
     return this.getAllSync().concat(this.getAllAsync());
 };
 
 
-FunctionNameManager.prototype.spreadObject = function (obj) {
+TutorNameManager.prototype.spreadObject = function (obj) {
     return this.getAll().map(function (key) {
         return obj[key];
     });
 };
 
 
-export default new FunctionNameManager();
+export default new TutorNameManager();
