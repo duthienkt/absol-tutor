@@ -40,11 +40,11 @@ UserClick.prototype.exec = function () {
 };
 
 UserClick.attachEnv = function (tutor, env) {
-    env.useClick = function (eltPath, message) {
+    env.userClick = function (eltPath, message) {
         return new UserClick(tutor, { eltPath: eltPath, message: message }).exec();
     };
 };
 
-TutorNameManager.addAsync('useClick');
+TutorNameManager.addAsync('userClick');
 
 export default UserClick;
