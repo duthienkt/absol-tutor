@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
 import {_} from "../dom/Core";
 import ToolTip from "absol-acomp/js/Tooltip";
+import TutorNameManager from "./TutorNameManager";
 
 /***
  * @extends BaseCommand
@@ -39,10 +40,11 @@ UserClick.prototype.exec = function () {
 };
 
 UserClick.attachEnv = function (tutor, env) {
-    env.USER_CLICK = function (eltPath, message) {
-        return new UserClick(tutor, { eltPath: eltPath, message: message });
+    env.useClick = function (eltPath, message) {
+        return new UserClick(tutor, { eltPath: eltPath, message: message }).exec();
     };
 };
 
+TutorNameManager.addAsync('useClick');
 
 export default UserClick;

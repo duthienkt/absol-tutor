@@ -4,6 +4,7 @@ import OOP from 'absol/src/HTML5/OOP';
 import {_} from '../dom/Core';
 import ToolTip from "absol-acomp/js/Tooltip";
 import wrapAsync from "../util/wrapAsync";
+import TutorNameManager from "./TutorNameManager";
 
 
 /***
@@ -44,10 +45,12 @@ Explain.prototype.exec = function () {
 
 
 Explain.attachEnv = function (tutor, env) {
-    env.EXPLAIN = function (eltPath, text, until) {
-        return new Explain(tutor, { eltPath: eltPath, text: text, until: until });
+    env.explain = function (eltPath, text, until) {
+        return new Explain(tutor, { eltPath: eltPath, text: text, until: until }).exec();
     };
 };
+
+TutorNameManager.addAsync('explain');
 
 
 export default Explain;
