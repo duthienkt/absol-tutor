@@ -49,9 +49,6 @@
         var _ = absol._;
         var $ = absol.$;
 
-        var master = new absol.tutor.TutorMaster();
-        master.start();
-
         var previewDiv = $('.preview');
         fetch('https://absol.cf/absol-tutor/demo_page.html').then(res => res.text()).then(html => {
             previewDiv.innerHTML = html;
