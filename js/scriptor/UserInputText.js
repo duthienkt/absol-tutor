@@ -1,7 +1,7 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
-import FunctionKeyManager from "./FunctionNameManager";
+import FunctionKeyManager from "./TutorNameManager";
 
 /***
  * @extends BaseCommand

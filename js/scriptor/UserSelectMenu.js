@@ -3,7 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
 import SelectTreeMenu from "absol-acomp/js/SelectTreeMenu";
 import '../../css/basecommand.css';
-import FunctionNameManager from "./FunctionNameManager";
+import FunctionNameManager from "./TutorNameManager";
 
 /***
  * @extends BaseCommand
