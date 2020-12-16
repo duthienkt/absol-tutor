@@ -1,6 +1,6 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
-import FunctionNameManager from "./FunctionNameManager";
+import FunctionNameManager from "./TutorNameManager";
 
 /***
  * @extends {BaseCommand}
