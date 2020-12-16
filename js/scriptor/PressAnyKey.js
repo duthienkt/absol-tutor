@@ -1,5 +1,6 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
+import TutorNameManager from "./TutorNameManager";
 
 /***
  * @extends {BaseCommand}
@@ -41,5 +42,7 @@ PressAnyKey.prototype.ev_keyPress = function (event) {
 PressAnyKey.attachEnv = function (tutor, env) {
     env.PRESS_ANY_KEY = new PressAnyKey(tutor, {});
 };
+
+TutorNameManager.addConst('PRESS_ANY_KEY');
 
 export default PressAnyKey;
