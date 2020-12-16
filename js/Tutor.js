@@ -38,9 +38,9 @@ Tutor.prototype.exec = function () {
     return this.script.exec.apply(null, args);
 };
 
-Tutor.prototype.findNode = function (query) {
+Tutor.prototype.findNode = function (query, unsafe) {
     var elt = findNode(query, this.$view);
-    if (!elt) throw new Error('Can not find element with data-tutor-id="' + query + '"');
+    if (!elt && !unsafe) throw new Error('Can not find element with data-tutor-id="' + query + '"');
     return elt;
 };
 
