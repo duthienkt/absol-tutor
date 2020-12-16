@@ -1,6 +1,6 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
-import FunctionKeyManager from "./FunctionNameManager";
+import FunctionKeyManager from "./TutorNameManager";
 
 /***
  * @extends {BaseCommand}
@@ -16,7 +16,7 @@ OOP.mixClass(Timeout, BaseCommand);
 
 Timeout.prototype.exec = function () {
     var thisC = this;
-    if (thisC._timeoutId > 0){
+    if (thisC._timeoutId > 0) {
         throw  new Error("Trigger TIMEOUT is not finish before started again!");
     }
     return new Promise(function (resolve, reject) {
@@ -50,10 +50,18 @@ Timeout.attachEnv = function (tutor, env) {
         return new Promise(function (resolve) {
             setTimeout(resolve, millis || 1);
         });
-    }
+    };
+
+    env.delayUntil = function (trigger) {
+        if (!trigger || !trigger.exec)
+            throw new Error("delayUntil: param " + trigger + " is not a Trigger!");
+        trigger = trigger.depthClone();
+        return trigger.exec();
+    };
 };
 
 FunctionKeyManager.addSync('TIME_OUT')
-    .addAsync('delay');
+    .addAsync('delay')
+    .addAsync('delayUntil');
 
 export default Timeout;
