@@ -12,7 +12,7 @@ import FlagManager from "./FlagManager";
 import Toast from "absol-acomp/js/Toast";
 
 var dependentSrc = $('script', false, function (elt) {
-    if (elt.src && elt.src.indexOf('absol.dependents.js')) {
+    if (elt.src && elt.src.indexOf('absol.dependents.js') >= 0) {
         return true;
     }
 });
