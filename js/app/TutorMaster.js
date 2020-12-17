@@ -11,6 +11,14 @@ import {_, $} from '../dom/Core';
 import FlagManager from "./FlagManager";
 import Toast from "absol-acomp/js/Toast";
 
+var dependentSrc = $('script', false, function (elt) {
+    if (elt.src && elt.src.indexOf('absol.dependents.js')) {
+        return true;
+    }
+});
+
+dependentSrc = dependentSrc && dependentSrc.src;
+
 var tutorSrc = document.currentScript.src;
 FlagManager.add('TUTOR_LOCAL_SAVE', true);
 
@@ -109,6 +117,7 @@ TutorMaster.prototype.createView = function () {
     this.$downloadLink = $('a.atr-download-link', this.$view);
 
     var htmlCode = editorText.replace('"EDITOR_CHANNEL_STRING"', JSON.stringify(this.broadcast.channel))
+        .replace('"ABSOL_DEPENDENT_URL_STRING"', JSON.stringify(dependentSrc))
         .replace('"ABSOL_URL_STRING"', JSON.stringify(tutorSrc));
     var blob = new Blob([htmlCode], { type: 'text/html' });
     var url = URL.createObjectURL(blob);
@@ -235,14 +244,13 @@ TutorMaster.prototype.ev_play_script = function (event) {
     try {
         this.tutor = new Tutor(document.body, this.script);
         return this.tutor.exec().catch(onFinish).then(onFinish)
-    }
-    catch (err){
+    } catch (err) {
         this.$playBtn.disabled = false;
         if (this.$editScriptBtn.containsClass('as-active')) {
             this.$editWindow.removeStyle('visibility');
         }
         Toast.make({
-            props:{
+            props: {
                 variant: 'error',
                 htitle: 'Script Error!',
                 message: err.message,

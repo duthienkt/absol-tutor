@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Editor</title>
+    <script src="ABSOL_DEPENDENT_URL_STRING"></script>
     <script src="ABSOL_URL_STRING"></script>
     <link rel="icon" href="https://absol.cf/favicon.ico">
 </head>

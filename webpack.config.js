@@ -14,10 +14,15 @@ function resolveEntry(entryInProject){
 var packages = {
     default: {
         entry: [
-            './js/dependents.js',
             "./dev.js"
         ],
         filename: "./dist/absol-tutor.js"
+    },
+    dependents:{
+        entry: [
+            './js/dependents.js',
+        ],
+        filename: "./dist/absol.dependents.js"
     }
 }
 
