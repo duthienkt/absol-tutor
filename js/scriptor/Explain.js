@@ -17,28 +17,22 @@ function Explain() {
 OOP.mixClass(Explain, BaseCommand);
 
 Explain.prototype.exec = function () {
-        var targetElt = this.tutor.findNode(this.args.eltPath);
-        var text = this.args.text;
-        if (!this.$puncturedModal.isDescendantOf(document.body)) {
-            this.$puncturedModal.addTo(document.body);
-        }
-        if (!this.$transparentModal.isDescendantOf(document.body)) {
-            this.$transparentModal.addTo(document.body);
-        }
+    var targetElt = this.tutor.findNode(this.args.eltPath);
+    var text = this.args.text;
+    if (!this.$puncturedModal.isDescendantOf(document.body)) {
+        this.$puncturedModal.addTo(document.body);
+    }
+    if (!this.$transparentModal.isDescendantOf(document.body)) {
+        this.$transparentModal.addTo(document.body);
+    }
+    this.showTooltip(targetElt, text);
+    this.preventInteract(true);
 
-        this.$puncturedModal.removeStyle('visibility', 'hidden');
-        var contentElt = _({
-            class: 'atr-explain-text',
-            child: { text: text }
-        });
-        var token = ToolTip.show(targetElt, contentElt, 'auto');
-        this.$puncturedModal.follow(targetElt);
-
-        return this.args.until.exec().then(function () {
-            this.$puncturedModal.addStyle('visibility', 'hidden');
-            this.$transparentModal.remove();
-            ToolTip.closeTooltip(token);
-        }.bind(this));
+    return this.args.until.exec().then(function () {
+        this.$transparentModal.remove();
+        this.preventInteract(false);
+        this.closeTooltip();
+    }.bind(this));
 };
 
 
