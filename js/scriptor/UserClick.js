@@ -16,32 +16,28 @@ function UserClick() {
 OOP.mixClass(UserClick, BaseCommand);
 
 UserClick.prototype.exec = function () {
-    var eltAsync = this.asyncGetElt(this.args.eltPath);
-    var messageAsync = wrapAsync(this.args.message);
     var thisC = this;
-    return Promise.all([eltAsync, messageAsync]).then(function (result) {
-        var elt = result[0];
+    var elt = this.tutor.findNode(this.args.eltPath);
+    var wrongMessage = this.args.wrongMessage;
+    thisC.onlyInteractWith(elt, function () {
         thisC.highlightElt(elt);
-        thisC.onlyInteractWith(elt);
-        var message = result[1];
-        var contentElt = _({
-            class: 'atr-explain-text',
-            child: { text: message }
-        });
-        var token = ToolTip.show(elt, contentElt, 'auto');
-        return new Promise(function (resolve) {
-            elt.once('click', resolve);
-        }).then(function () {
-            thisC.highlightElt(undefined);
-            thisC.onlyInteractWith(undefined);
-            ToolTip.closeTooltip(token);
-        }.bind(this));
+        if (wrongMessage)
+            thisC.showTooltip(elt, wrongMessage);
+    });
+    var message = this.args.message;
+    this.showToast(message);
+    return new Promise(function (resolve) {
+        elt.once('click', resolve);
+    }).then(function () {
+        thisC.highlightElt(undefined);
+        thisC.onlyInteractWith(undefined);
+        thisC.closeTooltip();
     }.bind(this));
 };
 
 UserClick.attachEnv = function (tutor, env) {
-    env.userClick = function (eltPath, message) {
-        return new UserClick(tutor, { eltPath: eltPath, message: message }).exec();
+    env.userClick = function (eltPath, message, wrongMessage) {
+        return new UserClick(tutor, { eltPath: eltPath, message: message, wrongMessage: wrongMessage }).exec();
     };
 };
 
