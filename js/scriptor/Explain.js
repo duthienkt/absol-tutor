@@ -17,9 +17,8 @@ function Explain() {
 OOP.mixClass(Explain, BaseCommand);
 
 Explain.prototype.exec = function () {
-    return Promise.all([this.asyncGetElt(this.args.eltPath), wrapAsync(this.args.text)]).then(function (result) {
-        var targetElt = result[0];
-        var text = result[1];
+        var targetElt = this.tutor.findNode(this.args.eltPath);
+        var text = this.args.text;
         if (!this.$puncturedModal.isDescendantOf(document.body)) {
             this.$puncturedModal.addTo(document.body);
         }
@@ -40,7 +39,6 @@ Explain.prototype.exec = function () {
             this.$transparentModal.remove();
             ToolTip.closeTooltip(token);
         }.bind(this));
-    }.bind(this));
 };
 
 
