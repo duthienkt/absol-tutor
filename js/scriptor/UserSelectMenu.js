@@ -68,7 +68,7 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
             if (highlight) {
                 thisC.highlightElt(elt);
                 elt.$selectlistBox.addClass('atr-on-top');
-            };
+            }
             if (searchMessage) {
                 thisC.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
             }
@@ -80,10 +80,10 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
 
             thisC._afterCloseList(elt).then(function () {
                 elt.$selectlistBox.removeClass('atr-on-top');
-                if (elt.value === value){
+                if (elt.value === value) {
                     resolve(true);
                 }
-                else{
+                else {
                     thisC.showTooltip(elt, wrongMessage);
                     resolve(false);
                 }
@@ -98,25 +98,17 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
 
 UserSelectMenu.prototype.exec = function () {
     var thisC = this;
-    return Promise.all([
-        this.asyncGetElt(this.args.eltPath),
-        wrapAsync(this.args.value),
-        wrapAsync(this.args.message),
-        wrapAsync(this.args.wrongMessage),
-        wrapAsync(this.args.searchMessage),
-    ]).then(function (args) {
-        /***
-         *
-         * @type {SelectTreeMenu}
-         */
-        var elt = args[0];
-        var value = args[1];
-        var message = args[2];
-        var wrongMessage = args[3];
-        var searchMessage = args[4];
-        thisC.showToast(message);
-        return thisC._afterSelect(elt, value, wrongMessage, searchMessage);
-    }).then(function () {
+    /***
+     *
+     * @type {SelectTreeMenu}
+     */
+    var elt = this.tutor.findNode(this.args.eltPath);
+    var value = this.args.value;
+    var message = this.args.message;
+    var wrongMessage = this.args.wrongMessage;
+    var searchMessage = this.args.searchMessage;
+    thisC.showToast(message);
+    return thisC._afterSelect(elt, value, wrongMessage, searchMessage).then(function () {
         thisC.highlightElt(null);
         thisC.onlyInteractWith(null);
         thisC.closeTooltip();
