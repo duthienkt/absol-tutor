@@ -1,7 +1,4 @@
-import * as babelParser from '@babel/parser';
 import expressionList from './scriptor/expressionList';
-import traverse from "@babel/traverse";
-import generate from "@babel/generator";
 import findNode from './util/findNode';
 import buildTutorJavaScript from "./buildTutorJavaScript";
 

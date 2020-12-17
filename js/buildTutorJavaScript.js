@@ -1,20 +1,11 @@
-import * as babelParser from '@babel/parser';
-import * as Babel from '@babel/core';
-import presetEnv from '@babel/preset-env';
 import regeneratorRuntime from "regenerator-runtime/runtime";
-import traverse from "@babel/traverse";
-import generate from "@babel/generator";
-import * as babelTypes from "@babel/types";
 import FunctionKeyManager from "./scriptor/TutorNameManager";
-import Tutor from "./Tutor";
 
-
-// FunctionKeyManager.addAsync('USER_SELECT_MENU')
-//     .addAsync('USER_CHECKBOX')
-//     .addAsync('USER_INPUT_TEXT')
-//     .addAsync('TOAST_MESSAGE')
-//     .addSync('$')
-//     .addSync('TIME_OUT');
+var traverse = babel.traverse;
+var parse = babel.parse;
+var babelTypes = babel.types;
+var presetEnv  = babel.presetEnv;
+var generator = babel.generator;
 
 function moduleTemplate(code, argNames) {
     return 'module.exports = async function exec(' + argNames.join(',') + ') {' +
@@ -66,7 +57,7 @@ function awaitInject(code, ast, asyncFunctionNames) {
 export default function buildTutorJavaScript(code) {
     var argNames = FunctionKeyManager.getAll();
     code = moduleTemplate(code, argNames);
-    var ast = babelParser.parse(code);
+    var ast = parse(code);
     awaitInject(code, ast, FunctionKeyManager.getAllAsync());
     var options = {
         presets: [
@@ -74,12 +65,12 @@ export default function buildTutorJavaScript(code) {
         ]
     };
 
-    var newCode = generate(
+    var newCode = generator(
         ast, {},
         code
     ).code;
 
-    var transformedCode = Babel.transform(newCode, options).code;
+    var transformedCode = babel.transform(newCode, options).code;
     var m = {};
     var execFn = new Function('module', 'regeneratorRuntime', transformedCode);
     execFn(m, regeneratorRuntime);

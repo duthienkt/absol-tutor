@@ -2,7 +2,6 @@ import Broadcast from "absol/src/Network/Broadcast";
 import {randomIdent} from "absol/src/String/stringGenerate";
 import OOP from "absol/src/HTML5/OOP";
 import editorText from '../../asset/page/spliteditor.tpl';
-import OnScreenWindow from "absol-acomp/js/OnsScreenWindow";
 import Tutor from "../Tutor";
 import Fragment from "absol/src/AppPattern/Fragment";
 import {TutorIco} from "../dom/Icon";
