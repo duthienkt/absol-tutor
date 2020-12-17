@@ -1,6 +1,7 @@
 import expressionList from './scriptor/expressionList';
 import findNode from './util/findNode';
 import buildTutorJavaScript from "./buildTutorJavaScript";
+import findAllNode from "./util/findAllNode";
 
 
 function Tutor(view, script, option) {
@@ -23,12 +24,12 @@ Tutor.prototype._compile = function (script) {
 Tutor.prototype.exec = function () {
     var tutor = this;
     var env = {};
-    expressionList.forEach(function (exp){
-        if (exp.attachEnv){
+    expressionList.forEach(function (exp) {
+        if (exp.attachEnv) {
             exp.attachEnv(tutor, env);
         }
     });
-    var args = this.script.argNames.map(function (name){
+    var args = this.script.argNames.map(function (name) {
         return env[name];
     });
 
@@ -39,6 +40,10 @@ Tutor.prototype.findNode = function (query, unsafe) {
     var elt = findNode(query, this.$view);
     if (!elt && !unsafe) throw new Error('Can not find element with data-tutor-id="' + query + '"');
     return elt;
+};
+
+Tutor.prototype.findAllNode = function (query) {
+    return findAllNode(query, this.$view);
 };
 
 

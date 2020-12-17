@@ -1,19 +1,24 @@
-import {$} from "../dom/Core";
 import FunctionNameManager from "./TutorNameManager";
 
-var  QuerySelector =  {};
+var QuerySelector = {};
 
 QuerySelector.attachEnv = function (tutor, env) {
-    env.querySelector = function (query, root){
-        var elt = $(query, root || tutor.$view) || tutor.findNode(query, true);
-        if (!elt) throw new Error('Can not query element \"'+ query+'"');
+    env.querySelector = function (query) {
+        var elt = tutor.findNode(query, true);
+        if (!elt) throw new Error('Can not query element \"' + query + '"');
         return elt;
     };
     env.$ = env.querySelector;
+    env.querySelectorAll = function (query) {
+        return tutor.findAllNode(query);
+    };
+    env.$$ = env.querySelectorAll;
 };
 
 
 FunctionNameManager.addSync('$')
-    .addSync('querySelector');
+    .addSync('querySelector')
+    .addSync('$$')
+    .addSync('querySelectoAllr');
 
 export default QuerySelector;
