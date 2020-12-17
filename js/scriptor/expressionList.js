@@ -15,6 +15,7 @@ import UserInputText from "./UserInputText";
 import SetRootView from "./SetRootView";
 import UserSelectMenu from "./UserSelectMenu";
 import ShowToastMessage from "./ShowToastMessage";
+import UserCalendarInput from "./UserCalendarInput";
 
 var commandList = [
     SetRootView,
@@ -33,7 +34,8 @@ var commandList = [
     CurrentInputText,
     UserInputText,
     UserSelectMenu,
-    ShowToastMessage
+    ShowToastMessage,
+    UserCalendarInput
 ];
 
 
