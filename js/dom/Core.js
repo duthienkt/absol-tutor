@@ -5,5 +5,6 @@ var Core = new Dom({});
 install(Core);
 export var _ = Core._;
 export var $ = Core.$;
+export var $$ = Core.$$;
 
 export default Core;
