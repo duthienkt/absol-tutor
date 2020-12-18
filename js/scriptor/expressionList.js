@@ -16,12 +16,14 @@ import SetRootView from "./SetRootView";
 import UserSelectMenu from "./UserSelectMenu";
 import ShowToastMessage from "./ShowToastMessage";
 import UserCalendarInput from "./UserCalendarInput";
+import DateTime from "./DateTime";
 
 var commandList = [
     SetRootView,
     Var,
     Explain,
     Timeout,
+    DateTime,
     PressAnyKey,
     ClickAnyWhere,
     Earliest,
@@ -35,7 +37,8 @@ var commandList = [
     UserInputText,
     UserSelectMenu,
     ShowToastMessage,
-    UserCalendarInput
+    UserCalendarInput,
+
 ];
 
 

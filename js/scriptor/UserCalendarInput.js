@@ -10,7 +10,6 @@ import {compareDate} from "absol/src/Time/datetime";
  */
 function UserCalendarInput() {
     BaseCommand.apply(this, arguments);
-
 }
 
 OOP.mixClass(UserCalendarInput, BaseCommand);
@@ -20,7 +19,9 @@ UserCalendarInput.prototype.exec = function () {
     var thisC = this;
     return new Promise(function (resolve, reject) {
         var elt = thisC.tutor.findNode(thisC.args.eltPath);
+        var message = thisC.args.message;
         var wrongMessage = thisC.args.wrongMessage;
+        thisC.showToast(message);
         var value = thisC.args.value;
         thisC.onlyInteractWith(elt, function () {
             if (wrongMessage)
@@ -29,7 +30,7 @@ UserCalendarInput.prototype.exec = function () {
         });
 
         function onChange(event) {
-            if (compareDate(value, this.value) == 0) {
+            if (compareDate(value, this.value) === 0) {
                 elt.off('change', onChange);
                 resolve();
             }
