@@ -24,7 +24,7 @@
     bottom: auto;
 }
 
-.atr-inspector-rect.left .atr-inspector-rect-text {
+.atr-inspector-rect.atr-left .atr-inspector-rect-text {
     right: -1px;
     left: auto;
 }
