@@ -4,6 +4,8 @@
     border: 1px solid #3a5b48;
     z-index: 1100000000;
     box-sizing: border-box;
+    background-color: rgba(0, 150, 150, 0.03);
+    transition: left 0.1s, top 0.1s, width 0.1s, height 0.1s;
 }
 
 .atr-inspector-rect-text {
@@ -20,4 +22,9 @@
 .atr-inspector-rect.atr-bottom .atr-inspector-rect-text {
     top: calc(100% + 1px);
     bottom: auto;
+}
+
+.atr-inspector-rect.left .atr-inspector-rect-text {
+    right: -1px;
+    left: auto;
 }

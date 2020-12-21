@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import ToolTip from "absol-acomp/js/Tooltip";
 import {$, _} from "../dom/Core";
 import '../../css/inspector.css';
+import {getScreenSize} from "absol/src/HTML5/Dom";
 
 function Inspector() {
     Context.call(this);
@@ -38,7 +39,7 @@ Inspector.prototype._createBox = function () {
 Inspector.prototype.ev_mouseenter = function (event) {
     var target = event.target;
     while (target) {
-        var tutorId = JSON.stringify(target.getAttribute('data-tutor-id') || target['data-tutor-id'] || target['data-tutor-id']);
+        var tutorId = JSON.stringify(target.getAttribute('data-tutor-id') || target['data-tutor-id'] || target['data-tutor-id'] || (target.id || undefined));
         var value;
         if (target.classList.contains('absol-selectlist-item')) {
             value = JSON.stringify(target.value);
@@ -55,12 +56,22 @@ Inspector.prototype.ev_mouseenter = function (event) {
                 left: bound.left - 1 + 'px',
                 top: bound.top - 1 + 'px',
             }).addTo(document.body);
-            if (bound.top < 20) {
+            var textBound = this.$text.getBoundingClientRect();
+            var screen = getScreenSize();
+            if (bound.top < textBound.height) {
                 this.$box.addClass('atr-bottom');
             }
             else {
                 this.$box.removeClass('atr-bottom');
             }
+
+            if (bound.right + textBound.width < screen.width) {
+                this.$box.addClass('atr-left');
+            }
+            else {
+                this.$box.removeClass('atr-left');
+            }
+
             break;
         }
         target = target.parentElement;
