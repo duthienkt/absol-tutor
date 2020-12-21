@@ -65,7 +65,7 @@ Inspector.prototype.ev_mouseenter = function (event) {
             else {
                 this.$box.removeClass('atr-bottom');
             }
-            if (bound.right + textBound.width > screen.width) {
+            if (bound.left + textBound.width > screen.width) {
                 this.$box.addClass('atr-left');
             }
             else {
