@@ -10,6 +10,7 @@ import {openFileDialog} from "absol-acomp/js/utils";
 import {_, $} from '../dom/Core';
 import FlagManager from "./FlagManager";
 import Toast from "absol-acomp/js/Toast";
+import Inspector from "./Inspector";
 
 var dependentSrc = $('script', false, function (elt) {
     if (elt.src && elt.src.indexOf('absol.dependents.js') >= 0) {
@@ -32,6 +33,7 @@ function TutorMaster() {
     this.broadcast = new Broadcast(randomIdent(24), randomIdent(24));
     this.broadcast.on('response_editor', this.ev_response_editor.bind(this))
         .on('play_script', this.ev_play_script.bind(this));
+    this.inspector = new Inspector();
 }
 
 OOP.mixClass(TutorMaster, Fragment);
@@ -86,6 +88,14 @@ TutorMaster.prototype.createView = function () {
                 child: 'span.mdi.mdi-cloud-download'
             },
             {
+                tag: 'button',
+                attr: {
+                    title: 'Inspector'
+                },
+                class: ['as-from-tool-button', 'atr-inspector-btn'],
+                child: 'span.mdi.mdi-auto-fix'
+            },
+            {
                 tag: 'a',
                 class: 'atr-download-link',
                 attr: {
@@ -115,6 +125,8 @@ TutorMaster.prototype.createView = function () {
     this.$stopBtn = $('.atr-download-btn', this.$view)
         .on('click', this.downloadScript.bind(this));
     this.$downloadLink = $('a.atr-download-link', this.$view);
+    this.$inspectorBtn = $('.atr-inspector-btn', this.$view)
+        .on('click', this.ev_clickInspectorBtn.bind(this));
 
     var htmlCode = editorText.replace('"EDITOR_CHANNEL_STRING"', JSON.stringify(this.broadcast.channel))
         .replace('"ABSOL_DEPENDENT_URL_STRING"', JSON.stringify(dependentSrc))
@@ -284,6 +296,17 @@ TutorMaster.prototype.ev_clickCloseScript = function () {
 
 TutorMaster.prototype.ev_clickPlayBtn = function () {
     this.broadcast.emit('request_play_script', {});
+};
+
+TutorMaster.prototype.ev_clickInspectorBtn = function () {
+    if (this.$inspectorBtn.containsClass('as-active')) {
+        this.$inspectorBtn.removeClass('as-active');
+        this.inspector.stop();
+    }
+    else {
+        this.$inspectorBtn.addClass('as-active');
+        this.inspector.start();
+    }
 };
 
 

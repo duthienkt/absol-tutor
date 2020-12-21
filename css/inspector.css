@@ -1,0 +1,23 @@
+.atr-inspector-rect {
+    position: fixed;
+    pointer-events: none;
+    border: 1px solid #3a5b48;
+    z-index: 1100000000;
+    box-sizing: border-box;
+}
+
+.atr-inspector-rect-text {
+    position: absolute;
+    left: -1px;
+    bottom: calc(100% + 1px);
+    padding: 2px;
+    background-color: #3a5b48;
+    color: white;
+    box-sizing: border-box;
+}
+
+
+.atr-inspector-rect.atr-bottom .atr-inspector-rect-text {
+    top: calc(100% + 1px);
+    bottom: auto;
+}
