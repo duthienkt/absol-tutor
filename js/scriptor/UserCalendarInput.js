@@ -44,7 +44,7 @@ UserCalendarInput.prototype.exec = function () {
 
         elt.on('change', onChange);
     }).then(function () {
-        this.stop();
+        thisC.stop();
     });
 };
 
