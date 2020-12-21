@@ -76,6 +76,9 @@ Inspector.prototype.ev_mouseenter = function (event) {
         }
         target = target.parentElement;
     }
+    if (!target){
+        this.$box.remove();
+    }
 
 }
 
