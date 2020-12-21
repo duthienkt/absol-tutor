@@ -180,7 +180,7 @@ TutorMaster.prototype.onResume = function () {
     document.body.classList.add('atr-has-tutor-master');
 };
 
-Tutor.prototype.onPause = function () {
+TutorMaster.prototype.onPause = function () {
     document.body.classList.remove('atr-has-tutor-master');
 };
 
