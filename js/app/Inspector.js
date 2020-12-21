@@ -39,7 +39,7 @@ Inspector.prototype._createBox = function () {
 Inspector.prototype.ev_mouseenter = function (event) {
     var target = event.target;
     while (target) {
-        var tutorId = JSON.stringify(target.getAttribute('data-tutor-id') || target['data-tutor-id'] || target['data-tutor-id'] || (target.id || undefined));
+        var tutorId = JSON.stringify(target.getAttribute('data-tutor-id') || target['data-tutor-id'] || target['data-tutor-id']);
         var value;
         if (target.classList.contains('absol-selectlist-item')) {
             value = JSON.stringify(target.value);
