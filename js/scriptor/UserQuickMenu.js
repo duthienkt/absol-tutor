@@ -75,19 +75,17 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
 };
 
 UserQuickMenu.prototype.exec = function () {
+    this.start();
     var elt = this.tutor.findNode(this.args.eltPath);
     var thisC = this;
     this.showToast(this.args.message);
     return this._afterSelectQM(elt, this.args.selectId).then(function (isOK) {
-        if (!isOK){
+        if (!isOK) {
             return thisC._afterSelectQM(elt, thisC.args.selectId, true);
         }
         return true;
-
-    }).then(function (){
-        thisC.closeTooltip();
-        thisC.onlyInteractWith(undefined);
-        thisC.highlightElt(undefined);
+    }).then(function () {
+        thisC.stop();
     });
 };
 

@@ -18,6 +18,7 @@ OOP.mixClass(UserCheckbox, BaseCommand);
 
 UserCheckbox.prototype.exec = function () {
     var thisC = this;
+    this.start();
     return Promise.all([this.asyncGetElt(this.args.eltPath),
         wrapAsync(this.args.checked),
         wrapAsync(this.args.message),
@@ -59,8 +60,7 @@ UserCheckbox.prototype.exec = function () {
 
             elt.on('change', onChange);
         });
-    });
-
+    }).then(this.stop.bind(this));
 };
 
 UserCheckbox.attachEnv = function (tutor, env) {

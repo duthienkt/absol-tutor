@@ -13,6 +13,7 @@ function UserClick() {
 OOP.mixClass(UserClick, BaseCommand);
 
 UserClick.prototype.exec = function () {
+    this.start();
     var thisC = this;
     var elt = this.tutor.findNode(this.args.eltPath);
     var wrongMessage = this.args.wrongMessage;
@@ -26,9 +27,7 @@ UserClick.prototype.exec = function () {
     return new Promise(function (resolve) {
         elt.once('click', resolve);
     }).then(function () {
-        thisC.highlightElt(undefined);
-        thisC.onlyInteractWith(undefined);
-        thisC.closeTooltip();
+        this.stop();
     }.bind(this));
 };
 

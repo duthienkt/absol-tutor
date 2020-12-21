@@ -14,6 +14,7 @@ function UserInputText() {
 OOP.mixClass(UserInputText, BaseCommand);
 
 UserInputText.prototype.exec = function () {
+    this.start();
     var matchExpression = this.args.match;
     var thisC = this;
     return Promise.all([
@@ -80,9 +81,7 @@ UserInputText.prototype.exec = function () {
         });
 
     }).then(function () {
-        thisC.onlyInteractWith(undefined);
-        thisC.highlightElt(undefined);
-        thisC.closeTooltip();
+        thisC.stop();
     });
 };
 
@@ -96,7 +95,7 @@ UserInputText.attachEnv = function (tutor, env) {
         });
     };
 
-    env.userInputText = function (eltPath, match, message, wrongMessage){
+    env.userInputText = function (eltPath, match, message, wrongMessage) {
         return new UserInputText(tutor, {
             eltPath: eltPath,
             match: match,

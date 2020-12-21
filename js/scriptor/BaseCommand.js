@@ -6,6 +6,12 @@ import Toast from "absol-acomp/js/Toast";
 import Context from "absol/src/AppPattern/Context";
 import OOP from "absol/src/HTML5/OOP";
 
+/***
+ * @extends Context
+ * @param tutor
+ * @param args
+ * @constructor
+ */
 function BaseCommand(tutor, args) {
     Context.call(this);
     this.ev_tutorPause = this.ev_tutorPause.bind(this);

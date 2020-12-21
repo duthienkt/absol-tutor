@@ -98,6 +98,7 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
 
 UserSelectMenu.prototype.exec = function () {
     var thisC = this;
+    this.start();
     /***
      *
      * @type {SelectTreeMenu}
@@ -109,9 +110,7 @@ UserSelectMenu.prototype.exec = function () {
     var searchMessage = this.args.searchMessage;
     thisC.showToast(message);
     return thisC._afterSelect(elt, value, wrongMessage, searchMessage).then(function () {
-        thisC.highlightElt(null);
-        thisC.onlyInteractWith(null);
-        thisC.closeTooltip();
+        thisC.stop();
     });
 };
 

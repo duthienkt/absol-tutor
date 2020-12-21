@@ -17,6 +17,7 @@ OOP.mixClass(UserCalendarInput, BaseCommand);
 
 UserCalendarInput.prototype.exec = function () {
     var thisC = this;
+    this.start();
     return new Promise(function (resolve, reject) {
         var elt = thisC.tutor.findNode(thisC.args.eltPath);
         var message = thisC.args.message;
@@ -43,9 +44,7 @@ UserCalendarInput.prototype.exec = function () {
 
         elt.on('change', onChange);
     }).then(function () {
-        thisC.onlyInteractWith(undefined);
-        thisC.closeTooltip();
-        thisC.highlightElt(undefined);
+        this.stop();
     });
 };
 
