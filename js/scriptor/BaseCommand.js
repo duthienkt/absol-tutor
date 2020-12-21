@@ -3,11 +3,20 @@ import {$, _} from "../dom/Core";
 import wrapAsync from "../util/wrapAsync";
 import ToolTip from "absol-acomp/js/Tooltip";
 import Toast from "absol-acomp/js/Toast";
+import Context from "absol/src/AppPattern/Context";
+import OOP from "absol/src/HTML5/OOP";
 
 function BaseCommand(tutor, args) {
+    Context.call(this);
+    this.ev_tutorPause = this.ev_tutorPause.bind(this);
+    this.ev_tutorStop = this.ev_tutorStop.bind(this);
     this.tutor = tutor;
     this.args = args;
+    this.tooltipToken = null;
+    this._tostElts = [];
 }
+
+OOP.mixClass(BaseCommand, Context);
 
 
 BaseCommand.prototype.$highlightModal = _({
@@ -37,6 +46,28 @@ BaseCommand.prototype.$tooltipContent = _({
     class: 'atr-explain-text',
     child: { text: '' }
 });
+
+BaseCommand.prototype.onStart = function () {
+    this.tutor.on('stop', this.ev_tutorStop);
+
+};
+
+BaseCommand.prototype.onPause = function () {
+    this.tutor.off('pause', this.ev_tutorPause);
+};
+
+BaseCommand.prototype.onResume = function () {
+    this.tutor.on('pause', this.ev_tutorPause);
+};
+
+BaseCommand.prototype.onStop = function () {
+    this.tutor.off('stop', this.ev_tutorStop);
+    this.closeTooltip();
+    this.closeAllToasts();
+    this.highlightElt(null);
+    this.onlyInteractWith(null);
+};
+
 
 BaseCommand.prototype.preventInteract = function (flag) {
     if (!this.$transparentModal.parentElement) {
@@ -87,14 +118,22 @@ BaseCommand.prototype.showTooltip = function (elt, message) {
 };
 
 BaseCommand.prototype.showToast = function (message) {
-    return Toast.make({
+    var toastElt = Toast.make({
         props: {
             message: message,
             htitle: 'Tutor',
-            disappearTimeout: 12000
+            variant: 'sticky-note'
         }
     });
+    this._tostElts.push(toastElt);
 };
+
+BaseCommand.prototype.closeAllToasts = function () {
+    this._tostElts.forEach(function (elt) {
+        elt.disappear();
+    });
+};
+
 
 BaseCommand.prototype.closeTooltip = function () {
     if (this.tooltipToken) {
@@ -140,6 +179,15 @@ BaseCommand.prototype.asyncGetElt = function (val) {
         if (result) return $(result);
         return result;
     });
+};
+
+
+BaseCommand.prototype.ev_tutorPause = function () {
+    this.pause();
+};
+
+BaseCommand.prototype.ev_tutorStop = function () {
+    this.stop();
 };
 
 
