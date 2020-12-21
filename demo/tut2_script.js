@@ -1,21 +1,26 @@
-var myDelay = TIME_OUT(1000);//lưu ý, biến myDelay không lưu giữ kết quả, nó lưu giữ biểu thức
-
-SNACK_BAR('Bấm chuột trái để bắt đầu' , CLICK_ANY_WHERE);
-for (var i = 3; i >= 1; --i){
-    SNACK_BAR(i +'' , myDelay);
+var indicator_select = $('indicator_select');
+if (indicator_select.value == 702 ){
+    indicator_select.value = 1215;
+}
+var goal_select = $('goal_select');
+if (goal_select.value == true){
+    goal_select.value = false;
 }
 
 
-/**
- nếu viết vậy thì kịch bản sẽ thành thế này
- SNACK_BAR("Đây là thông báo số 0", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 1", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 2", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 3", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 4", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 5", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 6", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 7", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 8", TIME_OUT(1000));
- SNACK_BAR("Đây là thông báo số 9", TIME_OUT(1000));
-**/ 
+userSelectMenu('indicator_select', 702, "Chọn KPI ADG(20-100kg)",
+    "Phải chọn đúng KPI  ADG(20-100kg", "Có thể nhập vào đây để tìm kiếm");
+
+
+
+userSelectMenu('department_select', 4390, "Chọn bộ phận Chăn nuôi heo",
+    "Phải chọn đúng bộ phận Chăn nuôi heo", "Có thể nhập vào đây để tìm kiếm");
+
+
+userSelectMenu('goal_select', true, "Chọn mục tiêu giao từ trên xuống",
+    "Phải chọn đúng mục tiêu giao từ trên xuống");
+
+
+userClick('view_report_btn', 'Nhấn vào Xem báo cáo');
+
+delay(2000);
