@@ -232,7 +232,13 @@
                 }, { "text": "Đăng xuất", "data-tutor-id": "mnu_logout" }]
             }];
 
+
         var leftSite = $('.left-site');
+        menuItems.forEach(function(item){
+            item.items && item.items.forEach(function (subItem){
+                subItem.cmd = "true";
+            });
+        });
 
         var menu = _({
             tag: 'vrootmenu',
@@ -241,7 +247,14 @@
             },
             props: {
                 items: menuItems
+            },
+            on:{
+                press: function(event){
+                    var item = event.menuItem;
+                    if (item.cmd) menu.activeTab = -1;
+                }
             }
+
         }).addTo(leftSite);
 
     })();
