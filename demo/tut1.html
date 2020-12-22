@@ -11,16 +11,16 @@
 
 <body>
 <style>
-    body {
-        min-height: 90vh;
-        font-size: 14px;
+    body, html {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
     }
 
     .preview {
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
+        height: 100%;
         width: 100%;
         overflow: auto;
     }
@@ -35,16 +35,35 @@
         box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.3);
     }
 
+    .main {
+        display: flex;
+        width: 100%;
+        height: 100%;
+
+    }
+
+    .left-site {
+    }
+
+    .right-site {
+
+    }
+
 </style>
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Aguafina+Script"/>
 <body>
-<div class="preview as-bscroller">
+<div class="main">
+    <div class="left-site"></div>
+    <div class="right-site">
+        <div class="preview as-bscroller">
+        </div>
+    </div>
 </div>
+
 </body>
 <script>
 
 </script>
-<div class="example-select-ctn"></div>
 <script>
     (function () {
         var _ = absol._;
@@ -54,46 +73,177 @@
         fetch('https://absol.cf/absol-tutor/demo_page.html').then(res => res.text()).then(html => {
             previewDiv.innerHTML = html;
             var oldSelectMenu = document.getElementsByTagName('selecttreemenu')[0];
-            var contructMenuDesc = absol.Dom.getConstructDescriptor(oldSelectMenu);
-            contructMenuDesc.props = contructMenuDesc.props || {};
-            contructMenuDesc.props.enableSearch = true;
-            fetch('https://absol.cf/absol-tutor/demo_items.json').then(res => res.json()).then(items => contructMenuDesc.props.items = items)
+            var constructMenuDesc = absol.Dom.getConstructDescriptor(oldSelectMenu);
+            constructMenuDesc.props = constructMenuDesc.props || {};
+            constructMenuDesc.props.enableSearch = true;
+            fetch('https://absol.cf/absol-tutor/demo_items.json').then(res => res.json()).then(items => constructMenuDesc.props.items = items)
                 .then(() => {
-                    var realSelectMenu = absol._(contructMenuDesc);
+                    var realSelectMenu = absol._(constructMenuDesc);
                     oldSelectMenu.parentElement.replaceChild(realSelectMenu, oldSelectMenu)
                 });
             absol.require('checkboxinput').autoReplace();
+            var idx = 0;
             absol.$('.card-icon-cover', false, function (elt) {
+                elt.id = 'quickmenu_' + idx;
                 absol.require('quickmenu').toggleWhenClick(elt, {
                     getMenuProps: function () {
                         return {
-                            items: [{ "text": "Sửa", "icon": "<i class=\"material-icons\">mode_edit</i>" }, {
-                                "text": "Xóa",
-                                "icon": "<i class=\"material-icons\">delete</i>"
-                            }, {
-                                "text": "Thêm mục tiêu chiến lược con",
-                                "icon": "<i class=\"material-icons\">add_circle_outline</i>"
-                            }]
+                            items: [
+                                {
+                                    "text": "Sửa", "icon": "<i class=\"material-icons\">mode_edit</i>",
+                                    'data-tutor-id': 'edit'
+                                },
+                                {
+                                    "text": "Xóa",
+                                    "icon": "<i class=\"material-icons\">delete</i>",
+                                    'data-tutor-id': 'delete'
+                                }, {
+                                    "text": "Thêm mục tiêu chiến lược con",
+                                    "icon": "<i class=\"material-icons\">add_circle_outline</i>",
+                                    'data-tutor-id': 'add'
+                                }
+                            ]
                         }
                     }
                 });
             });
 
-            absol.$('calendarinput', false, function (elt){
+            absol.$('calendarinput', false, function (elt) {
                 var constructMenuDesc = absol.Dom.getConstructDescriptor(elt);
                 var value = absol.datetime.parseDateString(constructMenuDesc.attr.value, 'đ/mm/yyyy');
                 delete constructMenuDesc.attr.value;
 
                 var newInput = absol._({
-                    tag:'calendarinput',
+                    tag: 'calendarinput',
                     attr: constructMenuDesc.attr,
-                    props:{
+                    props: {
                         value: value
                     }
                 });
                 $(elt).selfReplace(newInput);
             });
         });
+
+
+        var menuItems = [
+           '<div class="kpi-header-logo-ctn" style="padding: 10px; margin: 0px; background-color: rgb(250, 250, 250); box-sizing: border-box;">' +
+           '<img id="service_logo_img"  src="https://lab.daithangminh.vn/general_images/Logo_Bsc2Kpi_White_H_50.png" style="filter: invert(100%);max-height: 30px; display: inline-block; vertical-align: middle;"></div>', {
+                "text": "BSC",
+                "items": [{ "text": "Scorecard", "data-tutor-id": "mnu_scorecard" }, {
+                    "text": "Bản đồ chiến lược",
+                    "data-tutor-id": "mnu_strategic_map"
+                }, { "text": "Ma trận chức năng", "data-tutor-id": "mnu_functional_matrix" }],
+                "data-tutor-id": "mnu_bsc"
+            }, {
+                "text": "Đề xuất",
+                "data-tutor-id": "mnu_proposal",
+                "items": [{ "text": "Đề xuất mục tiêu", "data-tutor-id": "mnu_proposal_objective" }, {
+                    "text": "Đề xuất KQ",
+                    "data-tutor-id": "mnu_values_proposal"
+                }]
+            }, {
+                "text": "Duyệt",
+                "data-tutor-id": "mnu_approve",
+                "items": [{
+                    "text": "Duyệt mục tiêu",
+                    "data-tutor-id": "mnu_objective_approve"
+                }, {
+                    "text": "Duyệt kế hoạch thực hiện",
+                    "data-tutor-id": "mnu_objective_lines_approve"
+                }, { "text": "Duyệt kết quả", "data-tutor-id": "mnu_values_approval" }, {
+                    "text": "Duyệt kế hoạch báo cáo",
+                    "data-tutor-id": "mnu_plan_report_approval"
+                }]
+            }, {
+                "text": "Báo cáo",
+                "items": [{ "text": "Tổng quan", "data-tutor-id": "mnu_dashboard" }, {
+                    "text": "Báo cáo KPI",
+                    "data-tutor-id": "mnu_report_kpi"
+                }, {
+                    "text": "Báo cáo bộ phận, nhân viên",
+                    "data-tutor-id": "mnu_report_org_emp"
+                }, {
+                    "text": "Báo cáo so sánh mục tiêu theo bộ phận, nhân viên",
+                    "data-tutor-id": "mnu_report_objective_comparison_by_units_emps"
+                }, {
+                    "text": "Báo cáo so sánh mục tiêu theo KPI",
+                    "data-tutor-id": "mnu_report_objective_comparison_by_kpi"
+                }, { "text": "Hiệu suất", "data-tutor-id": "mnu_performance" }, {
+                    "text": "Báo cáo hiệu suất 12 tháng",
+                    "data-tutor-id": "mnu_report_performance_12_months"
+                }, {
+                    "text": "Ma trận bộ phận và KPI",
+                    "data-tutor-id": "mnu_kpi_unit_matrix"
+                }, {
+                    "text": "Báo cáo hiệu suất và năng lực nhân viên",
+                    "data-tutor-id": "mnu_report_9_cell_matrix"
+                }, {
+                    "text": "Báo cáo định vị tăng lương",
+                    "data-tutor-id": "mnu_report_wage_positioning"
+                }, { "text": "Map profile", "data-tutor-id": "mnu_map_profile" }, {
+                    "text": "Báo cáo cập nhật KPI",
+                    "data-tutor-id": "mnu_report_update_kpi"
+                }],
+                "data-tutor-id": "mnu_report"
+            }, {
+                "text": "Danh mục",
+                "items": [{ "text": "KPI", "data-tutor-id": "mnu_kpi" }, {
+                    "text": "Sơ đồ trách nhiệm BSC",
+                    "data-tutor-id": "mnu_organization_chart"
+                }, { "text": "Viễn cảnh", "data-tutor-id": "mnu_perspective" }, {
+                    "text": "Công thức tính",
+                    "data-tutor-id": "mnu_formula"
+                }, { "text": "Ngôn ngữ", "data-tutor-id": "mnu_language" }, {
+                    "text": "Hồ sơ BSC",
+                    "data-tutor-id": "mnu_profilename"
+                }],
+                "data-tutor-id": "mnu_list"
+            }, {
+                "text": "Hệ thống",
+                "items": [{ "text": "Người dùng", "data-tutor-id": "mnu_user" }, {
+                    "text": "Nhóm người dùng",
+                    "data-tutor-id": "mnu_user_groups"
+                }, "======", { "text": "Tùy chọn", "data-tutor-id": "mnu_options" }, {
+                    "text": "Mở khóa kế hoạch thực hiện",
+                    "data-tutor-id": "mnu_unlock_objective_details"
+                }, { "text": "Sao lưu và phục hồi", "data-tutor-id": "mnu_back_up_and_restore" }, "=====", {
+                    "text": "Undo",
+                    "data-tutor-id": "mnu_undo"
+                }, "=====", {
+                    "text": "Thư viện chỉ số",
+                    "data-tutor-id": "mnu_library_criteria"
+                }, "=====", { "text": "Hồ sơ cá nhân", "data-tutor-id": "mnu_personal_profile" }, {
+                    "text": "Đăng xuất",
+                    "data-tutor-id": "mnu_logout"
+                }],
+                "data-tutor-id": "mnu_system"
+            }, {
+                "text": "Hỗ trợ",
+                "data-tutor-id": "mnu_support",
+                "items": [{ "text": "Hướng dẫn sử dụng", "data-tutor-id": "mnu_help" }, {
+                    "text": "Hỗ trợ trực tuyến",
+                    "data-tutor-id": "mnu_online_support"
+                }]
+            }, {
+                "text": "admin",
+                "items": [{ "localData": { "resizeParams": { "w": 0, "h": 0 } } }, {
+                    "text": "Hồ sơ cá nhân",
+                    "data-tutor-id": "mnu_personal_profile"
+                }, { "text": "Đăng xuất", "data-tutor-id": "mnu_logout" }]
+            }];
+
+        var leftSite = $('.left-site');
+
+        var menu = _({
+            tag: 'vrootmenu',
+            attr:{
+                'data-tutor-id': 'menu_root'
+            },
+            props: {
+                items: menuItems
+            }
+        }).addTo(leftSite);
+
     })();
 </script>
 </body>
