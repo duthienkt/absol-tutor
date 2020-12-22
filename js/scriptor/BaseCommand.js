@@ -128,7 +128,8 @@ BaseCommand.prototype.showToast = function (message) {
         props: {
             message: message,
             htitle: 'Tutor',
-            variant: 'sticky-note'
+            variant: 'sticky-note',
+            timeText:''
         }
     });
     this._tostElts.push(toastElt);
