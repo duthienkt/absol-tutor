@@ -125,6 +125,7 @@ BaseCommand.prototype.showTooltip = function (elt, message) {
 
 BaseCommand.prototype.showToast = function (message) {
     var toastElt = Toast.make({
+        class: 'as-variant-background',
         props: {
             message: message,
             htitle: 'Tutor',

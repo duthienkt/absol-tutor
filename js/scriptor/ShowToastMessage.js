@@ -6,6 +6,7 @@ var ShowToastMessage = {};
 ShowToastMessage.attachEnv = function (tutor, env) {
     env.showToastMessage = function (title, text, disappearTimeout, until, variant) {
         Toast.make({
+            class: 'as-variant-background',
             props: {
                 htitle: title,
                 message: text,
