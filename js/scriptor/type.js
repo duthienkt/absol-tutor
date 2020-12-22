@@ -1,11 +1,10 @@
 /***
- * @exports window
  * @global
  * @function
  * @name explain
- * @param eltPath
- * @param text
- * @param until
+ * @param {string|AElement} eltPath
+ * @param {string} text
+ * @param {BaseCommand} until
  */
 
 /***
@@ -18,7 +17,6 @@
  */
 
 /***
- * @exports window
  * @global
  * @function
  * @name showToastMessage
