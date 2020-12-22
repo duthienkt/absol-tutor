@@ -136,9 +136,11 @@ BaseCommand.prototype.showToast = function (message) {
 };
 
 BaseCommand.prototype.closeAllToasts = function () {
-    this._tostElts.forEach(function (elt) {
-        elt.disappear();
-    });
+    setTimeout(function () {
+        this._tostElts.forEach(function (elt) {
+            elt.disappear();
+        });
+    }.bind(this), 1000)
 };
 
 
