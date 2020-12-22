@@ -129,7 +129,7 @@ BaseCommand.prototype.showToast = function (message) {
             message: message,
             htitle: 'Tutor',
             variant: 'sticky-note',
-            timeText:''
+            timeText: ''
         }
     });
     this._tostElts.push(toastElt);

@@ -10,7 +10,8 @@ ShowToastMessage.attachEnv = function (tutor, env) {
                 htitle: title,
                 message: text,
                 disappearTimeout: disappearTimeout,
-                variant: variant
+                variant: variant,
+                timeText: ''
             }
         });
         if (typeof until === "function")
