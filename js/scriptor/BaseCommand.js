@@ -85,10 +85,10 @@ BaseCommand.prototype.preventInteract = function (flag) {
         document.body.appendChild(this.$transparentModal);
     }
     if (flag) {
-        this.$transparentModal.addClass('as-hidden');
+        this.$puncturedModal.removeClass('as-hidden');
     }
     else {
-        this.$puncturedModal.removeClass('as-hidden');
+        this.$transparentModal.addClass('as-hidden');
     }
 };
 
@@ -125,7 +125,7 @@ BaseCommand.prototype.onlyInteractWith = function (elt, onInteractOut) {
 BaseCommand.prototype.showTooltip = function (elt, message) {
     var eltList = this.md2HTMLElements(message)
     this.$tooltipContent.clearChild();
-    eltList.forEach(function (elt){
+    eltList.forEach(function (elt) {
         this.$tooltipContent.addChild(elt);
     }.bind(this));
     this.tooltipToken = ToolTip.show(elt, this.$tooltipContent, 'auto');
@@ -140,7 +140,7 @@ BaseCommand.prototype.showToast = function (message) {
             variant: 'sticky-note',
             timeText: ''
         },
-        child:this.md2HTMLElements(message)
+        child: this.md2HTMLElements(message)
 
     });
     this._tostElts.push(toastElt);
