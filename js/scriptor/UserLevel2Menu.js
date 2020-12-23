@@ -18,6 +18,8 @@ OOP.mixClass(UserLevel2Menu, BaseCommand);
 UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highlight) {
     var thisC = this;
     return new Promise(function (resolve) {
+        var wrongMessage = thisC.args.wrongMessage;
+        var wrongMessage1 = thisC.args.wrongMessage1 || thisC.args.wrongMessage;
         var itemElt = findNode(id, rootElt);
         var itemIndex = rootElt.$items.indexOf(itemElt);
         var subItem = findNode(subId, itemElt.$vmenu);
@@ -25,14 +27,14 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
             highlight = true;
             thisC.highlightElt(rootElt);
             thisC.showTooltip(rootElt);
-            if (thisC.args.wrongMessage) {
-                thisC.showTooltip(rootElt, thisC.args.wrongMessage);
+            if (wrongMessage) {
+                thisC.showTooltip(rootElt, wrongMessage);
             }
         });
         if (highlight) {
             thisC.highlightElt(itemElt);
-            if (thisC.args.wrongMessage) {
-                thisC.showTooltip(rootElt, thisC.args.wrongMessage);
+            if (wrongMessage) {
+                thisC.showTooltip(rootElt, wrongMessage);
             }
         }
 
@@ -40,10 +42,13 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
             if (event.tabIndex === itemIndex) {
                 thisC.onlyInteractWith(subItem);
                 if (highlight) {
+                    if (wrongMessage1) {
+                        thisC.showTooltip(subItem, wrongMessage1);
+                    }
                     thisC.highlightElt(itemElt.$vmenu);
                     setTimeout(function () {
                         thisC.highlightElt(subItem);
-                    }, 500);
+                    }, 800);
                 }
             }
         }
@@ -90,12 +95,13 @@ UserLevel2Menu.prototype.exec = function () {
 };
 
 UserLevel2Menu.attachEnv = function (tutor, env) {
-    env.userLevel2Menu = function (eltPath, menuItemPath, message, wrongMessage) {
+    env.userLevel2Menu = function (eltPath, menuItemPath, message, wrongMessage, wrongMessage1) {
         return new UserLevel2Menu(tutor, {
             eltPath: eltPath,
             menuItemPath: menuItemPath,
             message: message,
-            wrongMessage: wrongMessage
+            wrongMessage: wrongMessage,
+            wrongMessage1: wrongMessage1
         }).exec();
     };
 };
