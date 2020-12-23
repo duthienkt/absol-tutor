@@ -123,9 +123,11 @@ BaseCommand.prototype.onlyInteractWith = function (elt, onInteractOut) {
 };
 
 BaseCommand.prototype.showTooltip = function (elt, message) {
-    // console.log(showdownConverter.makeHtml(message));
-
-    this.$tooltipContent.firstChild.data = message;
+    var eltList = this.md2HTMLElements(message)
+    this.$tooltipContent.clearChild();
+    eltList.forEach(function (elt){
+        this.$tooltipContent.addChild(elt);
+    }.bind(this));
     this.tooltipToken = ToolTip.show(elt, this.$tooltipContent, 'auto');
     ToolTip.$holder.addClass('atr-on-top-1');
 };
