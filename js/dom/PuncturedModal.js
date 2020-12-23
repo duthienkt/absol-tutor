@@ -15,7 +15,7 @@ function PuncturedModal() {
     this._handlePositionChange = this._handlePositionChange.bind(this);
     this.$attachhook = $('attachhook', this);
     this.$attachhook.requestUpdateSize = this._handlePositionChange;
-    this.$a = this;
+    this.$a = $('.atr-punctured-modal-a', this);
     this.$b = $('.atr-punctured-modal-b', this);
     this.$c = $('.atr-punctured-modal-c', this);
     this.$d = $('.atr-punctured-modal-d', this);
@@ -25,8 +25,9 @@ PuncturedModal.tag = 'PuncturedModal'.toLowerCase();
 PuncturedModal.render = function () {
     return _({
         extendEvent: 'positionchange',
-        class: ['atr-punctured-modal', 'atr-punctured-modal-a'],
+        class: ['atr-punctured-modal', 'atr-punctured-modal-root'],
         child: [
+            '.atr-punctured-modal.atr-punctured-modal-a',
             '.atr-punctured-modal.atr-punctured-modal-b',
             '.atr-punctured-modal.atr-punctured-modal-d',
             '.atr-punctured-modal.atr-punctured-modal-c',

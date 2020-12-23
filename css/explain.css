@@ -1,5 +1,7 @@
-.atr-explain-modal {
-    background-color: rgba(169, 169, 169, 0.5);
+.atr-explain-modal .atr-punctured-modal {
+    backdrop-filter: blur(0.04em);
+    -webkit-backdrop-filter: blur(0.04em);
+    background-color: rgba(228, 228, 228, 0.25);
 }
 
 .atr-explain-text {

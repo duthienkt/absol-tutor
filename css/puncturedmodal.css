@@ -37,7 +37,7 @@
 }
 
 
-.atr-punctured-modal-a.as-animation {
+.atr-punctured-modal.as-animation .atr-punctured-modal-a {
     transition: width 0.2s, height 0.2s;
 }
 

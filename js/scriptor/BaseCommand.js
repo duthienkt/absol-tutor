@@ -33,9 +33,6 @@ BaseCommand.prototype.$highlightModal = _({
 BaseCommand.prototype.$puncturedModal = _({
     tag: 'puncturedmodal',
     class: 'as-transparent',
-    style: {
-        background: 'red'
-    },
     props: {
         onInteractOut: null,
     },
