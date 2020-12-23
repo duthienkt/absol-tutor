@@ -5,6 +5,9 @@ import ToolTip from "absol-acomp/js/Tooltip";
 import Toast from "absol-acomp/js/Toast";
 import Context from "absol/src/AppPattern/Context";
 import OOP from "absol/src/HTML5/OOP";
+import {Converter} from 'showdown';
+
+var showdownConverter = new Converter();
 
 /***
  * @extends Context
@@ -24,6 +27,7 @@ function BaseCommand(tutor, args) {
 
 OOP.mixClass(BaseCommand, Context);
 
+BaseCommand.prototype.$htmlRender = _('div');
 
 BaseCommand.prototype.$highlightModal = _({
     tag: 'puncturedmodal',
@@ -46,8 +50,7 @@ BaseCommand.prototype.$puncturedModal = _({
 BaseCommand.prototype.$transparentModal = _('.atr-transparent-modal');
 
 BaseCommand.prototype.$tooltipContent = _({
-    class: 'atr-explain-text',
-    child: { text: '' }
+    class: 'atr-explain-text'
 });
 
 BaseCommand.prototype.onStart = function () {
@@ -71,6 +74,11 @@ BaseCommand.prototype.onStop = function () {
     this.onlyInteractWith(null);
 };
 
+
+BaseCommand.prototype.md2HTMLElements = function (text) {
+    this.$htmlRender.innerHTML = showdownConverter.makeHtml(text);
+    return Array.prototype.slice.call(this.$htmlRender.childNodes);
+};
 
 BaseCommand.prototype.preventInteract = function (flag) {
     if (!this.$transparentModal.parentElement) {
@@ -115,6 +123,8 @@ BaseCommand.prototype.onlyInteractWith = function (elt, onInteractOut) {
 };
 
 BaseCommand.prototype.showTooltip = function (elt, message) {
+    // console.log(showdownConverter.makeHtml(message));
+
     this.$tooltipContent.firstChild.data = message;
     this.tooltipToken = ToolTip.show(elt, this.$tooltipContent, 'auto');
     ToolTip.$holder.addClass('atr-on-top-1');
@@ -122,13 +132,14 @@ BaseCommand.prototype.showTooltip = function (elt, message) {
 
 BaseCommand.prototype.showToast = function (message) {
     var toastElt = Toast.make({
-        class: 'as-variant-background',
+        class: ['as-variant-background', 'atr-toast-message'],
         props: {
-            message: message,
             htitle: 'Tutor',
             variant: 'sticky-note',
             timeText: ''
-        }
+        },
+        child:this.md2HTMLElements(message)
+
     });
     this._tostElts.push(toastElt);
 };

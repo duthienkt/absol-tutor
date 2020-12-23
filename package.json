@@ -33,7 +33,8 @@
     "absol-acomp": "github:duthienkt/absol-acomp",
     "absol-brace": "^0.9.1",
     "absol-form": "github:duthienkt/absol-form",
-    "regenerator-runtime": "^0.13.7"
+    "regenerator-runtime": "^0.13.7",
+    "showdown": "^1.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
