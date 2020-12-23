@@ -201,6 +201,19 @@ TutorMaster.prototype.onStart = function () {
     if (!view.parentElement) {
         view.addTo(document.body);
     }
+    if (window.data_module && window.data_module.exportDatabase) {
+        this.$databaseBtn = _({
+            tag: 'button',
+            attr: {
+                title: 'ExportDatabase'
+            },
+            class: ['as-from-tool-button', 'atr-inspector-btn'],
+            child: 'span.mdi.mdi-database',
+            on: {
+                click: window.data_module.exportDatabase.bind(window.data_module)
+            }
+        }).addTo(this.$view)
+    }
 };
 
 TutorMaster.prototype.onDestroy = function () {
