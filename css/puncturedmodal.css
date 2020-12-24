@@ -8,7 +8,7 @@
 
 .atr-punctured-modal {
     position: fixed;
-    z-index: 100000000;
+    z-index: 200000000;
     background-color: inherit;
 }
 

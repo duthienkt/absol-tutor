@@ -6,6 +6,7 @@ import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import {$, $$} from "../dom/Core";
+import findNode from "../util/findNode";
 
 /***
  * @extends BaseCommand
@@ -26,10 +27,9 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
                 var quickMenuElt = $('quickmenu');
                 if (quickMenuElt) {
                     elt.off('click', onClick);
-                    console.log(highlight)
                     if (highlight)
                         thisC.showTooltip(quickMenuElt, wrongMessage);
-                    resolve(quickMenuElt);
+                    resolve({ quickMenuElt: quickMenuElt, highlight: highlight });
                 }
             }, 100);
         }
@@ -49,8 +49,24 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
 
 UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
     var thisC = this;
-    return this._afterOpenQuickMenu(elt, highlight).then(function (menuElt) {
+    return this._afterOpenQuickMenu(elt, highlight).then(function (result) {
+        var menuElt = result.quickMenuElt;
+        highlight = result.highlight;
         return new Promise(function (resolve) {
+            var wrongMessage = thisC.args.wrongMessage;
+            var itemElt = findNode(selectId, menuElt);
+            thisC.onlyInteractWith(itemElt);
+            if (highlight) {
+                thisC.highlightElt(menuElt);
+                thisC.highlightElt(menuElt);
+                setTimeout(function () {
+                    if (thisC.state !== 'RUNNING') return;
+                    thisC.highlightElt(itemElt);
+                    if (wrongMessage)
+                        thisC.showTooltip(itemElt, wrongMessage);
+                }, 800);
+            }
+
             function onSelect(ev) {
                 document.body.removeEventListener('click', onClose);
                 menuElt.off('press', onSelect);
@@ -68,8 +84,7 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
 
             document.body.addEventListener('click', onClose);
             menuElt.on('press', onSelect);
-            if (highlight)
-                thisC.highlightElt(menuElt)
+
         });
     });
 };
