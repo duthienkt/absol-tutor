@@ -34,12 +34,11 @@ UserCheckbox.prototype.exec = function () {
             child: { text: wrongMessage }
         });
 
-        var tooltipToken;
 
         function onInteractOut() {
             thisC.highlightElt(elt);
             if (wrongMessage) {
-                tooltipToken = ToolTip.show(elt, wrongMessageElt, 'auto');
+                thisC.showTooltip(elt, wrongMessageElt);
             }
         }
 
@@ -52,8 +51,7 @@ UserCheckbox.prototype.exec = function () {
                     elt.off('change', onChange);
                     thisC.onlyInteractWith(null);
                     thisC.highlightElt(null);
-                    if (tooltipToken)
-                        ToolTip.closeTooltip(tooltipToken);
+                    thisC.closeTooltip();
                     resolve();
                 }
             }
