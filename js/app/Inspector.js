@@ -38,15 +38,34 @@ Inspector.prototype._createBox = function () {
 
 Inspector.prototype.ev_mouseenter = function (event) {
     var target = event.target;
+    var elt;
+    var idPath = [];
+    var tooltipText = [];
     while (target) {
-        var tutorId = JSON.stringify(target.getAttribute('data-tutor-id') || target['data-tutor-id'] || target['data-tutor-id']);
-        var value;
-        if (target.classList.contains('absol-selectlist-item')) {
-            value = JSON.stringify(target.value);
+        if (target.classList.contains('absol-selectlist-item') && !(target.parentElement && target.parentElement.classList.contains('absol-selectmenu-holder-item'))) {
+            elt = target;
+            break;
         }
-        var tooltipText = [];
-        if (tutorId) tooltipText.push('id=' + tutorId);
-        if (value) tooltipText.push('value=' + value);
+        var tutorId = target.getAttribute('data-tutor-id') || target['data-tutor-id'] || target['data-tutor-id'];
+        if (tutorId) {
+            if (!elt) elt = target;
+            idPath.unshift(tutorId);
+        }
+        target = target.parentElement;
+    }
+
+    target = elt;
+    if (target) {
+        if (idPath.length > 0) {
+            tooltipText.push('id=' + JSON.stringify(idPath[idPath.length - 1]));
+            if (idPath.length > 1)
+                tooltipText.push('path =' + JSON.stringify(idPath.join(' ')));
+        }
+        if (target.classList.contains('absol-selectlist-item') || target.classList.contains('absol-selectmenu')) {
+            if (target.value === 0 || target.value)
+                tooltipText.push('value=' + target.value);
+        }
+
         if (tooltipText.length > 0) {
             this.$text.firstChild.data = tooltipText.join('  ');
             var bound = target.getBoundingClientRect();
@@ -72,11 +91,9 @@ Inspector.prototype.ev_mouseenter = function (event) {
                 this.$box.removeClass('atr-left');
             }
 
-            break;
         }
-        target = target.parentElement;
     }
-    if (!target){
+    if (!target) {
         this.$box.remove();
     }
 
