@@ -53,7 +53,7 @@ UserInputText.prototype.exec = function () {
                 if (!matched && wrongMessage) {
                     thisC.showTooltip(elt, wrongMessage);
                 }
-                else if (matched && tooltipToken) {
+                else if (matched) {
                     thisC.closeTooltip();
                 }
                 return matched;
@@ -66,7 +66,8 @@ UserInputText.prototype.exec = function () {
                 verify().then(function (result) {
                     if (result) {
                         elt.off('keyup', verify)
-                            .off('change', onChange);
+                            .off('change', onChange)
+                            .off('blur', onChange);
                         thisC.tutor.memory.share.getCurrentInputText = null;
                         resolve();
                     }
@@ -75,7 +76,11 @@ UserInputText.prototype.exec = function () {
 
             elt.on('keyup', verify)
                 .on('change', onChange)
+                .on('blur', onChange)
                 .once('change', function () {
+                    changed = true;
+                })
+                .once('blur', function () {
                     changed = true;
                 });
         });
