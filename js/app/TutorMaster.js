@@ -11,6 +11,9 @@ import {_, $} from '../dom/Core';
 import FlagManager from "./FlagManager";
 import Toast from "absol-acomp/js/Toast";
 import Inspector from "./Inspector";
+import BaseEditor from "absol-form/js/core/BaseEditor";
+import OnScreenWindow from "absol-acomp/js/OnsScreenWindow";
+import {getScreenSize} from "absol/src/HTML5/Dom";
 
 var dependentSrc = $('script', false, function (elt) {
     if (elt.src && elt.src.indexOf('absol.dependents.js') >= 0) {
@@ -24,11 +27,11 @@ var tutorSrc = document.currentScript.src;
 FlagManager.add('TUTOR_LOCAL_SAVE', true);
 
 /***
- * @extends Context
+ * @extends BaseEditor
  * @constructor
  */
 function TutorMaster() {
-    Fragment.call(this);
+    BaseEditor.call(this);
     this.script = (window['TUTOR_LOCAL_SAVE'] && localStorage.getItem('TUTOR_MASTER_SCRIPT')) || '';
     this.broadcast = new Broadcast(randomIdent(24), randomIdent(24));
     this.broadcast.on('response_editor', this.ev_response_editor.bind(this))
@@ -36,7 +39,18 @@ function TutorMaster() {
     this.inspector = new Inspector();
 }
 
-OOP.mixClass(TutorMaster, Fragment);
+OOP.mixClass(TutorMaster, BaseEditor);
+
+TutorMaster.prototype.CONFIG_STORE_KEY = 'TUTOR_MASTER_SETTING';
+TutorMaster.prototype.config = {
+    editor: {
+        width: 48,
+        height: 48,
+        x: 2,
+        y: 50
+    }
+};
+
 
 TutorMaster.prototype.createView = function () {
     this.$view = _({
@@ -140,17 +154,18 @@ TutorMaster.prototype.createView = function () {
         border: 'none'
     });
     this.$editIframe.src = this.iframeUrl;
-
     /***
      * @type {OnScreenWindow}
      */
     this.$editWindow = _('onscreenwindow').addStyle({
-        width: '600px',
-        height: '600px',
-        left: 'calc(100vw - 610px)',
+        width: this.config.editor.width +'vw',
+        height: this.config.editor.height +'vh',
+        left: this.config.editor.x +'vw',
+        top: this.config.editor.y +'vh',
         visibility: 'hidden'
     }).addClass('attr-split-editor-window');
-
+    this.$editWindow.on('relocation', this.ev_editWindowPositionChange.bind(this))
+        .on('sizechange', this.ev_editWindowPositionChange.bind(this));
     this.$editWindow.windowTitle = 'Tutor';
     this.$editWindow.addChild(this.$editIframe);
     this.$editWindow.addTo(document.body);
@@ -320,6 +335,17 @@ TutorMaster.prototype.ev_clickInspectorBtn = function () {
         this.$inspectorBtn.addClass('as-active');
         this.inspector.start();
     }
+};
+
+TutorMaster.prototype.ev_editWindowPositionChange = function () {
+    var screenSize = getScreenSize();
+    var bound = this.$editWindow.getBoundingClientRect();
+    this.config.editor.x = bound.left / screenSize.width * 100;
+    this.config.editor.y = bound.top / screenSize.height * 100;
+    this.config.editor.width = bound.width / screenSize.width * 100;
+    this.config.editor.height = bound.height / screenSize.height * 100;
+    console.log(this.config)
+    this.saveConfig();
 };
 
 
