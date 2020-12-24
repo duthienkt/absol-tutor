@@ -30,7 +30,6 @@ ShowToastMessage.prototype.exec = function () {
         },
         child: BaseCommand.prototype.md2HTMLElements.call({ $htmlRender: BaseCommand.prototype.$htmlRender }, text)
     });
-    console.log(until)
     if (typeof until === "function"){
         thisC.preventInteract(true);
         return until().then(function (){
