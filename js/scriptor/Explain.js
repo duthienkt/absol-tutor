@@ -1,9 +1,6 @@
 import '../../css/explain.css';
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
-import {_} from '../dom/Core';
-import ToolTip from "absol-acomp/js/Tooltip";
-import wrapAsync from "../util/wrapAsync";
 import TutorNameManager from "./TutorNameManager";
 
 
