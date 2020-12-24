@@ -21,10 +21,33 @@
 
 .atr-inspector-rect.atr-bottom .atr-inspector-rect-text {
     top: calc(100% + 1px);
-    bottom: auto;
+    bottom: unset;
 }
 
 .atr-inspector-rect.atr-left .atr-inspector-rect-text {
     right: -1px;
-    left: auto;
+    left: unset;
+}
+
+.atr-inspector-tree-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 16px;
+    line-height: 16px;
+    font-size: 12px;
+    color: #aaa;
+    background-color: #eee;
+}
+
+
+.atr-inspector-tree-ctn {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    bottom: 16px;
+    overflow-y: auto;
+    font-size: 12px;
 }
