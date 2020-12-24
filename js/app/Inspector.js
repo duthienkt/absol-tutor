@@ -29,7 +29,7 @@ Inspector.prototype.CONFIG_STORE_KEY = "TUTOR_INSPECTOR_SETTING";
 Inspector.prototype.config = {
     inspectedTreeWindow: {
         x: 1,
-        y: 68,
+        y: 58,
         width: 15,
         height: 40
     }
