@@ -72,6 +72,7 @@ BaseCommand.prototype.onStop = function () {
     this.closeAllToasts();
     this.highlightElt(null);
     this.onlyInteractWith(null);
+    this.preventInteract(false);
 };
 
 
