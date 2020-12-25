@@ -20,6 +20,7 @@ ShowToastMessage.prototype.exec = function () {
     var until = this.args.until;
     var variant = this.args.variant;
     var disappearTimeout = this.args.disappearTimeout;
+    this.start();
     Toast.make({
         class: ['as-variant-background', 'atr-toast-message'],
         props: {
@@ -33,13 +34,13 @@ ShowToastMessage.prototype.exec = function () {
     if (typeof until === "function"){
         thisC.preventInteract(true);
         return until().then(function (){
-            thisC.preventInteract(false);
+            this.stop();
         });
     }
     if (until && until.exec && until.depthClone) {
         thisC.preventInteract(true);
         return until.depthClone().exec().then(function (){
-            thisC.preventInteract(false);
+            this.stop();
         });
     }
 };
