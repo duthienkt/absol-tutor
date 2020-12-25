@@ -29,16 +29,10 @@ UserCheckbox.prototype.exec = function () {
         var message = args[2];
         var wrongMessage = args[3];
 
-        var wrongMessageElt = wrongMessage && _({
-            class: 'atr-explain-text',
-            child: { text: wrongMessage }
-        });
-
-
         function onInteractOut() {
             thisC.highlightElt(elt);
             if (wrongMessage) {
-                thisC.showTooltip(elt, wrongMessageElt);
+                thisC.showTooltip(elt, wrongMessage);
             }
         }
 
