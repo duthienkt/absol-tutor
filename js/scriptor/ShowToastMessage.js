@@ -40,7 +40,7 @@ ShowToastMessage.prototype.exec = function () {
     if (until && until.exec && until.depthClone) {
         thisC.preventInteract(true);
         return until.depthClone().exec().then(function (){
-            this.stop();
+            thisC.stop();
         });
     }
 };
