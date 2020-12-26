@@ -14,21 +14,16 @@ function Explain() {
 OOP.mixClass(Explain, BaseCommand);
 
 Explain.prototype.exec = function () {
+    this.start();
     var targetElt = this.tutor.findNode(this.args.eltPath);
     var text = this.args.text;
-    if (!this.$puncturedModal.isDescendantOf(document.body)) {
-        this.$puncturedModal.addTo(document.body);
-    }
-    if (!this.$transparentModal.isDescendantOf(document.body)) {
-        this.$transparentModal.addTo(document.body);
-    }
     this.showTooltip(targetElt, text);
     this.preventInteract(true);
 
     return this.args.until.exec().then(function () {
-        this.$transparentModal.remove();
         this.preventInteract(false);
         this.closeTooltip();
+        this.stop();
     }.bind(this));
 };
 

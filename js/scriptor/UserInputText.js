@@ -25,7 +25,6 @@ UserInputText.prototype.exec = function () {
         var elt = args[0];
         var message = args[1];
         var wrongMessage = args[2];
-        var tooltipToken;
 
         thisC.tutor.memory.share.getCurrentInputText = function () {
             return elt.value || elt.text || '';

@@ -47,7 +47,7 @@ BaseCommand.prototype.$puncturedModal = _({
     }
 });
 
-BaseCommand.prototype.$transparentModal = _('.atr-transparent-modal');
+BaseCommand.prototype.$transparentModal = _('.atr-transparent-modal.as-hidden');
 
 BaseCommand.prototype.$tooltipContent = _({
     class: 'atr-explain-text'
@@ -55,7 +55,6 @@ BaseCommand.prototype.$tooltipContent = _({
 
 BaseCommand.prototype.onStart = function () {
     this.tutor.on('stop', this.ev_tutorStop);
-
 };
 
 BaseCommand.prototype.onPause = function () {

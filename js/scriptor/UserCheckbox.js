@@ -29,17 +29,10 @@ UserCheckbox.prototype.exec = function () {
         var message = args[2];
         var wrongMessage = args[3];
 
-        var wrongMessageElt = wrongMessage && _({
-            class: 'atr-explain-text',
-            child: { text: wrongMessage }
-        });
-
-        var tooltipToken;
-
         function onInteractOut() {
             thisC.highlightElt(elt);
             if (wrongMessage) {
-                tooltipToken = ToolTip.show(elt, wrongMessageElt, 'auto');
+                thisC.showTooltip(elt, wrongMessage);
             }
         }
 
@@ -52,8 +45,7 @@ UserCheckbox.prototype.exec = function () {
                     elt.off('change', onChange);
                     thisC.onlyInteractWith(null);
                     thisC.highlightElt(null);
-                    if (tooltipToken)
-                        ToolTip.closeTooltip(tooltipToken);
+                    thisC.closeTooltip();
                     resolve();
                 }
             }
