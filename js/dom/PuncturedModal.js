@@ -63,8 +63,8 @@ PuncturedModal.prototype.follow = function (targetElt) {
     }
     else {
         this.$attachhook.resetState();
-        ResizeSystem.add(this.$attachhook);
     }
+    ResizeSystem.add(this.$attachhook);
 };
 
 PuncturedModal.prototype.stopTrackPosition = function () {
