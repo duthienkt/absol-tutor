@@ -16,16 +16,19 @@ Delay.prototype.exec = function () {
     this.start();
     this.preventInteract(true);
     var trigger = this.args.trigger;
-    if (trigger.exec){
+    if (trigger.exec) {
         if (trigger.depthClone) trigger = trigger.depthClone();
         return trigger.exec().then(this.stop.bind(this));
     }
-    else if (typeof trigger === "number"){
-        return  new Promise(function (resolve){
+    else if (typeof trigger === "number") {
+        return new Promise(function (resolve) {
             setTimeout(resolve, trigger);
-        })
+        }).then(this.stop.bind(this));
     }
-    else return  Promise.resolve();
+    else {
+        this.stop();
+        return Promise.resolve();
+    }
 }
 
 
