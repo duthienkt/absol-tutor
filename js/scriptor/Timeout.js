@@ -46,11 +46,6 @@ Timeout.attachEnv = function (tutor, env) {
             millis: millis
         });
     };
-    env.delay = function (millis) {
-        return new Promise(function (resolve) {
-            setTimeout(resolve, millis || 1);
-        });
-    };
 
     env.delayUntil = function (trigger) {
         if (!trigger || !trigger.exec)

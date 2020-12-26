@@ -18,6 +18,7 @@ import UserCalendarInput from "./UserCalendarInput";
 import DateTime from "./DateTime";
 import UserQuickMenu from "./UserQuickMenu";
 import UserLevel2Menu from "./UserLevel2Menu";
+import Delay from "./Delay";
 
 var commandList = [
     SetRootView,
@@ -39,7 +40,8 @@ var commandList = [
     ShowToastMessage,
     UserCalendarInput,
     UserQuickMenu,
-    UserLevel2Menu
+    UserLevel2Menu,
+    Delay
 ];
 
 
