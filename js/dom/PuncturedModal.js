@@ -19,6 +19,7 @@ function PuncturedModal() {
     this.$b = $('.atr-punctured-modal-b', this);
     this.$c = $('.atr-punctured-modal-c', this);
     this.$d = $('.atr-punctured-modal-d', this);
+    this._updateTimeout = -1;
 }
 
 PuncturedModal.tag = 'PuncturedModal'.toLowerCase();
@@ -82,15 +83,31 @@ PuncturedModal.prototype.stopTrackPosition = function () {
 
 PuncturedModal.prototype._handlePositionChange = function (event) {
     if (!this.$target) return;
-    var bound = this.$target.getBoundingClientRect();
-    this.addStyle({
-        '--punctured-x': bound.left + 'px',
-        '--punctured-y': bound.top + 'px',
-        '--punctured-width': bound.width + 'px',
-        '--punctured-height': bound.height + 'px'
-    });
+    var thisM = this;
+    if (this._updateTimeout > 0)
+        clearTimeout(this._updateTimeout);
+    var bound = undefined;
 
-    this.emit('positionchange', { target: this, bound: bound }, this);
+    function update() {
+        thisM._updateTimeout = -1;
+        if (!thisM.$target) return;
+        var bound1 = thisM.$target.getBoundingClientRect();
+        if (!bound || bound1.left !== bound.left || bound1.width !== bound.width
+            || bound1.top !== bound.top || bound1.height !== bound.height) {
+            thisM.addStyle({
+                '--punctured-x': bound1.left + 'px',
+                '--punctured-y': bound1.top + 'px',
+                '--punctured-width': bound1.width + 'px',
+                '--punctured-height': bound1.height + 'px'
+            });
+            thisM.emit('positionchange', { target: this, bound: bound }, this);
+            bound = bound1;
+            thisM._updateTimeout = setTimeout(update, 10);
+        }
+    }
+
+    update();
+
 };
 
 PuncturedModal.prototype.reset = function () {
