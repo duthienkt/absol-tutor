@@ -2,6 +2,7 @@ import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import {compareDate} from "absol/src/Time/datetime";
+import ChromeCalendar from "absol-acomp/js/ChromeCalendar";
 
 
 /***
@@ -14,6 +15,21 @@ function UserCalendarInput() {
 
 OOP.mixClass(UserCalendarInput, BaseCommand);
 
+UserCalendarInput.prototype._afterOpenCalendar = function () {
+    var thisC = this;
+    return new Promise(function (resolve) {
+        function onCLick() {
+            setTimeout(function () {
+                console.log(ChromeCalendar.$calendar &&ChromeCalendar.$calendar.isDescendantOf(document.body))
+            }, 30);
+        }
+
+        document.body.addEventListener('click', onCLick);
+        // ChromeCalendar
+
+    })
+};
+
 
 UserCalendarInput.prototype.exec = function () {
     var thisC = this;
@@ -22,6 +38,7 @@ UserCalendarInput.prototype.exec = function () {
         var elt = thisC.tutor.findNode(thisC.args.eltPath);
         var message = thisC.args.message;
         var wrongMessage = thisC.args.wrongMessage;
+
         thisC.showToast(message);
         var value = thisC.args.value;
         thisC.onlyInteractWith(elt, function () {

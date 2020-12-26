@@ -202,6 +202,16 @@ BaseCommand.prototype.asyncGetElt = function (val) {
 };
 
 
+/***
+ *
+ * @param {string|AElement} query
+ * @param {boolean=} unsafe
+ * @return {AElement}
+ */
+BaseCommand.prototype.findNode = function (query, unsafe){
+  return this.tutor.findNode(query, unsafe);
+};
+
 BaseCommand.prototype.ev_tutorPause = function () {
     this.pause();
 };
