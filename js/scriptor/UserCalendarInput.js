@@ -15,52 +15,77 @@ function UserCalendarInput() {
 
 OOP.mixClass(UserCalendarInput, BaseCommand);
 
-UserCalendarInput.prototype._afterOpenCalendar = function () {
+UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, highlight) {
     var thisC = this;
+    this.onlyInteractWith(elt);
     return new Promise(function (resolve) {
+        if (highlight) {
+            thisC.highlightElt(elt);
+            if (thisC.args.wrongMessage) {
+                thisC.showTooltip(elt, thisC.args.wrongMessage);
+            }
+        }
+
+        var clickTimeout = -1;
+
         function onCLick() {
-            setTimeout(function () {
-                console.log(ChromeCalendar.$calendar &&ChromeCalendar.$calendar.isDescendantOf(document.body))
+            if (clickTimeout >= 0) clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(function () {
+                clickTimeout = -1;
+                if (ChromeCalendar.$calendar && ChromeCalendar.$calendar.isDescendantOf(document.body)) {
+                    if (highlight) {
+                        thisC.highlightElt(ChromeCalendar.$calendar);
+                        if (thisC.args.wrongMessage) {
+                            thisC.showTooltip(ChromeCalendar.$calendar, thisC.args.wrongMessage);
+                        }
+                    }
+                }
+                else {
+                    highlight = true;
+                    thisC.onlyInteractWith(elt);
+                    thisC.highlightElt(elt);
+                    if (thisC.args.wrongMessage) {
+                        thisC.showTooltip(elt, thisC.args.wrongMessage);
+                    }
+
+                }
             }, 30);
         }
 
-        document.body.addEventListener('click', onCLick);
-        // ChromeCalendar
+        function onChange(event) {
+            var value = event.value;
+            if (clickTimeout >= 0) {
+                clearTimeout(clickTimeout);
+                clickTimeout = -1;
+            }
+            if (compareDate(value, requestValue) == 0) {
+                document.body.removeEventListener('click', onCLick);
+                elt.off('change', onChange);
+                setTimeout(resolve.bind(null, true), 10);
+            }
+            else{
+                highlight = true;
+                thisC.onlyInteractWith(elt);
+                thisC.highlightElt(elt);
+                if (thisC.args.wrongMessage) {
+                    thisC.showTooltip(elt, thisC.args.wrongMessage);
+                }
+            }
+        }
 
-    })
+        elt.on('change', onChange);
+        document.body.addEventListener('click', onCLick);
+    });
 };
 
 
 UserCalendarInput.prototype.exec = function () {
     var thisC = this;
     this.start();
-    return new Promise(function (resolve, reject) {
-        var elt = thisC.tutor.findNode(thisC.args.eltPath);
-        var message = thisC.args.message;
-        var wrongMessage = thisC.args.wrongMessage;
-
-        thisC.showToast(message);
-        var value = thisC.args.value;
-        thisC.onlyInteractWith(elt, function () {
-            if (wrongMessage)
-                thisC.showTooltip(elt, wrongMessage);
-            thisC.highlightElt(elt);
-        });
-
-        function onChange(event) {
-            if (compareDate(value, this.value) === 0) {
-                elt.off('change', onChange);
-                resolve();
-            }
-            else {
-                thisC.highlightElt(elt);
-                if (wrongMessage)
-                    thisC.showTooltip(elt, wrongMessage);
-            }
-        }
-
-        elt.on('change', onChange);
-    }).then(function () {
+    var elt = thisC.tutor.findNode(thisC.args.eltPath);
+    var value = this.args.value;
+    this.showToast(this.args.message);
+    return this._afterSelectCalendar(elt, value).then(function (){
         thisC.stop();
     });
 };
