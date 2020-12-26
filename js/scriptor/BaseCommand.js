@@ -85,7 +85,7 @@ BaseCommand.prototype.preventInteract = function (flag) {
         document.body.appendChild(this.$transparentModal);
     }
     if (flag) {
-        this.$puncturedModal.removeClass('as-hidden');
+        this.$transparentModal.removeClass('as-hidden');
     }
     else {
         this.$transparentModal.addClass('as-hidden');
