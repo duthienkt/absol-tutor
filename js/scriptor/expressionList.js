@@ -6,7 +6,6 @@ import Earliest from './Earliest';
 import Latest from './Latest';
 import ShowSnackBar from './ShowSnackBar';
 import Appear from "./Appear";
-import Var from "./Var";
 import QuerySelector from "./QuerySelector";
 import UserClick from "./UserClick";
 import CurrentInputText from "./CurrentInputText";
@@ -22,7 +21,6 @@ import UserLevel2Menu from "./UserLevel2Menu";
 
 var commandList = [
     SetRootView,
-    Var,
     Explain,
     Timeout,
     DateTime,
