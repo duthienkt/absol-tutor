@@ -34,7 +34,7 @@
  */
 
 /***
- * Hiển thị thông báo dạng Toast
+ * Hiển thị thông báo dạng Toast, trong thời gian đó mọi thao tác click sẽ bị chặn
  * @function
  * @name showToastMessage
  * @param {string} title
@@ -116,7 +116,22 @@
  * @param {MarkdownString} searchMessage - gợi ý khi mở dropdown
  */
 
+/***
+ * Yêu cầu người dùng chọn ngày, giá trị có thể giống giá trị ban đầu
+ * @function
+ * @name userCalendarInput
+ * @param {string|AElement} eltPath
+ * @param {Date} value - kiểu ngày tháng, có thể dùng chuỗi qua hàm parse, ví dụ datetime.parseDMY("22/12/2020")
+ * @param {MarkdownString} message
+ * @param {MarkdownString} wrongMessage
+ */
 
+/***
+ * Trì hoãn trong một thời gian, mọi thao tác chuột bị chặn
+ * @function
+ * @name delay
+ * @param {number} millis - trên thực tế, với bất kì giá trị nào, thời gian delay tối thiểu là ~4ms
+ */
 
 /***
  * Gán tầm vực tìm kiếm, mặc định tầm vực là toàn bộ trang
