@@ -15,6 +15,7 @@ OOP.mixClass(Timeout, BaseCommand);
 
 
 Timeout.prototype.exec = function () {
+    this.start();
     var thisC = this;
     if (thisC._timeoutId > 0) {
         throw  new Error("Trigger TIMEOUT is not finish before started again!");
@@ -26,7 +27,7 @@ Timeout.prototype.exec = function () {
             resolve();
         }, thisC.args.millis);
         thisC._rejectCb = reject;
-    });
+    }).then(this.stop.bind(this));
 };
 
 Timeout.prototype.cancel = function () {

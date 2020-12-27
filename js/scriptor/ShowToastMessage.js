@@ -9,6 +9,7 @@ import OOP from "absol/src/HTML5/OOP";
  */
 function ShowToastMessage() {
     BaseCommand.apply(this, arguments);
+    this.$toast = null;
 }
 
 OOP.mixClass(ShowToastMessage, BaseCommand);
@@ -21,7 +22,7 @@ ShowToastMessage.prototype.exec = function () {
     var variant = this.args.variant;
     var disappearTimeout = this.args.disappearTimeout;
     this.start();
-    Toast.make({
+    this.$toast = Toast.make({
         class: ['as-variant-background', 'atr-toast-message'],
         props: {
             htitle: title,
@@ -42,6 +43,14 @@ ShowToastMessage.prototype.exec = function () {
         return until.depthClone().exec().then(function (){
             thisC.stop();
         });
+    }
+};
+
+ShowToastMessage.prototype.cancel = function (){
+    console.log("cancel")
+    if (this.$toast){
+        this.$toast.remove();
+        this.$toast = null;
     }
 };
 

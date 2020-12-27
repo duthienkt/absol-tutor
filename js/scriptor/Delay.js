@@ -35,7 +35,7 @@ Delay.prototype.exec = function () {
     }
 };
 
-Delay.prototype.cancel = function (){
+Delay.prototype.cancel = function () {
     if (this._rejectCb) {
         this._rejectCb();
         this._rejectCb = null;
@@ -45,7 +45,6 @@ Delay.prototype.cancel = function (){
         this._timeoutId = -1;
     }
 };
-
 
 
 Delay.attachEnv = function (tutor, env) {
