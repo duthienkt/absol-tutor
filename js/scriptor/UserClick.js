@@ -8,6 +8,7 @@ import TutorNameManager from "./TutorNameManager";
  */
 function UserClick() {
     BaseCommand.apply(this, arguments);
+    this._rejectCb = null;
 }
 
 OOP.mixClass(UserClick, BaseCommand);
@@ -24,12 +25,27 @@ UserClick.prototype.exec = function () {
     });
     var message = this.args.message;
     this.showToast(message);
-    return new Promise(function (resolve) {
-        elt.once('click', resolve);
+    return new Promise(function (resolve, reject) {
+        function onClick(){
+            thisC._rejectCb  = null;
+            resolve();
+        }
+        thisC._rejectCb = function () {
+            elt.off(onClick);
+            reject();
+        };
+        elt.once('click', onClick);
     }).then(function () {
         this.stop();
     }.bind(this));
 };
+
+UserClick.prototype.cancel = function () {
+    if (this._rejectCb) {
+        this._rejectCb();
+        this._rejectCb = null;
+    }
+}
 
 UserClick.attachEnv = function (tutor, env) {
     env.userClick = function (eltPath, message, wrongMessage) {
