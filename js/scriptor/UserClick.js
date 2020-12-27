@@ -45,7 +45,7 @@ UserClick.prototype.cancel = function () {
         this._rejectCb();
         this._rejectCb = null;
     }
-}
+};
 
 UserClick.attachEnv = function (tutor, env) {
     env.userClick = function (eltPath, message, wrongMessage) {
