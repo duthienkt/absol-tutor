@@ -73,15 +73,12 @@ Tutor.prototype.exec = function () {
 
     return this.script.exec.apply(null, args).then(function () {
         this.stop();
-    }.bind(this), function () {
-        this.stop();
     }.bind(this)).catch(function (error) {
         this.stop();
-        console.log(error)
         if (error instanceof Error) {
             throw error;
         }
-    });
+    }.bind(this));
 };
 
 
