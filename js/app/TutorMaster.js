@@ -87,9 +87,6 @@ TutorMaster.prototype.createView = function () {
             },
             {
                 tag: 'button',
-                attr: {
-                    title: 'Engine not support stop script'
-                },
                 class: ['as-from-tool-button', 'atr-stop-btn'],
                 child: 'span.mdi.mdi-stop'
             },
@@ -133,10 +130,10 @@ TutorMaster.prototype.createView = function () {
         .on('click', this.ev_clickPlayBtn.bind(this));
 
     this.$stopBtn = $('.atr-stop-btn', this.$view)
-    // .on('click');
+        .on('click', this.ev_clickStopBtn.bind(this));
     this.$stopBtn.disabled = true;
 
-    this.$stopBtn = $('.atr-download-btn', this.$view)
+    this.$downloadBtn = $('.atr-download-btn', this.$view)
         .on('click', this.downloadScript.bind(this));
     this.$downloadLink = $('a.atr-download-link', this.$view);
     this.$inspectorBtn = $('.atr-inspector-btn', this.$view)
@@ -158,10 +155,10 @@ TutorMaster.prototype.createView = function () {
      * @type {OnScreenWindow}
      */
     this.$editWindow = _('onscreenwindow').addStyle({
-        width: this.config.editor.width +'vw',
-        height: this.config.editor.height +'vh',
-        left: this.config.editor.x +'vw',
-        top: this.config.editor.y +'vh',
+        width: this.config.editor.width + 'vw',
+        height: this.config.editor.height + 'vh',
+        left: this.config.editor.x + 'vw',
+        top: this.config.editor.y + 'vh',
         visibility: 'hidden'
     }).addClass('attr-split-editor-window');
     this.$editWindow.on('relocation', this.ev_editWindowPositionChange.bind(this))
@@ -277,12 +274,15 @@ TutorMaster.prototype.ev_play_script = function (event) {
             console.error(err)
         }
         this.$playBtn.disabled = false;
+        this.$stopBtn.disabled = true;
         if (this.$editScriptBtn.containsClass('as-active')) {
             this.$editWindow.removeStyle('visibility');
         }
+        this.tutor = null;
     }.bind(this);
     try {
         this.tutor = new Tutor(document.body, this.script);
+        this.$stopBtn.disabled = false;
         return this.tutor.exec().catch(onFinish).then(onFinish)
     } catch (err) {
         this.$playBtn.disabled = false;
@@ -298,6 +298,8 @@ TutorMaster.prototype.ev_play_script = function (event) {
             }
         })
         console.error(err);
+        this.$stopBtn.disabled = true;
+        this.tutor = null;
     }
 
 };
@@ -324,6 +326,12 @@ TutorMaster.prototype.ev_clickCloseScript = function () {
 
 TutorMaster.prototype.ev_clickPlayBtn = function () {
     this.broadcast.emit('request_play_script', {});
+};
+
+TutorMaster.prototype.ev_clickStopBtn = function () {
+    if (this.tutor) {
+        this.tutor.stop();
+    }
 };
 
 TutorMaster.prototype.ev_clickInspectorBtn = function () {

@@ -73,18 +73,25 @@ Tutor.prototype.exec = function () {
 
     return this.script.exec.apply(null, args).then(function () {
         this.stop();
-    }.bind(this));
+    }.bind(this), function () {
+        this.stop();
+    }.bind(this)).catch(function (error) {
+        this.stop();
+        console.log(error)
+        if (error instanceof Error) {
+            throw error;
+        }
+    });
 };
 
 
 Tutor.prototype.onStop = function () {
-    this.emit('stop', {});
+    var cmdList = this._commandStack.slice();
+    for (var i = cmdList.length - 1; i >= 0; --i) {
+        cmdList[i].stop();
+    }
 };
 
-
-Tutor.prototype.onStart = function () {
-    this.emit('start', {});
-};
 
 Tutor.prototype.findNode = function (query, unsafe) {
     var elt = findNode(query, this.$view);

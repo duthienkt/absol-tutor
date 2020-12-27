@@ -17,8 +17,6 @@ var showdownConverter = new Converter();
  */
 function BaseCommand(tutor, args) {
     Context.call(this);
-    this.ev_tutorPause = this.ev_tutorPause.bind(this);
-    this.ev_tutorStop = this.ev_tutorStop.bind(this);
     this.tutor = tutor;
     this.args = args;
     this.tooltipToken = null;
@@ -54,24 +52,22 @@ BaseCommand.prototype.$tooltipContent = _({
 });
 
 BaseCommand.prototype.onStart = function () {
-    this.tutor.on('stop', this.ev_tutorStop);
+    this.tutor.commandPush(this);
 };
 
 BaseCommand.prototype.onPause = function () {
-    this.tutor.off('pause', this.ev_tutorPause);
 };
 
-BaseCommand.prototype.onResume = function () {
-    this.tutor.on('pause', this.ev_tutorPause);
-};
+BaseCommand.prototype.cancel = null;
 
 BaseCommand.prototype.onStop = function () {
-    this.tutor.off('stop', this.ev_tutorStop);
+    this.cancel && this.cancel();
     this.closeTooltip();
     this.closeAllToasts();
     this.highlightElt(null);
     this.onlyInteractWith(null);
     this.preventInteract(false);
+    this.tutor.commandPop(this);
 };
 
 
@@ -123,6 +119,7 @@ BaseCommand.prototype.onlyInteractWith = function (elt, onInteractOut) {
 };
 
 BaseCommand.prototype.showTooltip = function (elt, message) {
+    if (typeof message !== "string") return;
     var eltList = this.md2HTMLElements(message)
     this.$tooltipContent.clearChild();
     eltList.forEach(function (elt) {
@@ -133,6 +130,7 @@ BaseCommand.prototype.showTooltip = function (elt, message) {
 };
 
 BaseCommand.prototype.showToast = function (message) {
+    if (typeof message !== "string") return;
     var toastElt = Toast.make({
         class: ['as-variant-background', 'atr-toast-message'],
         props: {
@@ -208,18 +206,9 @@ BaseCommand.prototype.asyncGetElt = function (val) {
  * @param {boolean=} unsafe
  * @return {AElement}
  */
-BaseCommand.prototype.findNode = function (query, unsafe){
-  return this.tutor.findNode(query, unsafe);
+BaseCommand.prototype.findNode = function (query, unsafe) {
+    return this.tutor.findNode(query, unsafe);
 };
-
-BaseCommand.prototype.ev_tutorPause = function () {
-    this.pause();
-};
-
-BaseCommand.prototype.ev_tutorStop = function () {
-    this.stop();
-};
-
 
 BaseCommand.attachEnv = function (tutor, env) {
 };
