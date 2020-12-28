@@ -104,9 +104,7 @@ UserCalendarInput.prototype.exec = function () {
 };
 
 UserCalendarInput.prototype.cancel = function () {
-    console.log(this.tutor._commandStack.slice())
     if (this._rejectCb) {
-        console.log("cancel")
         this._rejectCb();
         this._rejectCb = null;
     }
