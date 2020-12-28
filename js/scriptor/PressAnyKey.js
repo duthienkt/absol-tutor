@@ -7,7 +7,6 @@ import TutorNameManager from "./TutorNameManager";
  */
 function PressAnyKey() {
     BaseCommand.apply(this, arguments);
-    this._isRunning = false;
     this.ev_keyPress = this.ev_keyPress.bind(this);
     this._resolveCb = null;
 }
@@ -15,20 +14,16 @@ function PressAnyKey() {
 OOP.mixClass(PressAnyKey, BaseCommand);
 
 PressAnyKey.prototype.exec = function () {
-    if (this._isRunning) throw new Error("Trigger PRESS_ANY_KEY is not finished before stared again!");
-    this._isRunning = true;
+    this.start();
     document.addEventListener('keydown', this.ev_keyPress);
     return new Promise(function (rs) {
         this._resolveCb = rs;
-    }.bind(this)).then(function () {
-        this.cancel();
-    }.bind(this));
+    }.bind(this)).then(this.stop.bind(this));
 
 };
 
 PressAnyKey.prototype.cancel = function () {
     document.removeEventListener('keydown', this.ev_keyPress);
-    this._isRunning = false;
 };
 
 
