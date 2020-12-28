@@ -20,7 +20,6 @@ function UserQuickMenu() {
 OOP.mixClass(UserQuickMenu, BaseCommand);
 
 UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
-    console.log('elt', elt);
     var thisC = this;
     var wrongMessage = thisC.args.wrongMessage;
     return new Promise(function (resolve, reject) {
@@ -44,7 +43,6 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
         });
         elt.on('click', onClick);
         thisC._rejectCb = function () {
-            console.log("REJ")
             elt.off('click', onClick);
             reject();
         }
@@ -120,7 +118,6 @@ UserQuickMenu.prototype.exec = function () {
 };
 
 UserQuickMenu.prototype.cancel = function () {
-    console.log(this._rejectCb)
     if (this._rejectCb) {
         this._rejectCb();
         this._rejectCb = null;
