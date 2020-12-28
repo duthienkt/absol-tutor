@@ -4,12 +4,13 @@ import FunctionKeyManager from "./scriptor/TutorNameManager";
 var traverse = babel.traverse;
 var parse = babel.parse;
 var babelTypes = babel.types;
-var presetEnv  = babel.presetEnv;
+var presetEnv = babel.presetEnv;
 var generator = babel.generator;
 
 function moduleTemplate(code, argNames) {
     return 'module.exports = async function exec(' + argNames.join(',') + ') {' +
         code +
+        '\nreturn 0;' +
         '}'
 }
 
