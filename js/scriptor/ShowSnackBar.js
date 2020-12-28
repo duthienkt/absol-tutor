@@ -14,8 +14,16 @@ OOP.mixClass(ShowSnackBar, BaseCommand);
 
 
 ShowSnackBar.prototype.exec = function () {
+    this.start();
+    this.preventInteract(true);
     SnackbarElt.show(this.args.text);
-    return this.args.until.exec();
+    if (this.args.until && this.args.until.exec) {
+        return this.args.until.depthClone().exec().then(this.stop.bind(this));
+    }
+    else {
+        this.stop();
+        return Promise.resolve();
+    }
 };
 
 ShowSnackBar.attachEnv = function (tutor, env) {
