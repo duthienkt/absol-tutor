@@ -60,7 +60,7 @@ UserInputText.prototype.exec = function () {
     }
 
 
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
         function onChange() {
             if (verify()) {
                 elt.off('keyup', verify)
@@ -84,6 +84,7 @@ UserInputText.prototype.exec = function () {
             elt.off('keyup', verify)
                 .off('change', onChange)
                 .off('blur', onChange);
+            reject();
         };
     }).then(this.stop.bind(this));
 };
