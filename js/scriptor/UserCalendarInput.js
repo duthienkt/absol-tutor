@@ -11,6 +11,7 @@ import ChromeCalendar from "absol-acomp/js/ChromeCalendar";
  */
 function UserCalendarInput() {
     BaseCommand.apply(this, arguments);
+    this._rejectCb = null;
 }
 
 OOP.mixClass(UserCalendarInput, BaseCommand);
@@ -18,7 +19,7 @@ OOP.mixClass(UserCalendarInput, BaseCommand);
 UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, highlight) {
     var thisC = this;
     this.onlyInteractWith(elt);
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
         if (highlight) {
             thisC.highlightElt(elt);
             if (thisC.args.wrongMessage) {
@@ -61,9 +62,12 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
             if (compareDate(value, requestValue) == 0) {
                 document.body.removeEventListener('click', onCLick);
                 elt.off('change', onChange);
-                setTimeout(resolve.bind(null, true), 10);
+                setTimeout(function () {
+                    thisC._rejectCb = null;
+                    resolve(true);
+                }, 10);
             }
-            else{
+            else {
                 highlight = true;
                 thisC.onlyInteractWith(elt);
                 thisC.highlightElt(elt);
@@ -75,6 +79,15 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
 
         elt.on('change', onChange);
         document.body.addEventListener('click', onCLick);
+        thisC._rejectCb = function () {
+            if (clickTimeout >= 0) {
+                clearTimeout(clickTimeout);
+                clickTimeout = -1;
+            }
+            elt.off('change', onChange);
+            document.body.removeEventListener('click', onCLick);
+            reject();
+        };
     });
 };
 
@@ -85,9 +98,18 @@ UserCalendarInput.prototype.exec = function () {
     var elt = thisC.tutor.findNode(thisC.args.eltPath);
     var value = this.args.value;
     this.showToast(this.args.message);
-    return this._afterSelectCalendar(elt, value).then(function (){
+    return this._afterSelectCalendar(elt, value).then(function () {
         thisC.stop();
     });
+};
+
+UserCalendarInput.prototype.cancel = function () {
+    console.log(this.tutor._commandStack.slice())
+    if (this._rejectCb) {
+        console.log("cancel")
+        this._rejectCb();
+        this._rejectCb = null;
+    }
 };
 
 UserCalendarInput.attachEnv = function (tutor, env) {
