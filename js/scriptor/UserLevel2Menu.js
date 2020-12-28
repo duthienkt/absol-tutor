@@ -17,7 +17,7 @@ OOP.mixClass(UserLevel2Menu, BaseCommand);
 
 UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highlight) {
     var thisC = this;
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
         var wrongMessage = thisC.args.wrongMessage;
         var wrongMessage1 = thisC.args.wrongMessage1 || thisC.args.wrongMessage;
         var itemElt = findNode(id, rootElt);
@@ -61,6 +61,7 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
                 rootElt.off('activetab', onActiveTab)
                     .off('cancel', onCancel)
                     .off('press', onPressItem);
+                thisC._rejectCb = null;
                 resolve(false);
             }, 200)
         }
@@ -70,12 +71,19 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
             rootElt.off('activetab', onActiveTab)
                 .off('cancel', onCancel)
                 .off('press', onPressItem);
+            thisC._rejectCb = null;
             resolve(event.menuItem === subItem);
         }
 
         rootElt.on('activetab', onActiveTab)
             .on('cancel', onCancel)
             .on('press', onPressItem);
+        thisC._rejectCb = function () {
+            rootElt.off('activetab', onActiveTab)
+                .off('cancel', onCancel)
+                .off('press', onPressItem);
+            reject();
+        }
     }).then(function (ok) {
         if (ok) return;
         return thisC._afterSelectRoot(rootElt, id, subId, true);
@@ -92,6 +100,14 @@ UserLevel2Menu.prototype.exec = function () {
     return this._afterSelectRoot(elt, this.args.menuItemPath[0], this.args.menuItemPath[1], false).then(function () {
         thisC.stop();
     });
+};
+
+
+UserLevel2Menu.prototype.cancel = function () {
+    if (this._rejectCb) {
+        this._rejectCb();
+        this._rejectCb = null;
+    }
 };
 
 UserLevel2Menu.attachEnv = function (tutor, env) {
