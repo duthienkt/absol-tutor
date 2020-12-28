@@ -14,14 +14,16 @@ import findNode from "../util/findNode";
  */
 function UserQuickMenu() {
     BaseCommand.apply(this, arguments);
+    this._rejectCb = null;
 }
 
 OOP.mixClass(UserQuickMenu, BaseCommand);
 
 UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
+    console.log('elt', elt);
     var thisC = this;
     var wrongMessage = thisC.args.wrongMessage;
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
         function onClick() {
             setTimeout(function () {
                 var quickMenuElt = $('quickmenu');
@@ -29,6 +31,7 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
                     elt.off('click', onClick);
                     if (highlight)
                         thisC.showTooltip(quickMenuElt, wrongMessage);
+                    thisC._rejectCb = null;
                     resolve({ quickMenuElt: quickMenuElt, highlight: highlight });
                 }
             }, 100);
@@ -40,6 +43,11 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
             highlight = true;
         });
         elt.on('click', onClick);
+        thisC._rejectCb = function () {
+            console.log("REJ")
+            elt.off('click', onClick);
+            reject();
+        }
         if (highlight) {
             thisC.highlightElt(elt);
             thisC.showTooltip(elt, wrongMessage);
@@ -52,7 +60,7 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
     return this._afterOpenQuickMenu(elt, highlight).then(function (result) {
         var menuElt = result.quickMenuElt;
         highlight = result.highlight;
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             var wrongMessage = thisC.args.wrongMessage;
             var itemElt = findNode(selectId, menuElt);
             thisC.onlyInteractWith(itemElt);
@@ -71,6 +79,7 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
                 document.body.removeEventListener('click', onClose);
                 menuElt.off('press', onSelect);
                 var id = ev.menuItem["data-tutor-id"] || ev.menuItem.id || ev.menuItem.text;
+                thisC._rejectCb = null;
                 resolve(id === selectId);
             }
 
@@ -78,16 +87,22 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
                 setTimeout(function () {
                     document.body.removeEventListener('click', onClose);
                     menuElt.off('press', onSelect);
+                    thisC._rejectCb = null;
                     resolve(false);
                 }, 100)
             }
 
             document.body.addEventListener('click', onClose);
             menuElt.on('press', onSelect);
-
+            thisC._rejectCb = function () {
+                document.body.removeEventListener('click', onClose);
+                menuElt.off('press', onSelect);
+                reject();
+            }
         });
     });
 };
+
 
 UserQuickMenu.prototype.exec = function () {
     this.start();
@@ -102,6 +117,14 @@ UserQuickMenu.prototype.exec = function () {
     }).then(function () {
         thisC.stop();
     });
+};
+
+UserQuickMenu.prototype.cancel = function () {
+    console.log(this._rejectCb)
+    if (this._rejectCb) {
+        this._rejectCb();
+        this._rejectCb = null;
+    }
 };
 
 UserQuickMenu.attachEnv = function (tutor, env) {
