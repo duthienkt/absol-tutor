@@ -352,7 +352,6 @@ TutorMaster.prototype.ev_editWindowPositionChange = function () {
     this.config.editor.y = bound.top / screenSize.height * 100;
     this.config.editor.width = bound.width / screenSize.width * 100;
     this.config.editor.height = bound.height / screenSize.height * 100;
-    console.log(this.config)
     this.saveConfig();
 };
 
