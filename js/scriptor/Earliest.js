@@ -12,7 +12,9 @@ function Earliest() {
 OOP.mixClass(Earliest, BaseCommand);
 
 Earliest.prototype.exec = function () {
-    var expressions = this.args.expressions;
+    var expressions = this.args.expressions.map(function (e){
+        return e.depthClone();
+    });
     return Promise.any(expressions.map(function (exp) {
         return exp.exec();
     })).then(function (result) {
