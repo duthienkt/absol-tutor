@@ -19,12 +19,7 @@ Explain.prototype.exec = function () {
     var text = this.args.text;
     this.showTooltip(targetElt, text);
     this.preventInteract(true);
-
-    return this.args.until.exec().then(function () {
-        this.preventInteract(false);
-        this.closeTooltip();
-        this.stop();
-    }.bind(this));
+    return this.args.until.exec().then(this.stop.bind(this));
 };
 
 
