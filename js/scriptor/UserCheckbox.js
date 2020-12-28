@@ -1,8 +1,5 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
-import wrapAsync from "../util/wrapAsync";
-import ToolTip from "absol-acomp/js/Tooltip";
-import {_} from "../dom/Core";
 import FunctionNameManager from "./TutorNameManager";
 
 /***
@@ -11,6 +8,7 @@ import FunctionNameManager from "./TutorNameManager";
  */
 function UserCheckbox() {
     BaseCommand.apply(this, arguments);
+    this._rejectCb = null;
 }
 
 OOP.mixClass(UserCheckbox, BaseCommand);
@@ -19,40 +17,43 @@ OOP.mixClass(UserCheckbox, BaseCommand);
 UserCheckbox.prototype.exec = function () {
     var thisC = this;
     this.start();
-    return Promise.all([this.asyncGetElt(this.args.eltPath),
-        wrapAsync(this.args.checked),
-        wrapAsync(this.args.message),
-        wrapAsync(this.args.wrongMessage)
-    ]).then(function (args) {
-        var elt = args[0];
-        var checked = args[1];
-        var message = args[2];
-        var wrongMessage = args[3];
+    var elt = this.tutor.findNode(this.args.eltPath);
+    var message = this.args.message;
+    var wrongMessage = this.args.wrongMessage;
+    var checked = this.args.checked;
 
-        function onInteractOut() {
-            thisC.highlightElt(elt);
-            if (wrongMessage) {
-                thisC.showTooltip(elt, wrongMessage);
+    function onInteractOut() {
+        thisC.highlightElt(elt);
+        if (wrongMessage) {
+            thisC.showTooltip(elt, wrongMessage);
+        }
+    }
+
+    thisC.onlyInteractWith(elt, onInteractOut);
+    thisC.showToast(message);
+
+    return new Promise(function (resolve, reject) {
+        function onChange() {
+            if (elt.checked === checked) {
+                elt.off('change', onChange);
+                resolve();
             }
         }
 
-        thisC.onlyInteractWith(elt, onInteractOut);
-        thisC.showToast(message);
-
-        return new Promise(function (resolve) {
-            function onChange() {
-                if (elt.checked === checked) {
-                    elt.off('change', onChange);
-                    thisC.onlyInteractWith(null);
-                    thisC.highlightElt(null);
-                    thisC.closeTooltip();
-                    resolve();
-                }
-            }
-
-            elt.on('change', onChange);
-        });
+        elt.on('change', onChange);
+        thisC._rejectCb = function () {
+            elt.off('change', onChange);
+            reject();
+        }
     }).then(this.stop.bind(this));
+};
+
+
+UserCheckbox.prototype.cancel = function () {
+    if (this._rejectCb) {
+        this._rejectCb();
+        this._rejectCb = null;
+    }
 };
 
 UserCheckbox.attachEnv = function (tutor, env) {
