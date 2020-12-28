@@ -8,7 +8,6 @@ import ShowSnackBar from './ShowSnackBar';
 import Appear from "./Appear";
 import QuerySelector from "./QuerySelector";
 import UserClick from "./UserClick";
-import CurrentInputText from "./CurrentInputText";
 import UserCheckbox from "./UserCheckbox";
 import UserInputText from "./UserInputText";
 import SetRootView from "./SetRootView";
@@ -34,7 +33,6 @@ var commandList = [
     QuerySelector,
     UserClick,
     UserCheckbox,
-    CurrentInputText,
     UserInputText,
     UserSelectMenu,
     ShowToastMessage,
