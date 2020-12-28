@@ -17,31 +17,43 @@ OOP.mixClass(UserSelectMenu, BaseCommand);
 
 
 UserSelectMenu.prototype._afterOpenList = function (menuElt) {
-    return new Promise(function (resolve) {
+    var thisC = this;
+    return new Promise(function (resolve, reject) {
         function listenter() {
             setTimeout(function () {
                 if (menuElt.isFocus) {
                     menuElt.off('click', listenter);
+                    thisC._rejectCb = null;
                     resolve();
                 }
             }, 10);
         }
 
+        thisC._rejectCb = function () {
+            menuElt.off('click', listenter);
+            reject();
+        };
         menuElt.on('click', listenter);
     });
 };
 
 UserSelectMenu.prototype._afterCloseList = function (menuElt) {
-    return new Promise(function (resolve) {
+    var thisC = this;
+    return new Promise(function (resolve, reject) {
         function listenter() {
             setTimeout(function () {
                 if (!menuElt.isFocus) {
                     document.body.removeEventListener('pointerdown', listenter);
+                    thisC._rejectCb = null;
                     resolve();
                 }
             }, 200);
         }
 
+        thisC._rejectCb = function () {
+            document.body.removeEventListener('pointerdown', listenter);
+            reject();
+        };
         document.body.addEventListener('pointerdown', listenter);
     });
 };
@@ -57,37 +69,38 @@ UserSelectMenu.prototype._afterCloseList = function (menuElt) {
  */
 UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, searchMessage, highlight) {
     var thisC = this;
-    return new Promise(function (resolve) {
-        if (highlight) thisC.highlightElt(elt);
-        thisC.onlyInteractWith(elt, function () {
+    if (highlight) thisC.highlightElt(elt);
+    thisC.onlyInteractWith(elt, function () {
+        thisC.highlightElt(elt);
+        thisC.showTooltip(elt, wrongMessage);
+        highlight = true;
+    });
+    return thisC._afterOpenList(elt).then(function () {
+        if (highlight) {
+            thisC.highlightElt(elt);
+            elt.$selectlistBox.addClass('atr-on-top');
+        }
+        if (searchMessage) {
+            thisC.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
+        }
+        thisC.onlyInteractWith(elt.$selectlistBox, function () {
             thisC.highlightElt(elt);
             thisC.showTooltip(elt, wrongMessage);
-            highlight = true;
         });
-        thisC._afterOpenList(elt).then(function () {
-            if (highlight) {
-                thisC.highlightElt(elt);
-                elt.$selectlistBox.addClass('atr-on-top');
+        thisC._rejectCb1 = function () {
+            elt.$selectlistBox.removeClass('atr-on-top');
+        }
+        return thisC._afterCloseList(elt).then(function () {
+            thisC.onlyInteractWith(null);
+            elt.$selectlistBox.removeClass('atr-on-top');
+            thisC._rejectCb1 = null;
+            if (elt.value === value) {
+                return true;
             }
-            if (searchMessage) {
-                thisC.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
-            }
-            thisC.onlyInteractWith(elt.$selectlistBox, function () {
-                thisC.highlightElt(elt);
+            else {
                 thisC.showTooltip(elt, wrongMessage);
-                resolve(false);
-            });
-
-            thisC._afterCloseList(elt).then(function () {
-                elt.$selectlistBox.removeClass('atr-on-top');
-                if (elt.value === value) {
-                    resolve(true);
-                }
-                else {
-                    thisC.showTooltip(elt, wrongMessage);
-                    resolve(false);
-                }
-            });
+                return false;
+            }
         });
     }).then(function (success) {
         if (success) return true;
@@ -112,6 +125,17 @@ UserSelectMenu.prototype.exec = function () {
     return thisC._afterSelect(elt, value, wrongMessage, searchMessage).then(function () {
         thisC.stop();
     });
+};
+
+UserSelectMenu.prototype.cancel = function () {
+    if (this._rejectCb) {
+        this._rejectCb();
+        this._rejectCb = null;
+    }
+    if (this._rejectCb1) {
+        this._rejectCb1();
+        this._rejectCb1 = null;
+    }
 };
 
 UserSelectMenu.attachEnv = function (tutor, env) {
