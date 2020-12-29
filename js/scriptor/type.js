@@ -29,8 +29,8 @@
  * Hiển thị thông báo dạng SnackBar(thanh thông báo nhỏ, tự biến mất sau thời gian cố định)
  * @function
  * @name showSnackBar
- * @param {MarkdownString} text
- * @param {Timeout|PressAnyKey|ClickAnyWhere|*} until
+ * @param {string} text
+ * @param {(Timeout|PressAnyKey|ClickAnyWhere|*)=} until
  */
 
 /***
@@ -90,7 +90,6 @@
  * @param {MarkdownString} message
  * @param {MarkdownString} wrongMessage
  */
-
 
 
 /***
