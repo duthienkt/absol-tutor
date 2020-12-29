@@ -224,14 +224,6 @@ TutorMaster.prototype.onPause = function () {
 
 TutorMaster.prototype.onStart = function () {
     var view = this.getView();
-    if (!view.parentElement) {
-        view.addTo(document.body);
-        var bound = view.getBoundingClientRect();
-        view.addStyle({
-            '--tutor-master-width': bound.width + 'px',
-            '--tutor-master-height': bound.height + 'px'
-        });
-    }
     if (window.data_module && window.data_module.exportDatabase) {
         this.$databaseBtn = _({
             tag: 'button',
@@ -244,6 +236,14 @@ TutorMaster.prototype.onStart = function () {
                 click: window.data_module.exportDatabase.bind(window.data_module)
             }
         }).addTo(this.$view)
+    }
+    if (!view.parentElement) {
+        view.addTo(document.body);
+        var bound = view.getBoundingClientRect();
+        view.addStyle({
+            '--tutor-master-width': bound.width + 'px',
+            '--tutor-master-height': bound.height + 'px'
+        });
     }
 };
 
