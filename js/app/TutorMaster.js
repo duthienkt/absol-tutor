@@ -273,6 +273,28 @@ TutorMaster.prototype.ev_play_script = function (event) {
             });
             console.error(err)
         }
+        else if (typeof err === 'number' || err === undefined) {
+            if (err === 0) {
+                Toast.make({
+                    props: {
+                        message: "Script finnish successfully!",
+                        variant: 'success',
+                        htitle: "Success",
+                        disappearTimeout: 20000
+                    }
+                });
+            }
+            else {
+                Toast.make({
+                    props: {
+                        message: 'Script is interrupted!',
+                        variant: 'warning',
+                        htitle: "",
+                        disappearTimeout: 20000
+                    }
+                });
+            }
+        }
         this.$playBtn.disabled = false;
         this.$stopBtn.disabled = true;
         if (this.$editScriptBtn.containsClass('as-active')) {
@@ -283,7 +305,7 @@ TutorMaster.prototype.ev_play_script = function (event) {
     try {
         this.tutor = new Tutor(document.body, this.script);
         this.$stopBtn.disabled = false;
-        return this.tutor.exec().catch(onFinish).then(onFinish)
+        return this.tutor.exec().then(onFinish).catch(onFinish)
     } catch (err) {
         this.$playBtn.disabled = false;
         if (this.$editScriptBtn.containsClass('as-active')) {
