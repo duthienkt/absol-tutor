@@ -18,6 +18,7 @@ import DateTime from "./DateTime";
 import UserQuickMenu from "./UserQuickMenu";
 import UserLevel2Menu from "./UserLevel2Menu";
 import Delay from "./Delay";
+import UserSwitchTabIfNeed from "./UserSwitchTabIfNeed";
 
 var commandList = [
     SetRootView,
@@ -39,6 +40,7 @@ var commandList = [
     UserCalendarInput,
     UserQuickMenu,
     UserLevel2Menu,
+    UserSwitchTabIfNeed,
     Delay
 ];
 
