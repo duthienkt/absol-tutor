@@ -14,6 +14,7 @@ import Inspector from "./Inspector";
 import BaseEditor from "absol-form/js/core/BaseEditor";
 import OnScreenWindow from "absol-acomp/js/OnsScreenWindow";
 import {getScreenSize} from "absol/src/HTML5/Dom";
+import Vec2 from "absol/src/Math/Vec2";
 
 var dependentSrc = $('script', false, function (elt) {
     if (elt.src && elt.src.indexOf('absol.dependents.js') >= 0) {
@@ -48,17 +49,30 @@ TutorMaster.prototype.config = {
         height: 48,
         x: 2,
         y: 50
+    },
+    toolbar: {
+        x: 0.999,
+        y: 0.999
     }
 };
 
 
 TutorMaster.prototype.createView = function () {
     this.$view = _({
+        style: {
+            '--tutor-master-x': this.config.toolbar.x,
+            '--tutor-master-y': this.config.toolbar.y
+        },
         class: 'atr-tutor-master',
         child: [
             {
+                tag: 'hanger',
                 class: 'atr-tutor-master-head',
-                child: TutorIco.cloneNode(true)
+                child: TutorIco.cloneNode(true),
+                on: {
+                    dragstart: this.ev_headerDragStart.bind(this),
+                    drag: this.ev_headerDrag.bind(this)
+                }
             },
             {
                 tag: 'button',
@@ -212,6 +226,11 @@ TutorMaster.prototype.onStart = function () {
     var view = this.getView();
     if (!view.parentElement) {
         view.addTo(document.body);
+        var bound = view.getBoundingClientRect();
+        view.addStyle({
+            '--tutor-master-width': bound.width + 'px',
+            '--tutor-master-height': bound.height + 'px'
+        });
     }
     if (window.data_module && window.data_module.exportDatabase) {
         this.$databaseBtn = _({
@@ -377,5 +396,32 @@ TutorMaster.prototype.ev_editWindowPositionChange = function () {
     this.saveConfig();
 };
 
+TutorMaster.prototype.ev_headerDragStart = function () {
+    var bound = this.$view.getBoundingClientRect();
+    var screenSize = getScreenSize();
+    this._headerDragData = {
+        bound: bound,
+        screenSize: screenSize,
+        initPos: new Vec2(bound.left, bound.top)
+    }
+};
+
+
+TutorMaster.prototype.ev_headerDrag = function (event) {
+    console.log(event);
+    var d = event.currentPoint.sub(event.startingPoint);
+    var newPos = this._headerDragData.initPos.add(d);
+    var x = (newPos.x - 2) / (this._headerDragData.screenSize.width - this._headerDragData.bound.width - 4);
+    var y = (newPos.y - 2) / (this._headerDragData.screenSize.height - this._headerDragData.bound.height - 4);
+    x = Math.max(0, Math.min(1, x));
+    y = Math.max(0, Math.min(1, y));
+    this.$view.addStyle({
+        '--tutor-master-x': x,
+        '--tutor-master-y': y
+    });
+    this.config.toolbar.x = x;
+    this.config.toolbar.y = y;
+    this.saveConfig();
+};
 
 export default TutorMaster;
