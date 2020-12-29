@@ -71,8 +71,9 @@ Tutor.prototype.exec = function () {
         return env[name];
     });
 
-    return this.script.exec.apply(null, args).then(function () {
+    return this.script.exec.apply(null, args).then(function (result) {
         this.stop();
+        return result;
     }.bind(this)).catch(function (error) {
         this.stop();
         if (error instanceof Error) {
