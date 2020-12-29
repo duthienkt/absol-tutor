@@ -68,7 +68,7 @@ UserSwitchTabIfNeed.prototype.exec = function () {
         };
         thisC.onlyInteractWith(tabButton, function () {
             if (wrongMessage)
-                thisC.showToast(tabButton, wrongMessage);
+                thisC.showTooltip(tabButton, wrongMessage);
             thisC.highlightElt(tabButton);
         });
         tabButton.on('click', onClick);
