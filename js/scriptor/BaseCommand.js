@@ -17,7 +17,13 @@ var showdownConverter = new Converter();
  */
 function BaseCommand(tutor, args) {
     Context.call(this);
+    /***
+     * @type Tutor
+     */
     this.tutor = tutor;
+    /***
+     * @type {{eltPath:string, message:string, wrongMessage:string, text: string, query: string, value:(string|number|null), until:BaseCommand}|{}}
+     */
     this.args = args;
     this.tooltipToken = null;
     this._tostElts = [];
