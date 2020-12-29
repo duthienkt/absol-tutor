@@ -408,7 +408,6 @@ TutorMaster.prototype.ev_headerDragStart = function () {
 
 
 TutorMaster.prototype.ev_headerDrag = function (event) {
-    console.log(event);
     var d = event.currentPoint.sub(event.startingPoint);
     var newPos = this._headerDragData.initPos.add(d);
     var x = (newPos.x - 2) / (this._headerDragData.screenSize.width - this._headerDragData.bound.width - 4);
