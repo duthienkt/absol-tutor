@@ -126,6 +126,16 @@
  */
 
 /***
+ * Yêu cầu người dùng chuyển đến tab có element, nếu đang ở đó, không yêu cầu gì cả và bỏ qua
+ * @function
+ * @name userSwitchTabIfNeed
+ * @param {string|AElement} eltPath
+ * @param {MarkdownString} message
+ * @param {MarkdownString} wrongMessage
+ */
+
+
+/***
  * Trì hoãn trong một thời gian, mọi thao tác chuột bị chặn
  * @function
  * @name delay
