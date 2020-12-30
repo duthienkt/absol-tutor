@@ -70,10 +70,12 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
                 thisC.highlightElt(menuElt);
                 setTimeout(function () {
                     if (thisC.state !== 'RUNNING') return;
-                    thisC.highlightElt(itemElt);
-                    if (wrongMessage)
-                        thisC.showTooltip(itemElt, wrongMessage);
-                }, 800);
+                    if (itemElt.isDescendantOf(document.body)) {
+                        thisC.highlightElt(itemElt);
+                        if (wrongMessage)
+                            thisC.showTooltip(itemElt, wrongMessage);
+                    }
+                }, 100);
             }
 
             function onSelect(ev) {
@@ -89,6 +91,7 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
                     document.body.removeEventListener('click', onClose);
                     menuElt.off('press', onSelect);
                     thisC._rejectCb = null;
+                    thisC.closeTooltip();
                     resolve(false);
                 }, 100)
             }
@@ -101,6 +104,11 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
                 reject();
             }
         });
+    }).then(function (isOK) {
+        if (!isOK) {
+            return thisC._afterSelectQM(elt, thisC.args.selectId, true);
+        }
+        return true;
     });
 };
 
@@ -110,12 +118,7 @@ UserQuickMenu.prototype.exec = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
     var thisC = this;
     this.showToast(this.args.message);
-    return this._afterSelectQM(elt, this.args.selectId).then(function (isOK) {
-        if (!isOK) {
-            return thisC._afterSelectQM(elt, thisC.args.selectId, true);
-        }
-        return true;
-    }).then(function () {
+    return this._afterSelectQM(elt, this.args.selectId).then(function () {
         thisC.stop();
     });
 };
