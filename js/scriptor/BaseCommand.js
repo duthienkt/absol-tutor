@@ -30,6 +30,7 @@ function BaseCommand(tutor, args) {
     this.args = args;
     this.tooltipToken = null;
     this._tostElts = [];
+    this._preventKeyListener = null;
 }
 
 OOP.mixClass(BaseCommand, Context);
@@ -114,9 +115,19 @@ BaseCommand.prototype.preventInteract = function (flag) {
     }
     if (flag) {
         this.$transparentModal.removeClass('as-hidden');
+        if (!this._preventKeyListener) {
+            this._preventKeyListener = function (event) {
+                event.preventDefault();
+            }
+            document.addEventListener('keydown', this._preventKeyListener);
+        }
     }
     else {
         this.$transparentModal.addClass('as-hidden');
+        if (this._preventKeyListener) {
+            document.removeEventListener('keydown', this._preventKeyListener);
+            this._preventKeyListener = null;
+        }
     }
 };
 
