@@ -75,9 +75,9 @@ UserInputText.prototype.exec = function () {
                 resolve();
             }
             else {
-                changeTimeout = setTimeout(function (){
+                changeTimeout = setTimeout(function () {
                     changeTimeout = -1;
-                    if (!AElement.prototype.isDescendantOf.call(document.activeElement, elt)){
+                    if (!AElement.prototype.isDescendantOf.call(document.activeElement, elt)) {
                         elt.focus();
                     }
                 }, 1)
