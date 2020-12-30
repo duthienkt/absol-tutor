@@ -33,16 +33,37 @@ UserCheckbox.prototype.exec = function () {
     thisC.showToast(message);
 
     return new Promise(function (resolve, reject) {
+        var clickTimeout = -1;
+
         function onChange() {
+            if (clickTimeout > 0) {
+                clearTimeout(clickTimeout);
+                clickTimeout = -1;
+            }
             if (elt.checked === checked) {
-                elt.off('change', onChange);
+                elt.off('change', onChange)
+                    .off('click', onClick);
                 resolve();
             }
         }
 
-        elt.on('change', onChange);
+        function onClick() {
+            if (clickTimeout > 0) clearTimeout(clickTimeout);
+            setTimeout(function () {
+                clickTimeout = -1;
+                if (elt.checked === checked) {
+                    elt.off('change', onChange)
+                        .off('click', onClick);
+                    resolve();
+                }
+            }, 50);
+        }
+
+        elt.on('change', onChange)
+            .on('click', onClick);
         thisC._rejectCb = function () {
-            elt.off('change', onChange);
+            elt.off('change', onChange)
+                .off('click', onClick);
             reject();
         }
     }).then(this.stop.bind(this));
@@ -58,6 +79,15 @@ UserCheckbox.prototype.cancel = function () {
 
 UserCheckbox.attachEnv = function (tutor, env) {
     env.userCheckbox = function (eltPath, checked, message, wrongMessage) {
+        return new UserCheckbox(tutor, {
+            eltPath: eltPath,
+            checked: checked,
+            message: message,
+            wrongMessage: wrongMessage
+        }).exec();
+    }
+
+    env.userRadio = function (eltPath, checked, message, wrongMessage) {
         return new UserCheckbox(tutor, {
             eltPath: eltPath,
             checked: checked,
