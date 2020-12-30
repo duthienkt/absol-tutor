@@ -149,4 +149,7 @@
  * @param {string|AElement} query - truy vấn này chạy trên toàn bộ trang, không ảnh hưởng bởi việc gọi setRootView trước đó
  */
 
-
+/***
+ * @constant {number} EMAIL_REGEX
+ *
+ */

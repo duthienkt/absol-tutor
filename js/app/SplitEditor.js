@@ -4,7 +4,8 @@ import OOP from "absol/src/HTML5/OOP";
 import {$, _} from "../dom/Core";
 import AbsolBrace from "absol-brace";
 import '../../css/spliteditor.css';
-import 'absol-form/css/cmdtool.css'
+import 'absol-form/css/cmdtool.css';
+import "../scriptor/TutorACECompleter";
 
 /***
  * @augments Broadcast
@@ -39,7 +40,12 @@ SplitEditor.prototype.createView = function () {
     this.$editor = $('p.atr-split-editor-ace', this.$view);
     this.editor = AbsolBrace.ace.edit(this.$editor);
     this.editor.getSession().setMode("ace/mode/javascript");
-    if (window['TUTOR_LOCAL_SAVE']){
+    this.editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: false
+    });
+    if (window['TUTOR_LOCAL_SAVE']) {
         this.editor.on('change', this.localSaveDelay.bind(this))
     }
     // this.$playBtn = $('.atr-play-btn', this.$view).on('click', this.playScript.bind(this));

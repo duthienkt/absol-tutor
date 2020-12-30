@@ -31,7 +31,7 @@
     "@babel/types": "^7.12.7",
     "absol": "github:duthienkt/absol",
     "absol-acomp": "github:duthienkt/absol-acomp",
-    "absol-brace": "^0.9.1",
+    "absol-brace": "github:duthienkt/absol-brace",
     "absol-form": "github:duthienkt/absol-form",
     "regenerator-runtime": "^0.13.7",
     "showdown": "^1.9.1"
