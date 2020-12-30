@@ -121,10 +121,10 @@ UserSelectMenu.prototype.exec = function () {
     var items;
     if (elt.$selectlistBox && elt.$selectlistBox.findItemsByValue){
         items = elt.$selectlistBox.findItemsByValue(value);
-        console.log(items)
-        if (!items || items.length === 0){
-            throw new Error("Not found value="+(JSON.stringify(value)||value)+' in SelectMenu');
-        }
+        // console.log(items)
+        // if (!items || items.length === 0){
+        //     throw new Error("Not found value="+(JSON.stringify(value)||value)+' in SelectMenu');
+        // }
     }
 
     var message = this.args.message;
