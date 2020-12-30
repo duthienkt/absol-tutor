@@ -6,6 +6,9 @@ import Toast from "absol-acomp/js/Toast";
 import Context from "absol/src/AppPattern/Context";
 import OOP from "absol/src/HTML5/OOP";
 import {Converter} from 'showdown';
+import {hitElement} from "absol/src/HTML5/EventEmitter";
+import Vec2 from "absol/src/Math/Vec2";
+import Rectangle from "absol/src/Math/Rectangle";
 
 var showdownConverter = new Converter();
 
@@ -56,6 +59,29 @@ BaseCommand.prototype.$transparentModal = _('.atr-transparent-modal.as-hidden');
 BaseCommand.prototype.$tooltipContent = _({
     class: 'atr-explain-text'
 });
+
+/***
+ * @param {HTMLElement} elt
+ * @param {MouseEvent} event
+ */
+BaseCommand.prototype.hitSomeOf = function (elt, event) {
+    if (hitElement(elt, event)) return false;
+    console.log()
+    var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
+    var p = new Vec2(event.clientX, event.clientY);
+    if (!bound.containsPoint(p)) return false;
+    var id = elt.getAttribute('data-tutor-id') || elt['data-tutor-id'];
+    if (!id) return false;
+    var target = event.target;
+    var tId;
+    while (target) {
+        tId = target.getAttribute('data-tutor-id') || target['data-tutor-id'];
+        if (tId === id) return elt !== target;
+        target = target.parentElement;
+    }
+    return false;
+};
+
 
 BaseCommand.prototype.onStart = function () {
     this.tutor.commandPush(this);

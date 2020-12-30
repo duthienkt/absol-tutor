@@ -32,9 +32,16 @@ UserClick.prototype.exec = function () {
         }
         thisC._rejectCb = function () {
             elt.off(onClick);
+            document.body.removeEventListener("click", clickForceGround);
             reject();
         };
+        function clickForceGround(event){
+            if (thisC.hitSomeOf(elt, event)){
+                reject(new Error("Duplicated id detected!"));
+            }
+        }
         elt.once('click', onClick);
+        document.body.addEventListener("click", clickForceGround);
     }).then(function () {
         this.stop();
     }.bind(this));
