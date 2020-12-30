@@ -32,7 +32,6 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
         thisC.onlyInteractWith(rootElt, function () {
             highlight = true;
             thisC.highlightElt(rootElt);
-            thisC.showTooltip(rootElt);
             if (wrongMessage) {
                 thisC.showTooltip(rootElt, wrongMessage);
             }
@@ -40,7 +39,7 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
         if (highlight) {
             thisC.highlightElt(itemElt);
             if (wrongMessage) {
-                thisC.showTooltip(rootElt, wrongMessage);
+                thisC.showTooltip(itemElt, wrongMessage);
             }
         }
 
