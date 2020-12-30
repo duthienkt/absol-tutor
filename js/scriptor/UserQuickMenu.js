@@ -61,6 +61,9 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
         return new Promise(function (resolve, reject) {
             var wrongMessage = thisC.args.wrongMessage;
             var itemElt = findNode(selectId, menuElt);
+            if (!itemElt) {
+                throw new Error("Not found menu id=" + selectId);
+            }
             thisC.onlyInteractWith(itemElt);
             if (highlight) {
                 thisC.highlightElt(menuElt);
