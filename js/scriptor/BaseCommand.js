@@ -100,6 +100,7 @@ BaseCommand.prototype.onStop = function () {
     this.highlightElt(null);
     this.onlyInteractWith(null);
     this.preventInteract(false);
+    this.preventKeyBoard(false);
     this.tutor.commandPop(this);
 };
 
@@ -115,6 +116,15 @@ BaseCommand.prototype.preventInteract = function (flag) {
     }
     if (flag) {
         this.$transparentModal.removeClass('as-hidden');
+    }
+    else {
+        this.$transparentModal.addClass('as-hidden');
+
+    }
+};
+
+BaseCommand.prototype.preventKeyBoard = function (flag) {
+    if (flag) {
         if (!this._preventKeyListener) {
             this._preventKeyListener = function (event) {
                 event.preventDefault();
@@ -123,7 +133,6 @@ BaseCommand.prototype.preventInteract = function (flag) {
         }
     }
     else {
-        this.$transparentModal.addClass('as-hidden');
         if (this._preventKeyListener) {
             document.removeEventListener('keydown', this._preventKeyListener);
             this._preventKeyListener = null;
