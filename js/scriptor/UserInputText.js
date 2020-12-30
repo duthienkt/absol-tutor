@@ -2,6 +2,7 @@ import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
 import FunctionKeyManager from "./TutorNameManager";
+import AElement from "absol/src/HTML5/AElement";
 
 /***
  * @extends BaseCommand
@@ -61,13 +62,25 @@ UserInputText.prototype.exec = function () {
 
 
     return new Promise(function (resolve, reject) {
-        function onChange() {
+        var changeTimeout = -1;
+
+        function onChange(event) {
             if (verify()) {
                 elt.off('keyup', verify)
                     .off('change', onChange)
                     .off('blur', onChange);
+                if (changeTimeout >= 0) clearTimeout(changeTimeout);
+
                 thisC._rejectCb = null;
                 resolve();
+            }
+            else {
+                changeTimeout = setTimeout(function (){
+                    changeTimeout = -1;
+                    if (!AElement.prototype.isDescendantOf.call(document.activeElement, elt)){
+                        elt.focus();
+                    }
+                }, 1)
             }
         }
 
@@ -84,6 +97,7 @@ UserInputText.prototype.exec = function () {
             elt.off('keyup', verify)
                 .off('change', onChange)
                 .off('blur', onChange);
+            if (changeTimeout >= 0) clearTimeout(changeTimeout);
             reject();
         };
     }).then(this.stop.bind(this));
