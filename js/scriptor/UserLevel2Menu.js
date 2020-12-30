@@ -21,8 +21,14 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
         var wrongMessage = thisC.args.wrongMessage;
         var wrongMessage1 = thisC.args.wrongMessage1 || thisC.args.wrongMessage;
         var itemElt = findNode(id, rootElt);
+        if (!itemElt) {
+            throw new Error("Not found menu id=" + JSON.stringify(id));
+        }
         var itemIndex = rootElt.$items.indexOf(itemElt);
         var subItem = findNode(subId, itemElt.$vmenu);
+        if (!subItem) {
+            throw new Error("Not found menu id=" + subId);
+        }
         thisC.onlyInteractWith(rootElt, function () {
             highlight = true;
             thisC.highlightElt(rootElt);
