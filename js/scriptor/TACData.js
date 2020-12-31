@@ -15,6 +15,7 @@ var TACData = {
             }
             cObject = cObject.properties[cKey];
         }
+        return this
     }
 };
 
@@ -26,6 +27,16 @@ TACData.define('Math.max', {
     }],
     returns: 'number',
     desc: "Giá trị lớn nhất"
+});
+
+TACData.define('Math.min', {
+    type: 'function',
+    args: [{
+        name: '...x',
+        type: 'number'
+    }],
+    returns: 'number',
+    desc: "Giá trị nhỏ nhất"
 });
 
 
