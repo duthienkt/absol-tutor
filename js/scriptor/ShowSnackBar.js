@@ -2,6 +2,7 @@ import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import SnackbarElt from 'absol-acomp/js/Snackbar';
 import TutorNameManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 /***
  * @extends {BaseCommand}
@@ -33,5 +34,15 @@ ShowSnackBar.attachEnv = function (tutor, env) {
 };
 
 TutorNameManager.addAsync('showSnackBar');
+
+
+TACData.define('showSnackBar', {
+    type: 'function',
+    args: [
+        { name: 'title', type: 'string' },
+        { name: 'text', type: 'MarkdownString' },
+        { name: 'until', type: 'Trigger' },
+    ]
+});
 
 export default ShowSnackBar;

@@ -2,6 +2,7 @@ import Toast from "absol-acomp/js/Toast";
 import FunctionKeyManager from "./TutorNameManager";
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -69,6 +70,17 @@ ShowToastMessage.attachEnv = function (tutor, env) {
 
 FunctionKeyManager.addAsync('showToastMessage');
 
+TACData.define('showToastMessage', {
+    type: 'function',
+    args: [
+        { name: 'title', type: 'string' },
+        { name: 'text', type: 'MarkdownString' },
+        { name: 'disappearTimeout', type: 'number' },
+        { name: 'until', type: 'Trigger' },
+        { name: 'variant', type: 'VariantColorNamesMap' }
+    ],
+    desc:'VariantColorNamesMap("primary" | "secondary" | "success" | "info" | "warning" | "error" | "danger" | "light" | "dark" | "link" | "note")'
+});
 
 export default ShowToastMessage;
 

@@ -1,6 +1,7 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import FunctionKeyManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 /***
  * @extends {BaseCommand}
@@ -59,5 +60,14 @@ Timeout.attachEnv = function (tutor, env) {
 FunctionKeyManager.addSync('TIME_OUT')
     .addAsync('delay')
     .addAsync('delayUntil');
+
+TACData.define('TIME_OUT',
+    {
+        type: 'function',
+        args: [
+            { name: 'millis', type: 'number' }
+        ],
+        returns: 'Trigger'
+    })
 
 export default Timeout;

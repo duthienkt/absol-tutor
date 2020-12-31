@@ -2,6 +2,7 @@ import '../../css/explain.css';
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import TutorNameManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 
 /***
@@ -31,5 +32,13 @@ Explain.attachEnv = function (tutor, env) {
 
 TutorNameManager.addAsync('explain');
 
+TACData.define('explain', {
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'text', type: 'MarkdownString' },
+        { name: 'until', type: 'Trigger' },
+    ]
+});
 
 export default Explain;

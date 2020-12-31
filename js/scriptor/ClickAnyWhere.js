@@ -1,6 +1,7 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import TutorNameManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 /***
  * @extends {BaseCommand}
@@ -15,7 +16,7 @@ OOP.mixClass(ClickAnyWhere, BaseCommand);
 
 
 ClickAnyWhere.prototype.exec = function () {
-   this.start();
+    this.start();
     document.addEventListener('click', this.ev_click);
     return new Promise(function (rs) {
         this._resolveCb = rs;
@@ -41,5 +42,9 @@ ClickAnyWhere.attachEnv = function (tutor, env) {
 };
 
 TutorNameManager.addConst('CLICK_ANY_WHERE');
+
+TACData.define('CLICK_ANY_WHERE', {
+    type: 'Trigger'
+});
 
 export default ClickAnyWhere;

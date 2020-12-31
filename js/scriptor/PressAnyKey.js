@@ -1,6 +1,7 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import TutorNameManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 /***
  * @extends {BaseCommand}
@@ -39,5 +40,9 @@ PressAnyKey.attachEnv = function (tutor, env) {
 };
 
 TutorNameManager.addConst('PRESS_ANY_KEY');
+
+TACData.define('PRESS_ANY_KEY', {
+    type: 'Trigger'
+});
 
 export default PressAnyKey;
