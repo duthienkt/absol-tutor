@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import {compareDate} from "absol/src/Time/datetime";
 import ChromeCalendar from "absol-acomp/js/ChromeCalendar";
+import TACData from "./TACData";
 
 
 /***
@@ -123,5 +124,14 @@ UserCalendarInput.attachEnv = function (tutor, env) {
 
 TutorNameManager.addAsync('userCalendarInput');
 
+TACData.define('userCalendarInput', {
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'value', type: 'Date' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
+    ]
+})
 
 export default UserCalendarInput;

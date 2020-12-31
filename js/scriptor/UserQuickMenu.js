@@ -150,13 +150,19 @@ TutorNameManager.addAsync('userQuickMenu')
     .addSync('getAllQuickMenuTriggers');
 
 TACData.define('userQuickMenu', {
-    type:'function',
-    args:[
-        {name:'eltPath', type:'(string|AElement)'},
-        {name:'selectId', type:'string'},
-        {name:'message', type:'string'},
-        {name:'wrongMessage', type:'string'}
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'selectId', type: 'string' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
     ]
-});
+}).define('getAllQuickMenuTriggers',
+    {
+        type: 'function',
+        args: [],
+        returns: 'QuickMenuTriggers[]'
+    }
+);
 
 export default UserQuickMenu;

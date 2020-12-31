@@ -1,6 +1,7 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import FunctionNameManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -99,6 +100,26 @@ UserCheckbox.attachEnv = function (tutor, env) {
 };
 
 FunctionNameManager.addAsync('userCheckbox');
+
+
+TACData.define('userCheckbox', {
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'checked', type: 'boolean' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
+    ]
+}).define('userRadio', {
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'checked', type: 'boolean' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
+    ]
+});
+
 
 
 export default UserCheckbox;

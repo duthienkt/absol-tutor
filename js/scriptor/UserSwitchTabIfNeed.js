@@ -2,6 +2,7 @@ import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import UserQuickMenu from "./UserQuickMenu";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -93,5 +94,14 @@ UserSwitchTabIfNeed.attachEnv = function (tutor, env) {
 };
 
 TutorNameManager.addAsync('userSwitchTabIfNeed');
+
+TACData.define('userSwitchTabIfNeed', {
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
+    ]
+});
 
 export default UserSwitchTabIfNeed;

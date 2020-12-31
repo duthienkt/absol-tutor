@@ -1,6 +1,7 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -62,5 +63,15 @@ UserClick.attachEnv = function (tutor, env) {
 };
 
 TutorNameManager.addAsync('userClick');
+
+TACData.define('userClick', {
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
+    ]
+});
+
 
 export default UserClick;

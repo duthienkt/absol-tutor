@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import findNode from "../util/findNode";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -129,5 +130,15 @@ UserLevel2Menu.attachEnv = function (tutor, env) {
 
 TutorNameManager.addAsync('userLevel2Menu');
 
+TACData.define('userLevel2Menu', {
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'menuItemPath', type: 'string[]' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' },
+        { name: 'wrongMessage1', type: 'string' }
+    ]
+});
 
 export default UserLevel2Menu;

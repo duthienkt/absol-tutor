@@ -120,10 +120,10 @@ UserSelectMenu.prototype.exec = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
     var value = this.args.value;
     var items;
-    if (elt.$selectlistBox && elt.$selectlistBox.findItemsByValue){
+    if (elt.$selectlistBox && elt.$selectlistBox.findItemsByValue) {
         items = elt.$selectlistBox.findItemsByValue(value);
-        if (!items || items.length === 0){
-            throw new Error("Not found value="+(JSON.stringify(value)||value)+' in SelectMenu');
+        if (!items || items.length === 0) {
+            throw new Error("Not found value=" + (JSON.stringify(value) || value) + ' in SelectMenu');
         }
     }
 
@@ -156,13 +156,13 @@ UserSelectMenu.attachEnv = function (tutor, env) {
 };
 
 TACData.define('userSelectMenu', {
-    type:'function',
-    args:[
-        {name:'eltPath', type:'(string|AElement)'},
-        {name:'value', type:'(string|value)'},
-        {name:'message', type:'string'},
-        {name:'wrongMessage', type:'string'},
-        {name:'searchMessage', type:'string'}
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'value', type: '(string|value)' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' },
+        { name: 'searchMessage', type: 'string' }
     ]
 });
 

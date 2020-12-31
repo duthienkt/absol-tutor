@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
 import FunctionKeyManager from "./TutorNameManager";
 import AElement from "absol/src/HTML5/AElement";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -135,6 +136,18 @@ UserInputText.attachEnv = function (tutor, env) {
 
 FunctionKeyManager.addAsync('userInputText')
     .addConst('EMAIL_REGEX');
+
+TACData.define('userInputText', {
+    type: 'function',
+    args: [
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'match', type: 'Regex|function(string):bool' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
+    ]
+}).define('EMAIL_REGEX', {
+    type: 'Regex'
+});
 
 
 export default UserInputText;
