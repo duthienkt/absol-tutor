@@ -1,6 +1,7 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -56,5 +57,13 @@ Delay.attachEnv = function (tutor, env) {
 }
 
 TutorNameManager.addAsync('delay');
+
+TACData.define('delay', {
+    type: 'function',
+    args: [
+        { name: 'trigger', type: 'Trigger|number' }
+    ],
+    desc:"Chờ trong khoảng thời gian hoặc trigger kích hoạt"
+})
 
 export default Delay;
