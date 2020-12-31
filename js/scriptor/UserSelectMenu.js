@@ -4,6 +4,7 @@ import wrapAsync from "../util/wrapAsync";
 import SelectTreeMenu from "absol-acomp/js/SelectTreeMenu";
 import '../../css/basecommand.css';
 import FunctionNameManager from "./TutorNameManager";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -153,6 +154,17 @@ UserSelectMenu.attachEnv = function (tutor, env) {
         }).exec();
     };
 };
+
+TACData.define('userSelectMenu', {
+    type:'function',
+    args:[
+        {name:'eltPath', type:'(string|AElement)'},
+        {name:'value', type:'(string|value)'},
+        {name:'message', type:'string'},
+        {name:'wrongMessage', type:'string'},
+        {name:'searchMessage', type:'string'}
+    ]
+});
 
 FunctionNameManager.addAsync('userSelectMenu');
 

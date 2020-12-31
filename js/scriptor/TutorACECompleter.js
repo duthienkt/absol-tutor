@@ -133,7 +133,7 @@ TutorACECompleter.prototype.getCompletions = function (editor, session, pos, pre
 
 TutorACECompleter.prototype.getDocTooltip = function (item) {
     if (item.type === "function" && !item.docHTML) {
-        var html = ['<div class="ace_line" style="height: 14px;">',
+        var html = ['<div class="atr-ace-tooltip-define">',
             '<span class="ace_storage ace_type">function</span>',
             '<span class="ace_paren ace_lparen">(</span>']
             .concat([item.args.map(function (arg) {
@@ -141,7 +141,7 @@ TutorACECompleter.prototype.getDocTooltip = function (item) {
                     arg = arg.name + ':' + arg.type
                 }
                 return '<span class="ace_identifier">' + arg + '</span>';
-            }).join('<span class="ace_punctuation ace_operator">,</span>')])
+            }).join('<span class="ace_punctuation ace_operator">, </span>')])
             .concat(['<span class="ace_paren ace_rparen">)</span>']);
 
         if (item.returns) {
