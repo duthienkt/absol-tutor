@@ -296,7 +296,7 @@ TutorMaster.prototype.ev_play_script = function (event) {
             if (err === 0) {
                 Toast.make({
                     props: {
-                        message: "Script finnish successfully!",
+                        message: "Script finish successfully!",
                         variant: 'success',
                         htitle: "Success",
                         disappearTimeout: 20000

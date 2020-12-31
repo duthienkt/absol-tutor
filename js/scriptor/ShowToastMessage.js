@@ -34,6 +34,7 @@ ShowToastMessage.prototype.exec = function () {
     });
     if (typeof until === "function") {
         thisC.preventInteract(true);
+        thisC.preventKeyBoard(true);
         return until().then(function () {
             thisC.$toast = null;
             this.stop();

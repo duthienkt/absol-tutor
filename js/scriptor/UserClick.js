@@ -23,6 +23,7 @@ UserClick.prototype.exec = function () {
         if (wrongMessage)
             thisC.showTooltip(elt, wrongMessage);
     });
+    this.preventKeyBoard(true);
     var message = this.args.message;
     this.showToast(message);
     return new Promise(function (resolve, reject) {
