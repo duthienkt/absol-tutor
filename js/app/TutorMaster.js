@@ -238,9 +238,11 @@ TutorMaster.prototype.ev_clickEditScript = function () {
     if (this.$editScriptBtn.containsClass('as-active')) {
         this.$editScriptBtn.removeClass('as-active');
         this.$editWindow.addStyle('visibility', 'hidden');
+        this.$editWindow.addStyle('opacity', '0');
     }
     else {
         this.$editWindow.removeStyle('visibility');
+        this.$editWindow.addStyle('opacity', '1');
         this.$editScriptBtn.addClass('as-active');
     }
 };
@@ -249,6 +251,7 @@ TutorMaster.prototype.ev_clickCloseScript = function () {
     if (this.$editScriptBtn.containsClass('as-active')) {
         this.$editScriptBtn.removeClass('as-active');
         this.$editWindow.addStyle('visibility', 'hidden');
+        this.$editWindow.addStyle('opacity', '0');
     }
 };
 
