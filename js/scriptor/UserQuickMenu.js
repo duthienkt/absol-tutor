@@ -7,6 +7,7 @@ import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import {$, $$} from "../dom/Core";
 import findNode from "../util/findNode";
+import TACData from "./TACData";
 
 /***
  * @extends BaseCommand
@@ -148,5 +149,14 @@ UserQuickMenu.attachEnv = function (tutor, env) {
 TutorNameManager.addAsync('userQuickMenu')
     .addSync('getAllQuickMenuTriggers');
 
+TACData.define('userQuickMenu', {
+    type:'function',
+    args:[
+        {name:'eltPath', type:'(string|AElement)'},
+        {name:'selectId', type:'string'},
+        {name:'message', type:'string'},
+        {name:'wrongMessage', type:'string'}
+    ]
+});
 
 export default UserQuickMenu;
