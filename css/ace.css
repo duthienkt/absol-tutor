@@ -6,6 +6,7 @@
 .atr-ace-tooltip-desc {
     margin: 0;
     max-width: 500px;
+    white-space: pre-wrap;
 }
 
 .atr-ace-tooltip-define {
