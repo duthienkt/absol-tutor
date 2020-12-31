@@ -1,11 +1,12 @@
+import '../../css/ace.css';
+import TACData from "./TACData";
+import {wordLike} from "absol/src/String/stringMatching";
+
 function TutorACECompleter() {
     this.name = 'absol';
     this.spaceRex = /\s+/;
-    this.global = Object.assign({}, window);
-    this.global.Math = Math;
-    this.global.Date = Date;
     this.structIdent = { identifier: true, 'variable.language': true, 'support.constant': true };
-};
+}
 
 TutorACECompleter.prototype._getArgs = function (func) {
     var args = (func.toString().match(/function\s.*?\(([^)]*)\)/) || ['', ''])[1];
@@ -33,25 +34,47 @@ TutorACECompleter.prototype._jsTrackStruct = function (session, pos, prefix) {
         }
         tokenIto.stepBackward();
     }
-    if (firstToken != '.' && track.length > 0 && prefix == track[0]) track.shift();
-
+    if (firstToken !== '.' && track.length > 0 && prefix === track[0]) track.shift();
     var currentKey;
-    var currentObj = this.global;
+    var currentObj = TACData;
     for (var i = track.length - 1; i >= 0; --i) {
         currentKey = track[i];
-        currentObj = currentObj[currentKey];
+        currentObj = currentObj.properties && currentObj.properties[currentKey];
+        if (!currentObj) break;
     }
-    currentObj && Object.keys(currentObj).forEach(function (key) {
-        if (key.startsWith(prefix)) {
-            var item = { name: key, value: key, score: 1000000 + track.length * 2, meta: 'browser' };
-            if (typeof (currentObj[key]) == 'function') {
-                item.type = 'function';
-                item.args = this._getArgs(currentObj[key]);
+    if (currentObj) {
+        var keyHolders = Object.keys(currentObj.properties).map(function (key) {
+            var score = 0;
+            if (key.startsWith(prefix)) {
+                score += 1 + prefix.length / (key.length + 1);
+            }
+            if (prefix.length > 0)
+                score += wordLike(key, prefix);
+
+            return {
+                key: key,
+                score: score
+            }
+        });
+        keyHolders.sort(function (a, b) {
+            return b.score - a.score;
+        });
+
+        keyHolders.forEach(function (holder) {
+            var item = { name: holder.key, value: holder.key, score: 1000000 + holder.score * 100, meta: 'tutor' };
+            var propertyDesc = currentObj.properties && currentObj.properties[holder.key];
+            if (propertyDesc) {
+                item.type = propertyDesc.type;
+                if (item.type === 'function') {
+                    item.args = propertyDesc.args;
+                    item.returns = propertyDesc.returns;
+                    item.desc = propertyDesc.desc;
+                }
             }
             res.push(item);
-        }
-    }.bind(this));
+        });
 
+    }
     return res;
 };
 
@@ -88,11 +111,11 @@ TutorACECompleter.prototype._jsTrackLocalValue = function (session, pos, prefix)
 
 
 TutorACECompleter.prototype.getCompletions = function (editor, session, pos, prefix, callback) {
+
     if (session.getMode().$id !== "ace/mode/javascript") {
         callback(null, []);
         return;
     }
-
     var completions = [];
 
     completions.push.apply(completions, this._jsTrackStruct(session, pos, prefix));
@@ -103,27 +126,52 @@ TutorACECompleter.prototype.getCompletions = function (editor, session, pos, pre
         var y = b.value.toUpperCase();
         return ((x === y) ? 0 : ((x > y) ? 1 : -1));
     });
+
     callback(null, completions);
 };
 
 
 TutorACECompleter.prototype.getDocTooltip = function (item) {
     if (item.type === "function" && !item.docHTML) {
-        item.docHTML = [
-            '<div class="ace_line" style="height: 14px;">',
+        var html = ['<div class="ace_line" style="height: 14px;">',
             '<span class="ace_storage ace_type">function</span>',
             '<span class="ace_paren ace_lparen">(</span>']
             .concat([item.args.map(function (arg) {
+                if (typeof arg === "object") {
+                    arg = arg.name + ':' + arg.type
+                }
                 return '<span class="ace_identifier">' + arg + '</span>';
             }).join('<span class="ace_punctuation ace_operator">,</span>')])
-            .concat(['<span class="ace_paren ace_rparen">)</span>', '</div>']).join("");
+            .concat(['<span class="ace_paren ace_rparen">)</span>']);
+
+        if (item.returns) {
+            html.push('<span>:' + item.returns + '</span>')
+        }
+        html.push('</div>');
+        if (item.desc) {
+            html.push('<p class="atr-ace-tooltip-desc">' + item.desc + '</p>')
+        }
+        item.docHTML = html.join("");
     }
 };
 
 if (window.ace) {
     var langTools = ace.acequire('ace/ext/language_tools');
+    ace.TokenIterator = ace.TokenIterator || ace.acequire("ace/token_iterator").TokenIterator
     if (langTools)
         langTools.addCompleter(new TutorACECompleter());
+
+
+// data stub:
+    var sqlTables = [
+        { name: 'users', description: 'Users in the system' },
+        { name: 'userGroups', description: 'User groups to which users belong' },
+        { name: 'customers', description: 'Customer entries' },
+        { name: 'companies', description: 'Legal entities of customers' },
+        { name: 'loginLog', description: 'Log entries for user log-ins' },
+        { name: 'products', description: 'Products offered in the system' },
+        { name: 'productCategories', description: 'Different product categories' }
+    ];
 }
 
 export default TutorACECompleter;

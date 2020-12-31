@@ -1,0 +1,10 @@
+.ace_doc-tooltip .ace_storage,
+.ace_doc-tooltip .ace_keyword
+{
+    color: blue;
+}
+
+.atr-ace-tooltip-desc{
+    margin: 0;
+    max-width: 200px;
+}

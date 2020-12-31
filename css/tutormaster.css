@@ -74,3 +74,8 @@
 .atr-has-tutor-master .as-toast-list.as-se {
     bottom: 50px;
 }
+
+.atr-has-tutor-master .ace_tooltip,
+.atr-has-tutor-master .ace_editor.ace_autocomplete{
+    z-index: 1100000000;
+}
