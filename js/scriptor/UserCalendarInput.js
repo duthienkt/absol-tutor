@@ -80,7 +80,9 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
         }
 
         elt.on('change', onChange);
-        document.body.addEventListener('click', onCLick);
+        setTimeout(function (){
+            document.body.addEventListener('click', onCLick);
+        }, 10);
         thisC._rejectCb = function () {
             if (clickTimeout >= 0) {
                 clearTimeout(clickTimeout);
