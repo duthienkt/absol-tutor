@@ -35,6 +35,7 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
             clickTimeout = setTimeout(function () {
                 clickTimeout = -1;
                 if (ChromeCalendar.$calendar && ChromeCalendar.$calendar.isDescendantOf(document.body)) {
+                    thisC.onlyInteractWith(ChromeCalendar.$calendar);
                     if (highlight) {
                         thisC.highlightElt(ChromeCalendar.$calendar);
                         if (thisC.args.wrongMessage) {
