@@ -349,7 +349,6 @@ TutorMaster.prototype.ev_editWindowPositionChange = function () {
     this.config.editor.width = bound.width / screenSize.width * 100;
     this.config.editor.height = bound.height / screenSize.height * 100;
     this.saveConfig();
-    window.dispatchEvent(new Event('resize'));
 };
 
 TutorMaster.prototype.ev_headerDragStart = function () {
