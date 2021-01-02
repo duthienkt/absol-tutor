@@ -157,7 +157,8 @@ TutorMaster.prototype.createView = function () {
         height: this.config.editor.height + 'vh',
         left: this.config.editor.x + 'vw',
         top: this.config.editor.y + 'vh',
-        visibility: 'hidden'
+        visibility: 'hidden',
+        opacity: '0'
     }).addClass('attr-split-editor-window');
     this.$editWindow.on('relocation', this.ev_editWindowPositionChange.bind(this))
         .on('sizechange', this.ev_editWindowPositionChange.bind(this));
@@ -233,7 +234,6 @@ TutorMaster.prototype.downloadScript = function () {
 };
 
 
-
 TutorMaster.prototype.ev_clickEditScript = function () {
     if (this.$editScriptBtn.containsClass('as-active')) {
         this.$editScriptBtn.removeClass('as-active');
@@ -297,7 +297,8 @@ TutorMaster.prototype.ev_clickPlayBtn = function () {
         this.$playBtn.disabled = false;
         this.$stopBtn.disabled = true;
         if (this.$editScriptBtn.containsClass('as-active')) {
-            this.$editWindow.removeStyle('visibility');
+            this.$editWindow.removeStyle('visibility')
+                .addStyle('opacity', '1');
         }
         this.tutor = null;
     }.bind(this);
@@ -308,7 +309,8 @@ TutorMaster.prototype.ev_clickPlayBtn = function () {
     } catch (err) {
         this.$playBtn.disabled = false;
         if (this.$editScriptBtn.containsClass('as-active')) {
-            this.$editWindow.removeStyle('visibility');
+            this.$editWindow.removeStyle('visibility')
+                .addStyle('opacity', '1');
         }
         Toast.make({
             props: {
