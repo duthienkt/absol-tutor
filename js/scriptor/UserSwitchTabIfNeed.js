@@ -60,9 +60,10 @@ UserSwitchTabIfNeed.prototype.exec = function () {
                 resolve();
                 return;
             }
+            thisC.showToast(thisC.args.notNeedMessage);
             var timeoutId = setTimeout(function (){
                 timeoutId = -1;
-                thisC.showToast(thisC.args.notNeedMessage);
+                thisC.stop();
             }, 2000);
             thisC._rejectCb = function (){
                 if (timeoutId >=0){
