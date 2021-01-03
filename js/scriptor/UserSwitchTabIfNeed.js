@@ -29,6 +29,7 @@ UserSwitchTabIfNeed.prototype.findTabView = function (elt) {
         }
         else if (elt.classList.contains('absol-tabview')) {
             tabViewElt = elt;
+            break;
         }
         elt = elt.parentElement;
     }
@@ -53,7 +54,25 @@ UserSwitchTabIfNeed.prototype.exec = function () {
     var tabViewElt = tabInfo.tabViewElt;
     var tabFrameElt = tabInfo.tabFrameElt;
     var activeTabId = tabViewElt.historyOfTab[tabViewElt.historyOfTab.length - 1];
-    if (activeTabId === tabFrameElt.id) return Promise.resolve();
+    if (activeTabId === tabFrameElt.id) {
+        return new Promise(function (resolve, reject){
+            if (!thisC.args.notNeedMessage) {
+                resolve();
+                return;
+            }
+            var timeoutId = setTimeout(function (){
+                timeoutId = -1;
+                thisC.showToast(thisC.args.notNeedMessage);
+            }, 2000);
+            this._rejectCb = function (){
+                if (timeoutId >=0){
+                    clearTimeout(timeoutId);
+                    timeoutId = -1;
+                    reject();
+                }
+            }
+        })
+    }
     var tabButton = tabViewElt.$tabbar.getButtonByIdent(tabFrameElt.id);
     tabButton.addClass('atr-tab-button-disabled-close');
     this.showToast(message);
@@ -84,11 +103,12 @@ UserSwitchTabIfNeed.prototype.cancel = function () {
 };
 
 UserSwitchTabIfNeed.attachEnv = function (tutor, env) {
-    env.userSwitchTabIfNeed = function (eltPath, message, wrongMessage) {
+    env.userSwitchTabIfNeed = function (eltPath, message, wrongMessage, notNeedMessage) {
         return new UserSwitchTabIfNeed(tutor, {
             eltPath: eltPath,
             message: message,
-            wrongMessage: wrongMessage
+            wrongMessage: wrongMessage,
+            notNeedMessage: notNeedMessage
         }).exec();
     };
 };
@@ -100,8 +120,13 @@ TACData.define('userSwitchTabIfNeed', {
     args: [
         { name: 'eltPath', type: '(string|AElement)' },
         { name: 'message', type: 'string' },
-        { name: 'wrongMessage', type: 'string' }
-    ]
+        { name: 'wrongMessage', type: 'string' },
+        {
+            name: 'notNeedMessage', type: 'string'
+        },
+    ],
+    desc: "eltPath: phần tử bất kì trong tab cần bật, nếu đang mở đúng tab hiện tại, sử dụng notNeedMessage, delay 2s và nhảy lệnh " +
+        "tiếp theo, nếu không có tab nào, lệnh không được thực hiện"
 });
 
 export default UserSwitchTabIfNeed;
