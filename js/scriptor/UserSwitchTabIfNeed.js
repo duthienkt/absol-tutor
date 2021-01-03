@@ -64,7 +64,7 @@ UserSwitchTabIfNeed.prototype.exec = function () {
                 timeoutId = -1;
                 thisC.showToast(thisC.args.notNeedMessage);
             }, 2000);
-            this._rejectCb = function (){
+            thisC._rejectCb = function (){
                 if (timeoutId >=0){
                     clearTimeout(timeoutId);
                     timeoutId = -1;
