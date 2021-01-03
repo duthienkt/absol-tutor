@@ -64,6 +64,7 @@ UserSwitchTabIfNeed.prototype.exec = function () {
             var timeoutId = setTimeout(function (){
                 timeoutId = -1;
                 thisC.stop();
+                resolve();
             }, 2000);
             thisC._rejectCb = function (){
                 if (timeoutId >=0){
