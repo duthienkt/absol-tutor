@@ -258,7 +258,8 @@ TutorMaster.prototype.ev_clickCloseScript = function () {
 
 TutorMaster.prototype.ev_clickPlayBtn = function () {
     this.script = this.splitEditor.getValue();
-    this.$editWindow.addStyle('visibility', 'hidden');
+    this.$editWindow.addStyle('visibility', 'hidden')
+        .addStyle('opacity', '0');
     this.$playBtn.disabled = true;
     var onFinish = function (err) {
         if (err instanceof Error) {
