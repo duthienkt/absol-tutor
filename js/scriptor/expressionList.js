@@ -19,6 +19,7 @@ import UserQuickMenu from "./UserQuickMenu";
 import UserLevel2Menu from "./UserLevel2Menu";
 import Delay from "./Delay";
 import UserSwitchTabIfNeed from "./UserSwitchTabIfNeed";
+import UserSwitchTab from "./UserSwitchTab";
 
 var commandList = [
     SetRootView,
@@ -41,6 +42,7 @@ var commandList = [
     UserQuickMenu,
     UserLevel2Menu,
     UserSwitchTabIfNeed,
+    UserSwitchTab,
     Delay
 ];
 
