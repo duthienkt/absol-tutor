@@ -1,19 +1,17 @@
-import BaseCommand from "./BaseCommand";
+import UserBaseAction from "./UserBaseAction";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
-import UserQuickMenu from "./UserQuickMenu";
 import TACData from "./TACData";
 
 /***
- * @extends BaseCommand
+ * @extends UserBaseAction
  * @constructor
  */
 function UserSwitchTabIfNeed() {
-    BaseCommand.apply(this, arguments);
-    this._rejectCb = null;
+    UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserSwitchTabIfNeed, BaseCommand);
+OOP.mixClass(UserSwitchTabIfNeed, UserBaseAction);
 
 /***
  *
@@ -55,19 +53,19 @@ UserSwitchTabIfNeed.prototype.exec = function () {
     var tabFrameElt = tabInfo.tabFrameElt;
     var activeTabId = tabViewElt.historyOfTab[tabViewElt.historyOfTab.length - 1];
     if (activeTabId === tabFrameElt.id) {
-        return new Promise(function (resolve, reject){
+        return new Promise(function (resolve, reject) {
             if (!thisC.args.notNeedMessage) {
                 resolve();
                 return;
             }
             thisC.showToast(thisC.args.notNeedMessage);
-            var timeoutId = setTimeout(function (){
+            var timeoutId = setTimeout(function () {
                 timeoutId = -1;
                 thisC.stop();
                 resolve();
             }, 2000);
-            thisC._rejectCb = function (){
-                if (timeoutId >=0){
+            thisC._rejectCb = function () {
+                if (timeoutId >= 0) {
                     clearTimeout(timeoutId);
                     timeoutId = -1;
                     reject();
@@ -88,21 +86,16 @@ UserSwitchTabIfNeed.prototype.exec = function () {
             tabButton.off('click', onClick);
             reject();
         };
-        thisC.onlyInteractWith(tabButton, function () {
+        thisC._clickCb = function () {
             if (wrongMessage)
                 thisC.showTooltip(tabButton, wrongMessage);
             thisC.highlightElt(tabButton);
-        });
+        }
+        thisC.onlyClickTo(tabButton);
         tabButton.on('click', onClick);
-    }).then(this.stop.bind(this));
+    });
 };
 
-UserSwitchTabIfNeed.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
-};
 
 UserSwitchTabIfNeed.attachEnv = function (tutor, env) {
     env.userSwitchTabIfNeed = function (eltPath, message, wrongMessage, notNeedMessage) {
