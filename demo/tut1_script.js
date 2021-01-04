@@ -1,20 +1,11 @@
-var index = 0;
-var message = "Bạn đã hoàn thành bài hướng dẫn";
-var n = 2;
-function haha(){
-    for (var i = 0; i < n; ++i){
-        showToastMessage("Congratulations!", '['+(index++)+']'+message, 3000 , TIME_OUT(100), 'success');
-        delay(1000);
-    }
-}
-
-
-userSelectMenu($('selecttreemenu'), 4373,
-    'Trong menu bộ phận, chọn "Dự Án & KỸ THUẬT"', 'Chọn đúng bộ phận "Dự Án & KỸ THUẬT"',"Có thể tìm kiếm để nhanh hơn");
-userCheckbox($('checkboxinput'), true, "Tick vào checkbox để hiện sách nhân viên", "Checkbox này phải được bật");
-userInputText($('input[placeholder="type here to search..."]'), /.+/,
-    "Nhập đoạn chuỗi vào ô tìm kiếm", "Không được để trống");
-
-var inputelt = $('input[value="có sẵn value"]');
-if (showToastMessage("Text input", 'Giá trị là '+ inputelt.placeholder, 3000, TIME_OUT(100)));
-haha();
+/*
+userClick("tab-frame-6 close_btn", "Nhấn vào nút đóng", "Nút này nè")
+userCheckbox("tab-frame-6 some_div employee_checkbox", true, "tick vào nhân viên", "phải bật");
+userCalendarInput("tab-frame-6 some_div start_date", datetime.parseDMY('22/12/2020'), 'Chọn 22/12', "sai rồi" );
+userInputText("tab-frame-6 some_div search_ipt", '32',"Nhập vào số 32", "32")
+userLevel2Menu("main-tab-frame menu_root", ["mnu_report", "mnu_report_kpi"], "Vào menu báo cáo->Báo cáo KPI", "Vào Báo Cáo", "Chọn KPI")
+userQuickMenu("main-tab-frame some_div quick_icon_perspective_41", 'edit', "Chọn QuickMenu đầy tiên>edit", "Sai rồi");
+// userSelectMenu("main-tab-frame some_div department_select", 4432, "Tại bộ phận chọn Nhà máy ấp", 'Chọn đúng nhà máy ấp', "có thể tìm kiếm")
+userInputText("tab-frame-6 some_div search_ipt", '32',"Nhập vào số 32", "32")
+userSwitchTab("main-tab-frame some_div search_ipt", "Mở tab đầu tiên", "sai rồi")
+*/
