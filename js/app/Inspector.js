@@ -111,6 +111,7 @@ Inspector.prototype.tag2Icon = {
 /**
  *
  * @param {Array<string>} path
+ * @param {string} tagName
  */
 Inspector.prototype.addNode = function (path, tagName) {
     var current = this.$tree;

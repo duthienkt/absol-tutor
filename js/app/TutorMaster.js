@@ -370,8 +370,8 @@ TutorMaster.prototype.ev_headerDrag = function (event) {
     var newPos = this._headerDragData.initPos.add(d);
     var x = (newPos.x - 2) / (this._headerDragData.screenSize.width - this._headerDragData.bound.width - 4);
     var y = (newPos.y - 2) / (this._headerDragData.screenSize.height - this._headerDragData.bound.height - 4);
-    x = Math.max(0, Math.min(1, x));
-    y = Math.max(0, Math.min(1, y));
+    x = Math.max(0, Math.min(0.98, x));
+    y = Math.max(0, Math.min(0.98, y));
     this.$view.addStyle({
         '--tutor-master-x': x,
         '--tutor-master-y': y
