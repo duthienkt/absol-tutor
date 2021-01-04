@@ -21,11 +21,17 @@ function Tutor(view, script, option) {
     this.script = null;
 
     this.memory = {
-        variables: {},
         share: {
             getCurrentInputText: null
+        },
+        option: {
+            messageDelay: 1000
         }
     };
+
+    this.option = Object.assign({
+        messageDelay: 1000
+    }, option);
     this._commandStack = [];
     this._compile(script);
 }
