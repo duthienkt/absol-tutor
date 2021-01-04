@@ -64,13 +64,6 @@ UserCheckbox.prototype.requestUserAction = function () {
 };
 
 
-UserCheckbox.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
-};
-
 UserCheckbox.attachEnv = function (tutor, env) {
     env.userCheckbox = function (eltPath, checked, message, wrongMessage) {
         return new UserCheckbox(tutor, {
