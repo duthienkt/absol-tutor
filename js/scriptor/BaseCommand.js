@@ -227,11 +227,11 @@ BaseCommand.prototype.showDelayToast = function (message) {
     return new Promise(function (resolve, reject) {
         var resolveTimoutId = setTimeout(function () {
             thisC._rejectCb = null;
+            thisC.preventMouse(false);
             resolve();
 
         }, thisC.tutor.option.messageDelay);
         thisC._rejectCb = function () {
-            thisC.preventMouse(false);
             clearTimeout(resolveTimoutId);
             reject();
         }
