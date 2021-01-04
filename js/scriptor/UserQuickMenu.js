@@ -1,8 +1,4 @@
-/****
- * @externs BaseCommand
- * @constructor
- */
-import BaseCommand from "./BaseCommand";
+import UserBaseAction from "./UserBaseAction";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import {$, $$} from "../dom/Core";
@@ -10,15 +6,15 @@ import findNode from "../util/findNode";
 import TACData from "./TACData";
 
 /***
- * @extends BaseCommand
+ * @extends UserBaseAction
  * @constructor
  */
 function UserQuickMenu() {
-    BaseCommand.apply(this, arguments);
+    UserBaseAction.apply(this, arguments);
     this._rejectCb = null;
 }
 
-OOP.mixClass(UserQuickMenu, BaseCommand);
+OOP.mixClass(UserQuickMenu, UserBaseAction);
 
 UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
     var thisC = this;
@@ -37,11 +33,12 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
             }, 100);
         }
 
-        thisC.onlyInteractWith(elt, function () {
+        thisC._clickCb =  function () {
             thisC.showTooltip(elt, wrongMessage);
             thisC.highlightElt(elt);
             highlight = true;
-        });
+        };
+        thisC.onlyClickTo(elt);
         elt.on('click', onClick);
         thisC._rejectCb = function () {
             elt.off('click', onClick);
@@ -65,7 +62,7 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
             if (!itemElt) {
                 throw new Error("Not found menu id=" + selectId);
             }
-            thisC.onlyInteractWith(itemElt);
+            thisC.onlyClickTo(itemElt);
             if (highlight) {
                 thisC.highlightElt(menuElt);
                 thisC.highlightElt(menuElt);
@@ -114,21 +111,10 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
 };
 
 
-UserQuickMenu.prototype.exec = function () {
-    this.start();
+UserQuickMenu.prototype.requestUserAction = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
     var thisC = this;
-    this.showToast(this.args.message);
-    return this._afterSelectQM(elt, this.args.selectId).then(function () {
-        thisC.stop();
-    });
-};
-
-UserQuickMenu.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
+    return this._afterSelectQM(elt, this.args.selectId);
 };
 
 UserQuickMenu.attachEnv = function (tutor, env) {
