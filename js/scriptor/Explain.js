@@ -19,7 +19,7 @@ Explain.prototype.exec = function () {
     var targetElt = this.tutor.findNode(this.args.eltPath);
     var text = this.args.text;
     this.showTooltip(targetElt, text);
-    this.preventInteract(true);
+    this.preventMouse(true);
     return this.args.until.exec().then(this.stop.bind(this));
 };
 
