@@ -280,7 +280,7 @@ TutorMaster.prototype.ev_clickPlayBtn = function () {
                         message: "Script finish successfully!",
                         variant: 'success',
                         htitle: "Success",
-                        disappearTimeout: 20000
+                        disappearTimeout: 6000
                     }
                 });
             }
@@ -290,7 +290,7 @@ TutorMaster.prototype.ev_clickPlayBtn = function () {
                         message: 'Script is interrupted!',
                         variant: 'warning',
                         htitle: "",
-                        disappearTimeout: 20000
+                        disappearTimeout: 6000
                     }
                 });
             }
@@ -318,7 +318,7 @@ TutorMaster.prototype.ev_clickPlayBtn = function () {
                 variant: 'error',
                 htitle: 'Script Error!',
                 message: err.message,
-                disappearTimeout: 20000
+                disappearTimeout: 10000
             }
         })
         console.error(err);
