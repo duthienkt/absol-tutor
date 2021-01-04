@@ -106,6 +106,7 @@ Inspector.prototype.tag2Icon = {
     'selectmenu': 'span.mdi.mdi-menu-open',
     'quickmenutrigger': 'span.mdi.mdi-dots-vertical-circle-outline',
     'checkbox': 'span.mdi.mdi-check-box-outline',
+    'text-input': 'span.mdi.mdi-form-textbox'
 }
 /**
  *
@@ -184,6 +185,7 @@ Inspector.prototype.ev_mouseenter = function (event) {
             if (target.classList.contains('absol-selectmenu')) tagName = 'selectmenu';
             if (target.classList.contains('as-quick-menu-trigger')) tagName = 'quickmenutrigger';
             if (target.classList.contains('absol-checkbox')) tagName = 'checkbox';
+            if (target.tagName === 'INPUT' && target.type === 'text') tagName = 'text-input';
             this.addNode(idPath, tagName);
         }
         if (target.classList.contains('absol-selectlist-item') || target.classList.contains('absol-selectmenu')) {
