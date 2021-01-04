@@ -71,7 +71,7 @@ UserSelectMenu.prototype._afterCloseList = function (menuElt) {
 UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, searchMessage, highlight) {
     var thisC = this;
     if (highlight) thisC.highlightElt(elt);
-    thisC.onlyInteractWith(elt, function () {
+    thisC.onlyClickTo(elt, function () {
         thisC.highlightElt(elt);
         thisC.showTooltip(elt, wrongMessage);
         highlight = true;
@@ -84,7 +84,7 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
         if (searchMessage) {
             thisC.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
         }
-        thisC.onlyInteractWith(elt.$selectlistBox, function () {
+        thisC.onlyClickTo(elt.$selectlistBox, function () {
             thisC.highlightElt(elt);
             thisC.showTooltip(elt, wrongMessage);
         });
@@ -92,7 +92,7 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
             elt.$selectlistBox.removeClass('atr-on-top');
         }
         return thisC._afterCloseList(elt).then(function () {
-            thisC.onlyInteractWith(null);
+            thisC.onlyClickTo(null);
             elt.$selectlistBox.removeClass('atr-on-top');
             thisC._rejectCb1 = null;
             if (elt.value === value) {
