@@ -30,7 +30,33 @@ function BaseCommand(tutor, args) {
     this.args = args;
     this.tooltipToken = null;
     this._tostElts = [];
-    this._preventKeyListener = null;
+    this.hadWrongAction = false;
+    /** KeyBoard **/
+    this._ev_docKeyboard = this.ev_docKeyboard.bind(this);
+    this._keyboardPrevented = false;
+
+    /***
+     * only call if prevented keyboard
+     * @type {function():void}
+     * @protected
+     */
+    this._keyCb = null;
+    /** Mouse **/
+    this.ev_clickModal = this.ev_clickModal.bind(this);
+
+    /***
+     * only call if prevented mouse
+     * @type {function():void}
+     * @protected
+     */
+    this._clickCb = null;
+
+
+    /***
+     * @type {function():void}
+     * @protected
+     */
+    this._rejectCb = null;
 }
 
 OOP.mixClass(BaseCommand, Context);
@@ -47,11 +73,6 @@ BaseCommand.prototype.$puncturedModal = _({
     class: 'as-transparent',
     props: {
         onInteractOut: null,
-    },
-    on: {
-        click: function (event) {
-            this.onInteractOut && this.onInteractOut(event);
-        }
     }
 });
 
@@ -62,12 +83,30 @@ BaseCommand.prototype.$tooltipContent = _({
 });
 
 /***
+ *
+ * @param {KeyboardEvent} event
+ */
+BaseCommand.prototype.ev_docKeyboard = function (event) {
+    this.hadWrongAction = true;
+    event.preventDefault();
+    if (this._keyCb) {
+        this._keyCb();
+    }
+};
+
+BaseCommand.prototype.ev_clickModal = function (event) {
+    this.hadWrongAction = true;
+    if (this._clickCb)
+        this._clickCb();
+};
+
+
+/***
  * @param {HTMLElement} elt
  * @param {MouseEvent} event
  */
 BaseCommand.prototype.hitSomeOf = function (elt, event) {
     if (hitElement(elt, event)) return false;
-    console.log()
     var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
     var p = new Vec2(event.clientX, event.clientY);
     if (!bound.containsPoint(p)) return false;
@@ -86,20 +125,32 @@ BaseCommand.prototype.hitSomeOf = function (elt, event) {
 
 BaseCommand.prototype.onStart = function () {
     this.tutor.commandPush(this);
+    this.$puncturedModal.on('click', this.ev_clickModal);
+    this.$transparentModal.on('click', this.ev_clickModal);
 };
 
-BaseCommand.prototype.onPause = function () {
-};
 
-BaseCommand.prototype.cancel = null;
+BaseCommand.prototype.cancel = function () {
+    if (this._rejectCb) {
+        this._rejectCb();
+        this._rejectCb = null;
+    }
+};
 
 BaseCommand.prototype.onStop = function () {
+    /** modal **/
+    this.$puncturedModal.off('click', this.ev_clickModal);
+    this.$transparentModal.off('click', this.ev_clickModal);
+
+    this._clickCb = null;
+    this._keyCb = null;
+
     this.cancel && this.cancel();
     this.closeTooltip();
     this.closeAllToasts();
     this.highlightElt(null);
-    this.onlyInteractWith(null);
-    this.preventInteract(false);
+    this.onlyClickTo(null);
+    this.preventMouse(false);
     this.preventKeyBoard(false);
     this.tutor.commandPop(this);
 };
@@ -110,7 +161,7 @@ BaseCommand.prototype.md2HTMLElements = function (text) {
     return Array.prototype.slice.call(this.$htmlRender.childNodes);
 };
 
-BaseCommand.prototype.preventInteract = function (flag) {
+BaseCommand.prototype.preventMouse = function (flag) {
     if (!this.$transparentModal.parentElement) {
         document.body.appendChild(this.$transparentModal);
     }
@@ -154,20 +205,37 @@ BaseCommand.prototype.highlightElt = function (elt) {
     }
 };
 
-BaseCommand.prototype.onlyInteractWith = function (elt, onInteractOut) {
+BaseCommand.prototype.onlyClickTo = function (elt) {
     if (!this.$puncturedModal.parentElement) {
         document.body.appendChild(this.$puncturedModal);
     }
     if (elt) {
         this.$puncturedModal.follow(elt);
         this.$puncturedModal.removeClass('as-hidden');
-        this.$puncturedModal.onInteractOut = onInteractOut;
     }
     else {
         this.$puncturedModal.follow(null);
         this.$puncturedModal.addClass('as-hidden');
         this.$puncturedModal.onInteractOut = null;
     }
+};
+
+BaseCommand.prototype.showDelayToast = function (message) {
+    var thisC = this;
+    this.preventMouse(true);
+    this.showToast(message);
+    return new Promise(function (resolve, reject) {
+        var resolveTimoutId = setTimeout(function () {
+            thisC._rejectCb = null;
+            resolve();
+
+        }, thisC.tutor.option.messageDelay);
+        thisC._rejectCb = function () {
+            thisC.preventMouse(false);
+            clearTimeout(resolveTimoutId);
+            reject();
+        }
+    })
 };
 
 BaseCommand.prototype.showTooltip = function (elt, message) {
