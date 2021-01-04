@@ -78,6 +78,7 @@ UserSwitchTabIfNeed.prototype.exec = function () {
     this.showToast(message);
     return new Promise(function (resolve, reject) {
         function onClick() {
+            tabButton.removeClass('atr-tab-button-disabled-close');
             resolve();
         }
 
