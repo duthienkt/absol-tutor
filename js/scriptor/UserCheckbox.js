@@ -1,38 +1,31 @@
-import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import FunctionNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import UserBaseAction from "./UserBaseAction";
 
 /***
- * @extends BaseCommand
+ * @extends UserBaseAction
  * @constructor
  */
 function UserCheckbox() {
-    BaseCommand.apply(this, arguments);
-    this._rejectCb = null;
+    UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserCheckbox, BaseCommand);
+OOP.mixClass(UserCheckbox, UserBaseAction);
 
 
-UserCheckbox.prototype.exec = function () {
+UserCheckbox.prototype.requestUserAction = function () {
     var thisC = this;
-    this.start();
     var elt = this.tutor.findNode(this.args.eltPath);
-    var message = this.args.message;
     var wrongMessage = this.args.wrongMessage;
     var checked = this.args.checked;
-
-    function onInteractOut() {
+    this._clickCb = function () {
         thisC.highlightElt(elt);
         if (wrongMessage) {
             thisC.showTooltip(elt, wrongMessage);
         }
     }
-
-    thisC.onlyInteractWith(elt, onInteractOut);
-    thisC.showToast(message);
-
+    this.onlyClickTo(elt);
     return new Promise(function (resolve, reject) {
         var clickTimeout = -1;
 
@@ -67,7 +60,7 @@ UserCheckbox.prototype.exec = function () {
                 .off('click', onClick);
             reject();
         }
-    }).then(this.stop.bind(this));
+    });
 };
 
 
@@ -119,7 +112,6 @@ TACData.define('userCheckbox', {
         { name: 'wrongMessage', type: 'string' }
     ]
 });
-
 
 
 export default UserCheckbox;
