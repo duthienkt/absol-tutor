@@ -1,19 +1,18 @@
-import BaseCommand from "./BaseCommand";
+import UserBaseAction from "./UserBaseAction";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import findNode from "../util/findNode";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
 import TACData from "./TACData";
 
 /***
- * @extends BaseCommand
+ * @extends UserBaseAction
  * @constructor
  */
 function UserLevel2Menu() {
-    BaseCommand.apply(this, arguments);
+    UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserLevel2Menu, BaseCommand);
+OOP.mixClass(UserLevel2Menu, UserBaseAction);
 
 
 UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highlight) {
@@ -30,13 +29,14 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
         if (!subItem) {
             throw new Error("Not found menu id=" + subId);
         }
-        thisC.onlyInteractWith(rootElt, function () {
+        thisC._clickCb = function () {
             highlight = true;
             thisC.highlightElt(rootElt);
             if (wrongMessage) {
                 thisC.showTooltip(rootElt, wrongMessage);
             }
-        });
+        }
+        thisC.onlyClickTo(rootElt);
         if (highlight) {
             thisC.highlightElt(itemElt);
             if (wrongMessage) {
@@ -46,7 +46,7 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
 
         function onActiveTab(event) {
             if (event.tabIndex === itemIndex) {
-                thisC.onlyInteractWith(subItem);
+                thisC.onlyClickTo(subItem);
                 if (highlight) {
                     if (wrongMessage1) {
                         thisC.showTooltip(subItem, wrongMessage1);
@@ -98,23 +98,11 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
 };
 
 
-UserLevel2Menu.prototype.exec = function () {
-    this.start();
-    var thisC = this;
+UserLevel2Menu.prototype.requestUserAction = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
-    this.showToast(this.args.message);
-    return this._afterSelectRoot(elt, this.args.menuItemPath[0], this.args.menuItemPath[1], false).then(function () {
-        thisC.stop();
-    });
+    return this._afterSelectRoot(elt, this.args.menuItemPath[0], this.args.menuItemPath[1], false);
 };
 
-
-UserLevel2Menu.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
-};
 
 UserLevel2Menu.attachEnv = function (tutor, env) {
     env.userLevel2Menu = function (eltPath, menuItemPath, message, wrongMessage, wrongMessage1) {
