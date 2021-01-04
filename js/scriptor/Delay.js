@@ -18,7 +18,7 @@ OOP.mixClass(Delay, BaseCommand);
 Delay.prototype.exec = function () {
     var thisC = this;
     this.start();
-    this.preventInteract(true);
+    this.preventMouse(true);
     var trigger = this.args.trigger;
     if (trigger.exec) {
         if (trigger.depthClone) trigger = trigger.depthClone();
