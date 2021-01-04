@@ -1,38 +1,34 @@
-import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import wrapAsync from "../util/wrapAsync";
 import FunctionKeyManager from "./TutorNameManager";
 import AElement from "absol/src/HTML5/AElement";
 import TACData from "./TACData";
+import UserBaseAction from "./UserBaseAction";
 
 /***
- * @extends BaseCommand
+ * @extends UserBaseAction
  * @constructor
  */
 function UserInputText() {
-    BaseCommand.apply(this, arguments);
-    this._rejectCb = null;
+    UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserInputText, BaseCommand);
+OOP.mixClass(UserInputText, UserBaseAction);
 
-UserInputText.prototype.exec = function () {
-    this.start();
+UserInputText.prototype.requestUserAction = function () {
     var matchExpression = this.args.match;
     var thisC = this;
     var elt = this.tutor.findNode(this.args.eltPath);
-    var message = this.args.message;
     var wrongMessage = this.args.wrongMessage;
-    var match = this.args.match;
 
-    thisC.showToast(message);
     var changed = false;
-    thisC.onlyInteractWith(elt, function () {
+    this._clickCb = function () {
         var result = verify();
         if (!result || !changed) {
             thisC.highlightElt(elt);
         }
-    });
+    };
+    thisC.onlyClickTo(elt);
 
     function verify() {
         var isMatched;
@@ -101,27 +97,11 @@ UserInputText.prototype.exec = function () {
             if (changeTimeout >= 0) clearTimeout(changeTimeout);
             reject();
         };
-    }).then(this.stop.bind(this));
-};
-
-UserInputText.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
+    });
 };
 
 
 UserInputText.attachEnv = function (tutor, env) {
-    env.USER_INPUT_TEXT = function (eltPath, match, message, wrongMessage) {
-        return new UserInputText(tutor, {
-            eltPath: eltPath,
-            match: match,
-            message: message,
-            wrongMessage: wrongMessage
-        });
-    };
-
     env.userInputText = function (eltPath, match, message, wrongMessage) {
         return new UserInputText(tutor, {
             eltPath: eltPath,
@@ -146,7 +126,8 @@ TACData.define('userInputText', {
         { name: 'wrongMessage', type: 'string' }
     ]
 }).define('EMAIL_REGEX', {
-    type: 'Regex'
+    type: 'Regex',
+    desc: "Biểu thức kiểm tra email"
 });
 
 
