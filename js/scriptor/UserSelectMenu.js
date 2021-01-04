@@ -1,20 +1,18 @@
-import BaseCommand from "./BaseCommand";
+import UserBaseAction from "./UserBaseAction";
 import OOP from "absol/src/HTML5/OOP";
-import wrapAsync from "../util/wrapAsync";
-import SelectTreeMenu from "absol-acomp/js/SelectTreeMenu";
 import '../../css/basecommand.css';
 import FunctionNameManager from "./TutorNameManager";
 import TACData from "./TACData";
 
 /***
- * @extends BaseCommand
+ * @extends UserBaseAction
  * @constructor
  */
 function UserSelectMenu() {
-    BaseCommand.apply(this, arguments);
+    UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserSelectMenu, BaseCommand);
+OOP.mixClass(UserSelectMenu, UserBaseAction);
 
 
 UserSelectMenu.prototype._afterOpenList = function (menuElt) {
@@ -71,11 +69,13 @@ UserSelectMenu.prototype._afterCloseList = function (menuElt) {
 UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, searchMessage, highlight) {
     var thisC = this;
     if (highlight) thisC.highlightElt(elt);
-    thisC.onlyClickTo(elt, function () {
+    this._clickCb = function () {
         thisC.highlightElt(elt);
-        thisC.showTooltip(elt, wrongMessage);
+        if (wrongMessage)
+            thisC.showTooltip(elt, wrongMessage);
         highlight = true;
-    });
+    }
+    thisC.onlyClickTo(elt);
     return thisC._afterOpenList(elt).then(function () {
         if (highlight) {
             thisC.highlightElt(elt);
@@ -84,10 +84,7 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
         if (searchMessage) {
             thisC.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
         }
-        thisC.onlyClickTo(elt.$selectlistBox, function () {
-            thisC.highlightElt(elt);
-            thisC.showTooltip(elt, wrongMessage);
-        });
+        thisC.onlyClickTo(elt.$selectlistBox);
         thisC._rejectCb1 = function () {
             elt.$selectlistBox.removeClass('atr-on-top');
         }
@@ -110,13 +107,7 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
 };
 
 
-UserSelectMenu.prototype.exec = function () {
-    var thisC = this;
-    this.start();
-    /***
-     *
-     * @type {SelectTreeMenu}
-     */
+UserSelectMenu.prototype.requestUserAction = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
     var value = this.args.value;
     var items;
@@ -127,25 +118,11 @@ UserSelectMenu.prototype.exec = function () {
         }
     }
 
-    var message = this.args.message;
     var wrongMessage = this.args.wrongMessage;
     var searchMessage = this.args.searchMessage;
-    thisC.showToast(message);
-    return thisC._afterSelect(elt, value, wrongMessage, searchMessage).then(function () {
-        thisC.stop();
-    });
+    return this._afterSelect(elt, value, wrongMessage, searchMessage);
 };
 
-UserSelectMenu.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
-    if (this._rejectCb1) {
-        this._rejectCb1();
-        this._rejectCb1 = null;
-    }
-};
 
 UserSelectMenu.attachEnv = function (tutor, env) {
     env.userSelectMenu = function (eltPath, value, message, wrongMessage, searchMessage) {
