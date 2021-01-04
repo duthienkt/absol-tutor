@@ -13,9 +13,13 @@ import Rectangle from "absol/src/Math/Rectangle";
 var showdownConverter = new Converter();
 
 /***
+ * @typedef {{eltPath:string, message:string, wrongMessage:string, text: string, query: string, value:(string|number|null), until:(BaseCommand|(function():Promise))}} TutorCommandArgs
+ */
+
+/***
  * @extends Context
  * @param tutor
- * @param args
+ * @param {TutorCommandArgs} args
  * @constructor
  */
 function BaseCommand(tutor, args) {
@@ -25,7 +29,7 @@ function BaseCommand(tutor, args) {
      */
     this.tutor = tutor;
     /***
-     * @type {{eltPath:string, message:string, wrongMessage:string, text: string, query: string, value:(string|number|null), until:BaseCommand}|{}}
+     * @type {TutorCommandArgs}
      */
     this.args = args;
     this.tooltipToken = null;
