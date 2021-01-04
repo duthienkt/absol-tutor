@@ -34,7 +34,7 @@ ShowToastMessage.prototype.exec = function () {
         child: BaseCommand.prototype.md2HTMLElements.call({ $htmlRender: BaseCommand.prototype.$htmlRender }, text)
     });
     if (typeof until === "function") {
-        thisC.preventInteract(true);
+        thisC.preventMouse(true);
         thisC.preventKeyBoard(true);
         return until().then(function () {
             thisC.$toast = null;
@@ -42,7 +42,7 @@ ShowToastMessage.prototype.exec = function () {
         });
     }
     else if (until && until.exec && until.depthClone) {
-        thisC.preventInteract(true);
+        thisC.preventMouse(true);
         return until.depthClone().exec().then(function () {
             thisC.$toast = null;
             thisC.stop();
