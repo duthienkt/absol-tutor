@@ -1,59 +1,51 @@
-import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import UserBaseAction from "./UserBaseAction";
 
 /***
- * @extends BaseCommand
+ * @extends UserBaseAction
  * @constructor
  */
 function UserClick() {
-    BaseCommand.apply(this, arguments);
-    this._rejectCb = null;
+    UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserClick, BaseCommand);
+OOP.mixClass(UserClick, UserBaseAction);
 
-UserClick.prototype.exec = function () {
-    this.start();
+UserClick.prototype.requestUserAction = function (){
     var thisC = this;
     var elt = this.tutor.findNode(this.args.eltPath);
     var wrongMessage = this.args.wrongMessage;
-    thisC.onlyInteractWith(elt, function () {
+    this._clickCb = function (){
         thisC.highlightElt(elt);
         if (wrongMessage)
             thisC.showTooltip(elt, wrongMessage);
-    });
+    };
+    this.onlyClickTo(elt);
     this.preventKeyBoard(true);
-    var message = this.args.message;
-    this.showToast(message);
     return new Promise(function (resolve, reject) {
-        function onClick(){
-            thisC._rejectCb  = null;
+        function onClick() {
+            thisC._rejectCb = null;
             resolve();
         }
+
         thisC._rejectCb = function () {
             elt.off(onClick);
             document.body.removeEventListener("click", clickForceGround);
             reject();
         };
-        function clickForceGround(event){
-            if (thisC.hitSomeOf(elt, event)){
+
+        function clickForceGround(event) {
+            if (thisC.hitSomeOf(elt, event)) {
                 reject(new Error("Duplicated id detected!"));
             }
         }
+
         elt.once('click', onClick);
         document.body.addEventListener("click", clickForceGround);
-    }).then(function () {
-        this.stop();
-    }.bind(this));
-};
+    })
 
-UserClick.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
 };
 
 UserClick.attachEnv = function (tutor, env) {
