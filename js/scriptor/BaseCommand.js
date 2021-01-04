@@ -180,17 +180,13 @@ BaseCommand.prototype.preventMouse = function (flag) {
 
 BaseCommand.prototype.preventKeyBoard = function (flag) {
     if (flag) {
-        if (!this._preventKeyListener) {
-            this._preventKeyListener = function (event) {
-                event.preventDefault();
-            }
-            document.addEventListener('keydown', this._preventKeyListener);
+        if (!this._keyboardPrevented) {
+            document.addEventListener('keydown', this.ev_docKeyboard);
         }
     }
     else {
-        if (this._preventKeyListener) {
-            document.removeEventListener('keydown', this._preventKeyListener);
-            this._preventKeyListener = null;
+        if (this._keyboardPrevented) {
+            document.removeEventListener('keydown', this.ev_docKeyboard);
         }
     }
 };
