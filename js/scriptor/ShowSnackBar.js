@@ -16,7 +16,7 @@ OOP.mixClass(ShowSnackBar, BaseCommand);
 
 ShowSnackBar.prototype.exec = function () {
     this.start();
-    this.preventInteract(true);
+    this.preventMouse(true);
     SnackbarElt.show(this.args.text);
     if (this.args.until && this.args.until.exec) {
         return this.args.until.depthClone().exec().then(this.stop.bind(this));
