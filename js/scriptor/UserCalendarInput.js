@@ -1,25 +1,25 @@
-import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import {compareDate} from "absol/src/Time/datetime";
 import ChromeCalendar from "absol-acomp/js/ChromeCalendar";
 import TACData from "./TACData";
+import UserBaseAction from "./UserBaseAction";
 
 
 /***
- * @extends BaseCommand
+ * @extends UserBaseAction
  * @constructor
  */
 function UserCalendarInput() {
-    BaseCommand.apply(this, arguments);
+    UserBaseAction.apply(this, arguments);
     this._rejectCb = null;
 }
 
-OOP.mixClass(UserCalendarInput, BaseCommand);
+OOP.mixClass(UserCalendarInput, UserBaseAction);
 
 UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, highlight) {
     var thisC = this;
-    this.onlyInteractWith(elt);
+    this.onlyClickTo(elt);
     return new Promise(function (resolve, reject) {
         if (highlight) {
             thisC.highlightElt(elt);
@@ -35,7 +35,7 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
             clickTimeout = setTimeout(function () {
                 clickTimeout = -1;
                 if (ChromeCalendar.$calendar && ChromeCalendar.$calendar.isDescendantOf(document.body)) {
-                    thisC.onlyInteractWith(ChromeCalendar.$calendar);
+                    thisC.onlyClickTo(ChromeCalendar.$calendar);
                     if (highlight) {
                         thisC.highlightElt(ChromeCalendar.$calendar);
                         if (thisC.args.wrongMessage) {
@@ -45,7 +45,7 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
                 }
                 else {
                     highlight = true;
-                    thisC.onlyInteractWith(elt);
+                    thisC.onlyClickTo(elt);
                     thisC.highlightElt(elt);
                     if (thisC.args.wrongMessage) {
                         thisC.showTooltip(elt, thisC.args.wrongMessage);
@@ -71,7 +71,7 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
             }
             else {
                 highlight = true;
-                thisC.onlyInteractWith(elt);
+                thisC.onlyClickTo(elt);
                 thisC.highlightElt(elt);
                 if (thisC.args.wrongMessage) {
                     thisC.showTooltip(elt, thisC.args.wrongMessage);
@@ -95,24 +95,13 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
     });
 };
 
-
-UserCalendarInput.prototype.exec = function () {
+UserCalendarInput.prototype.requestUserAction = function (){
     var thisC = this;
-    this.start();
     var elt = thisC.tutor.findNode(thisC.args.eltPath);
     var value = this.args.value;
-    this.showToast(this.args.message);
-    return this._afterSelectCalendar(elt, value).then(function () {
-        thisC.stop();
-    });
+    return this._afterSelectCalendar(elt, value);
 };
 
-UserCalendarInput.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
-};
 
 UserCalendarInput.attachEnv = function (tutor, env) {
     env.userCalendarInput = function (eltPath, value, message, wrongMessage) {
