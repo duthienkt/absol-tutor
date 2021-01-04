@@ -113,7 +113,6 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
 
 UserQuickMenu.prototype.requestUserAction = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
-    var thisC = this;
     return this._afterSelectQM(elt, this.args.selectId);
 };
 
