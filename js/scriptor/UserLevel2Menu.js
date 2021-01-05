@@ -18,12 +18,18 @@ OOP.mixClass(UserLevel2Menu, UserBaseAction);
 UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highlight) {
     var thisC = this;
     return new Promise(function (resolve, reject) {
+        thisC.highlightElt(rootElt);
+
         var wrongMessage = thisC.args.wrongMessage;
         var wrongMessage1 = thisC.args.wrongMessage1 || thisC.args.wrongMessage;
         var itemElt = findNode(id, rootElt);
         if (!itemElt) {
             throw new Error("Not found menu id=" + JSON.stringify(id));
         }
+        var highlightTimeout = setTimeout(function () {
+            highlightTimeout = -1;
+            thisC.highlightElt(itemElt);
+        }, 400);
         var itemIndex = rootElt.$items.indexOf(itemElt);
         var subItem = findNode(subId, itemElt.$vmenu);
         if (!subItem) {
@@ -32,13 +38,20 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
         thisC._clickCb = function () {
             highlight = true;
             thisC.highlightElt(rootElt);
+            if (highlightTimeout) {
+                highlightTimeout = -1;
+
+            }
+            highlightTimeout = setTimeout(function () {
+                highlightTimeout = -1;
+                thisC.highlightElt(itemElt);
+            }, 400);
             if (wrongMessage) {
                 thisC.showTooltip(rootElt, wrongMessage);
             }
         }
         thisC.onlyClickTo(rootElt);
         if (highlight) {
-            thisC.highlightElt(itemElt);
             if (wrongMessage) {
                 thisC.showTooltip(itemElt, wrongMessage);
             }
@@ -47,14 +60,18 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
         function onActiveTab(event) {
             if (event.tabIndex === itemIndex) {
                 thisC.onlyClickTo(subItem);
+                thisC.highlightElt(itemElt.$vmenu);
+                if (highlightTimeout) {
+                    highlightTimeout = -1;
+                }
+                highlightTimeout = setTimeout(function () {
+                    thisC.highlightElt(subItem);
+                }, 400);
                 if (highlight) {
                     if (wrongMessage1) {
                         thisC.showTooltip(subItem, wrongMessage1);
                     }
-                    thisC.highlightElt(itemElt.$vmenu);
-                    setTimeout(function () {
-                        thisC.highlightElt(subItem);
-                    }, 800);
+
                 }
             }
         }
@@ -74,6 +91,10 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
 
         function onPressItem(event) {
             if (cancelTimeout >= 0) clearTimeout(cancelTimeout);
+            if (highlightTimeout) {
+                highlightTimeout = -1;
+                clearTimeout(highlightTimeout);
+            }
             rootElt.off('activetab', onActiveTab)
                 .off('cancel', onCancel)
                 .off('press', onPressItem);
@@ -85,6 +106,10 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
             .on('cancel', onCancel)
             .on('press', onPressItem);
         thisC._rejectCb = function () {
+            if (highlightTimeout) {
+                highlightTimeout = -1;
+                clearTimeout(highlightTimeout);
+            }
             rootElt.off('activetab', onActiveTab)
                 .off('cancel', onCancel)
                 .off('press', onPressItem);
