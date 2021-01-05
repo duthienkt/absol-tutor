@@ -75,7 +75,6 @@ UserSwitchTabIfNeed.prototype.exec = function () {
     }
     var tabButton = tabViewElt.$tabbar.getButtonByIdent(tabFrameElt.id);
     tabButton.addClass('atr-tab-button-disabled-close');
-    console.log("HL")
     this.highlightElt(tabButton);
     this.showToast(message);
     return new Promise(function (resolve, reject) {
