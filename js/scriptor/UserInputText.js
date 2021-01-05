@@ -20,8 +20,14 @@ UserInputText.prototype.requestUserAction = function () {
     var thisC = this;
     var elt = this.tutor.findNode(this.args.eltPath);
     var wrongMessage = this.args.wrongMessage;
-
+    thisC.highlightElt(elt);
     var changed = false;
+
+    function onClick() {
+        thisC.highlightElt(null);
+    }
+
+
     this._clickCb = function () {
         var result = verify();
         if (!result || !changed) {
@@ -61,11 +67,30 @@ UserInputText.prototype.requestUserAction = function () {
     return new Promise(function (resolve, reject) {
         var changeTimeout = -1;
 
+        function onKeydown(event) {
+            thisC.highlightElt(null);
+            if (event.key === 'Enter') {
+                if (verify()) {
+                    elt.off('keyup', verify)
+                        .off('change', onChange)
+                        .off('blur', onChange)
+                        .off('keydown', onKeydown)
+                        .off('click', onClick);
+                    if (changeTimeout >= 0) clearTimeout(changeTimeout);
+
+                    thisC._rejectCb = null;
+                    resolve();
+                }
+            }
+        }
+
         function onChange(event) {
             if (verify()) {
                 elt.off('keyup', verify)
                     .off('change', onChange)
-                    .off('blur', onChange);
+                    .off('blur', onChange)
+                    .off('keydown', onKeydown)
+                    .off('click', onClick);
                 if (changeTimeout >= 0) clearTimeout(changeTimeout);
 
                 thisC._rejectCb = null;
@@ -89,7 +114,9 @@ UserInputText.prototype.requestUserAction = function () {
             })
             .once('blur', function () {
                 changed = true;
-            });
+            })
+            .on('click', onClick)
+            .on('keydown', onKeydown);
         thisC._rejectCb = function () {
             elt.off('keyup', verify)
                 .off('change', onChange)
