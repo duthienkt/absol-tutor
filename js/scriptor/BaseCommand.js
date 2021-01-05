@@ -9,6 +9,7 @@ import {Converter} from 'showdown';
 import {hitElement} from "absol/src/HTML5/EventEmitter";
 import Vec2 from "absol/src/Math/Vec2";
 import Rectangle from "absol/src/Math/Rectangle";
+import BlinkMask from "../dom/BlinkMask";
 
 var showdownConverter = new Converter();
 
@@ -67,8 +68,11 @@ OOP.mixClass(BaseCommand, Context);
 
 BaseCommand.prototype.$htmlRender = _('div');
 
+/***
+ * @type BlinkMask
+ */
 BaseCommand.prototype.$highlightModal = _({
-    tag: 'puncturedmodal',
+    tag: BlinkMask.tag,
     class: ['atr-explain-modal', 'as-non-interact', 'as-animation']
 });
 
@@ -181,11 +185,13 @@ BaseCommand.prototype.preventMouse = function (flag) {
 BaseCommand.prototype.preventKeyBoard = function (flag) {
     if (flag) {
         if (!this._keyboardPrevented) {
+            this._keyboardPrevented = true;
             document.addEventListener('keydown', this.ev_docKeyboard);
         }
     }
     else {
         if (this._keyboardPrevented) {
+            this._keyboardPrevented = false;
             document.removeEventListener('keydown', this.ev_docKeyboard);
         }
     }
