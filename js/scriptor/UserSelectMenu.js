@@ -69,18 +69,17 @@ UserSelectMenu.prototype._afterCloseList = function (menuElt) {
 UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, searchMessage, highlight) {
     var thisC = this;
     if (highlight) thisC.highlightElt(elt);
+    thisC.highlightElt(elt);
     this._clickCb = function () {
-        thisC.highlightElt(elt);
         if (wrongMessage)
             thisC.showTooltip(elt, wrongMessage);
         highlight = true;
     }
     thisC.onlyClickTo(elt);
     return thisC._afterOpenList(elt).then(function () {
-        if (highlight) {
-            thisC.highlightElt(elt);
-            elt.$selectlistBox.addClass('atr-on-top');
-        }
+        thisC.highlightElt(null);
+        elt.$selectlistBox.addClass('atr-on-top');
+
         if (searchMessage) {
             thisC.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
         }
