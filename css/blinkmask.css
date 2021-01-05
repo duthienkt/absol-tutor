@@ -3,6 +3,7 @@
     background: #ffe807;
     z-index: 999999999;
     pointer-events: none;
+    opacity: 0;
 }
 
 .atr-blink-mask.as-anim {

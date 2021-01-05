@@ -32,7 +32,20 @@ BlinkMask.render = function () {
 };
 
 
-BlinkMask.prototype.follow = PuncturedModal.prototype.follow;
+BlinkMask.prototype.follow = function () {
+    var lastTargetElt = this.$target;
+    var res = PuncturedModal.prototype.follow.apply(this, arguments);
+    var currentTarget = this.$target;
+    if (lastTargetElt !== currentTarget && currentTarget) {
+        this.removeClass('as-anim');
+        setTimeout(function () {
+            if (this.$target === currentTarget) {
+                this.addClass('as-anim');
+            }
+        }.bind(this), 0)
+    }
+    return res;
+};
 
 BlinkMask.prototype.stopTrackPosition = PuncturedModal.prototype.stopTrackPosition;
 
