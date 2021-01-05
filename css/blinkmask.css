@@ -1,0 +1,42 @@
+.atr-blink-mask {
+    position: fixed;
+    background: #ffe807;
+    z-index: 999999999;
+    pointer-events: none;
+}
+
+.atr-blink-mask.as-anim {
+    animation-name: blink;
+    animation-duration: 1.6s;
+    animation-iteration-count: infinite;
+    /*animation-timing-function: linear;*/
+}
+
+
+.atr-blink-mask.as-transparent{
+    animation-name: none;
+    opacity: 0;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    12%{
+        opacity: 0.5;
+    }
+    25% {
+        opacity: 0;
+    }
+    37%{
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
