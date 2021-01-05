@@ -33,19 +33,18 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
             }, 100);
         }
 
-        thisC._clickCb =  function () {
+        thisC._clickCb = function () {
             thisC.showTooltip(elt, wrongMessage);
-            thisC.highlightElt(elt);
             highlight = true;
         };
         thisC.onlyClickTo(elt);
+        thisC.highlightElt(elt);
         elt.on('click', onClick);
         thisC._rejectCb = function () {
             elt.off('click', onClick);
             reject();
         }
         if (highlight) {
-            thisC.highlightElt(elt);
             thisC.showTooltip(elt, wrongMessage);
         }
     });
@@ -62,19 +61,19 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
             if (!itemElt) {
                 throw new Error("Not found menu id=" + selectId);
             }
-            thisC.onlyClickTo(itemElt);
-            if (highlight) {
-                thisC.highlightElt(menuElt);
-                thisC.highlightElt(menuElt);
-                setTimeout(function () {
-                    if (thisC.state !== 'RUNNING') return;
-                    if (itemElt.isDescendantOf(document.body)) {
-                        thisC.highlightElt(itemElt);
+
+
+            setTimeout(function () {
+                if (thisC.state !== 'RUNNING') return;
+                if (itemElt.isDescendantOf(document.body)) {
+                    thisC.onlyClickTo(itemElt);
+                    thisC.highlightElt(itemElt);
+                    if (highlight) {
                         if (wrongMessage)
                             thisC.showTooltip(itemElt, wrongMessage);
                     }
-                }, 100);
-            }
+                }
+            }, 50);
 
             function onSelect(ev) {
                 document.body.removeEventListener('click', onClose);
