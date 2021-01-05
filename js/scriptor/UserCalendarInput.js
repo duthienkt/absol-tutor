@@ -20,9 +20,9 @@ OOP.mixClass(UserCalendarInput, UserBaseAction);
 UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, highlight) {
     var thisC = this;
     this.onlyClickTo(elt);
+    thisC.highlightElt(elt);
     return new Promise(function (resolve, reject) {
         if (highlight) {
-            thisC.highlightElt(elt);
             if (thisC.args.wrongMessage) {
                 thisC.showTooltip(elt, thisC.args.wrongMessage);
             }
@@ -32,12 +32,12 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
 
         function onCLick() {
             if (clickTimeout >= 0) clearTimeout(clickTimeout);
+            thisC.highlightElt(null);
             clickTimeout = setTimeout(function () {
                 clickTimeout = -1;
                 if (ChromeCalendar.$calendar && ChromeCalendar.$calendar.isDescendantOf(document.body)) {
                     thisC.onlyClickTo(ChromeCalendar.$calendar);
                     if (highlight) {
-                        thisC.highlightElt(ChromeCalendar.$calendar);
                         if (thisC.args.wrongMessage) {
                             thisC.showTooltip(ChromeCalendar.$calendar, thisC.args.wrongMessage);
                         }
@@ -61,7 +61,7 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
                 clearTimeout(clickTimeout);
                 clickTimeout = -1;
             }
-            if (compareDate(value, requestValue) == 0) {
+            if (compareDate(value, requestValue) === 0) {
                 document.body.removeEventListener('click', onCLick);
                 elt.off('change', onChange);
                 setTimeout(function () {
@@ -72,6 +72,7 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
             else {
                 highlight = true;
                 thisC.onlyClickTo(elt);
+                console.log("HL")
                 thisC.highlightElt(elt);
                 if (thisC.args.wrongMessage) {
                     thisC.showTooltip(elt, thisC.args.wrongMessage);
@@ -80,7 +81,7 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
         }
 
         elt.on('change', onChange);
-        setTimeout(function (){
+        setTimeout(function () {
             document.body.addEventListener('click', onCLick);
         }, 10);
         thisC._rejectCb = function () {
@@ -95,7 +96,7 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
     });
 };
 
-UserCalendarInput.prototype.requestUserAction = function (){
+UserCalendarInput.prototype.requestUserAction = function () {
     var thisC = this;
     var elt = thisC.tutor.findNode(thisC.args.eltPath);
     var value = this.args.value;
