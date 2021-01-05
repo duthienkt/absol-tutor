@@ -19,8 +19,8 @@ UserCheckbox.prototype.requestUserAction = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
     var wrongMessage = this.args.wrongMessage;
     var checked = this.args.checked;
+    thisC.highlightElt(elt);
     this._clickCb = function () {
-        thisC.highlightElt(elt);
         if (wrongMessage) {
             thisC.showTooltip(elt, wrongMessage);
         }
