@@ -72,7 +72,6 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
             else {
                 highlight = true;
                 thisC.onlyClickTo(elt);
-                console.log("HL")
                 thisC.highlightElt(elt);
                 if (thisC.args.wrongMessage) {
                     thisC.showTooltip(elt, thisC.args.wrongMessage);
