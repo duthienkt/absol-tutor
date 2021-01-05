@@ -18,7 +18,7 @@ OOP.mixClass(UserSwitchTab, UserSwitchTabIfNeed);
 UserSwitchTab.prototype.requestUserAction = function () {
     var thisC = this;
     var elt = this.tutor.findNode(this.args.eltPath);
-    console.log(elt)
+
     var wrongMessage = this.args.wrongMessage;
     var tabInfo = this.findTabView(elt);
     if (!tabInfo) {
@@ -28,6 +28,7 @@ UserSwitchTab.prototype.requestUserAction = function () {
     var tabFrameElt = tabInfo.tabFrameElt;
     var tabButton = tabViewElt.$tabbar.getButtonByIdent(tabFrameElt.id);
     tabButton.addClass('atr-tab-button-disabled-close');
+    thisC.highlightElt(tabButton);
     return new Promise(function (resolve, reject) {
         function onClick() {
             thisC._clickCb = null;
@@ -43,7 +44,7 @@ UserSwitchTab.prototype.requestUserAction = function () {
         thisC._clickCb = function () {
             if (wrongMessage)
                 thisC.showTooltip(tabButton, wrongMessage);
-            thisC.highlightElt(tabButton);
+
         }
         thisC.onlyClickTo(tabButton);
         tabButton.on('click', onClick);
