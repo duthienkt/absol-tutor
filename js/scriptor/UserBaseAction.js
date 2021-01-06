@@ -20,6 +20,7 @@ UserBaseAction.prototype.requestUserAction = function () {
 
 UserBaseAction.prototype.exec = function () {
     this.start();
+    this.assignTarget(this.tutor.findNode(this.args.eltPath, true));
     return this.showDelayToast(this.args.message).then(this.requestUserAction.bind(this))
         .then(this.stop.bind(this));
 };

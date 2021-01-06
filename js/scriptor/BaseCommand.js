@@ -10,6 +10,7 @@ import {hitElement} from "absol/src/HTML5/EventEmitter";
 import Vec2 from "absol/src/Math/Vec2";
 import Rectangle from "absol/src/Math/Rectangle";
 import BlinkMask from "../dom/BlinkMask";
+import {getScreenSize} from "absol/src/HTML5/Dom";
 
 var showdownConverter = new Converter();
 
@@ -36,9 +37,14 @@ function BaseCommand(tutor, args) {
     this.tooltipToken = null;
     this._tostElts = [];
     this.hadWrongAction = false;
+
+    this.$target = null;
+    this._currentTostPosition = 'se';
+
     /** KeyBoard **/
     this._ev_docKeyboard = this.ev_docKeyboard.bind(this);
     this._keyboardPrevented = false;
+
 
     /***
      * only call if prevented keyboard
@@ -226,6 +232,11 @@ BaseCommand.prototype.onlyClickTo = function (elt) {
     }
 };
 
+/***
+ *
+ * @param {string} message
+ * @param {"se"|"sw"|"ne"|"nw} [pos="se"]
+ */
 BaseCommand.prototype.showDelayToast = function (message) {
     var thisC = this;
     this.preventMouse(true);
@@ -241,7 +252,7 @@ BaseCommand.prototype.showDelayToast = function (message) {
             clearTimeout(resolveTimoutId);
             reject();
         }
-    })
+    });
 };
 
 BaseCommand.prototype.showTooltip = function (elt, message) {
@@ -255,8 +266,15 @@ BaseCommand.prototype.showTooltip = function (elt, message) {
     ToolTip.$holder.addClass('atr-on-top-1');
 };
 
+/***
+ *
+ * @param {string} message
+ * @param {"se"|"sw"|"ne"|"nw } [pos="se"]
+ */
 BaseCommand.prototype.showToast = function (message) {
     if (typeof message !== "string") return;
+    var pos = this._currentTostPosition;
+
     var toastElt = Toast.make({
         class: ['as-variant-background', 'atr-toast-message'],
         props: {
@@ -266,7 +284,7 @@ BaseCommand.prototype.showToast = function (message) {
         },
         child: this.md2HTMLElements(message)
 
-    });
+    }, pos);
     this._tostElts.push(toastElt);
 };
 
@@ -276,6 +294,25 @@ BaseCommand.prototype.closeAllToasts = function () {
             elt.disappear();
         });
     }.bind(this), 1000)
+};
+
+BaseCommand.prototype.assignTarget = function (targetElt) {
+    this.$target = targetElt;
+    if (targetElt) {
+        var bound = targetElt.getBoundingClientRect();
+        var screenSize = getScreenSize();
+        if (this._currentTostPosition === 'se' && bound.left + 400 >= screenSize.width && bound.top + 150 >= screenSize.height) {
+            this._currentTostPosition = 'sw';
+        }
+        else if (this._currentTostPosition === 'sw' && bound.left <= 400 && bound.top + 150 >= screenSize.height) {
+            this._currentTostPosition = 'se';
+        }
+        var toastListElt = Toast.$toastList4Pos[this._currentTostPosition];
+        this._tostElts.forEach(function (elt) {
+            if (!elt.parentElement || elt.parentElement === toastListElt) return;
+            toastListElt.addChild(elt);
+        });
+    }
 };
 
 

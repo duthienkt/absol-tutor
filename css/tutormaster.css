@@ -71,11 +71,12 @@
     color: #4f72f5;
 }
 
-.atr-has-tutor-master .as-toast-list.as-se {
+.atr-has-tutor-master .as-toast-list.as-se,
+.atr-has-tutor-master .as-toast-list.as-sw {
     bottom: 50px;
 }
 
 .atr-has-tutor-master .ace_tooltip,
-.atr-has-tutor-master .ace_editor.ace_autocomplete{
+.atr-has-tutor-master .ace_editor.ace_autocomplete {
     z-index: 1100000000;
 }
