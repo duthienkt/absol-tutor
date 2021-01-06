@@ -9,3 +9,8 @@
     font-size: 1.25em;
     margin: 0;
 }
+
+.atr-explain-text p{
+    font-size: inherit;
+    margin: 0;
+}

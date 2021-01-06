@@ -5,6 +5,7 @@ import TACData from "./TACData";
 import TutorNameManager from "./TutorNameManager";
 import {$, _} from "../dom/Core";
 import {ScrollBarIco} from "../dom/Icon";
+import ToolTip from "absol-acomp/js/Tooltip";
 
 /***
  * @extends BaseCommand
@@ -21,10 +22,19 @@ UserScrollIfNeed.prototype.$scrollBarIcon = $(ScrollBarIco.cloneNode(true));
 UserScrollIfNeed.prototype.$scrollBarIconCtn = _({
     class: 'atr-scroll-icon-ctn',
     child: UserScrollIfNeed.prototype.$scrollBarIcon
-})
+});
+
+/***
+ * @type {Tooltip}
+ */
+UserScrollIfNeed.prototype.$scrollTooltip = _({
+    tag: ToolTip.tag,
+    child: {
+        class: 'atr-explain-text'
+    }
+});
 
 UserScrollIfNeed.prototype._showScroll = function (elt, dir) {
-    console.log(elt, dir)
     this.$scrollBarIcon.removeClass('atr-down')
         .removeClass('atr-up')
         .removeStyle('transform');
@@ -41,7 +51,7 @@ UserScrollIfNeed.prototype._showScroll = function (elt, dir) {
     var bound = elt.getBoundingClientRect();
     var iconBound = this.$scrollBarIconCtn.getBoundingClientRect();
     if (dir.dy) {
-        this.$scrollBarIconCtn.addStyle('left', bound.right - 17 -iconBound.width - 5 + 'px');
+        this.$scrollBarIconCtn.addStyle('left', bound.right - 17 - iconBound.width - 5 + 'px');
         if (dir.dy > 0) {
             this.$scrollBarIcon.addClass('atr-up');
             this.$scrollBarIconCtn.addStyle('top', bound.top + 'px');
@@ -91,6 +101,7 @@ UserScrollIfNeed.prototype._findScrollDir = function (elt) {
 };
 
 UserScrollIfNeed.prototype.onStop = function () {
+    this._showScroll(null);
     BaseCommand.prototype.onStop.apply(this, arguments);
 };
 
@@ -103,42 +114,74 @@ UserScrollIfNeed.prototype.exec = function () {
     var scrollUpMessage = this.args.scrollUpMessage;
     var scrollDownMessage = this.args.scrollDownMessage;
     var scrollDir = this._findScrollDir(elt);
-    var vScroller;
-    var hScroller;
     if (scrollDir.dy !== 0) {
         vScroller = this.findVScroller(elt, scrollDir.dy);
     }
+    else {
+        return Promise.resolve();
+    }
+    this.assignTarget(elt);
+    this.showToast(message);
+    this.highlightElt(elt);
+    var vScroller;
 
     return new Promise(function (resolve, reject) {
         var checkTimeoutId = -1;
         var currentDir;
 
         function check() {
+            checkTimeoutId = -1;
             currentDir = thisC._findScrollDir(elt);
-            if ((currentDir.dx === 0 || !hScroller) && (currentDir.dy === 0 || !vScroller)) {
+            if (currentDir.dy === 0 || !vScroller) {
                 thisC._rejectCb = null;
                 if (vScroller) {
                     vScroller.removeEventListener('scroll', onScroll);
+                    vScroller.removeClass('atr-scroll-only');
                 }
                 resolve();
             }
+            else {
+                thisC._showScroll(elt, currentDir);
+                if (currentDir.dy > 0) {
+
+                }
+                else {
+
+                }
+            }
 
         }
+
+        var prevScrollTop;
 
         function onScroll(event) {
             if (checkTimeoutId) {
                 clearTimeout(checkTimeoutId);
             }
             currentDir = thisC._findScrollDir(elt);
+            if (vScroller.scrollTop > prevScrollTop) {
+                if (currentDir.dy > 0) {
+                    thisC.hadWrongAction = true;
+                }
+            }
+            else if (vScroller.scrollTop < prevScrollTop) {
+                if (currentDir.dy < 0) {
+                    thisC.hadWrongAction = true;
+                }
+            }
+
+
+            prevScrollTop = vScroller.scrollTop;
             checkTimeoutId = setTimeout(check, 200);
 
         }
 
         if (vScroller) {
+            prevScrollTop = vScroller.scrollTop;
             thisC._showScroll(vScroller, scrollDir);
             vScroller.addClass('atr-scroll-only');
             thisC.onlyClickTo(vScroller);
-            vScroller.addEventListener('scroll', onScroll)
+            vScroller.addEventListener('scroll', onScroll);
         }
 
         thisC._rejectCb = function () {
@@ -174,7 +217,8 @@ TACData.define('userScrollIfNeed', {
         { name: 'message', type: 'string' },
         { name: 'scrollUpMessage', type: 'string' },
         { name: 'scrollDownMessage', type: 'string' }
-    ]
+    ],
+    desc: "Yêu cầu người dùng scroll, hiện giờ chỉ hỗ trợ scroll dọc"
 });
 
 
