@@ -53,3 +53,21 @@
 
 }
 
+.atr-scroll-tooltip {
+    position: fixed;
+    z-index: 1000000009;
+}
+
+.atr-scroll-tooltip {
+    animation: scroll-move 1s linear infinite alternate;
+}
+
+@keyframes scroll-move {
+    0% {
+        transform: translateY(0);
+
+    }
+    100% {
+        transform: translateY(40px);
+    }
+}

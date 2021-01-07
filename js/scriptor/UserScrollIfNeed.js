@@ -13,7 +13,7 @@ import ToolTip from "absol-acomp/js/Tooltip";
  */
 function UserScrollIfNeed() {
     BaseCommand.apply(this, arguments);
-    this._scrollTrackingElts = [];
+    this._prevTootipDir = { dy: 0, dx: 0 };
 }
 
 OOP.mixClass(UserScrollIfNeed, BaseCommand);
@@ -29,10 +29,13 @@ UserScrollIfNeed.prototype.$scrollBarIconCtn = _({
  */
 UserScrollIfNeed.prototype.$scrollTooltip = _({
     tag: ToolTip.tag,
+    class: 'atr-scroll-tooltip',
     child: {
         class: 'atr-explain-text'
     }
 });
+UserScrollIfNeed.prototype.$scrollTooltipText = $('.atr-explain-text', UserScrollIfNeed.prototype.$scrollTooltip)
+
 
 UserScrollIfNeed.prototype._showScroll = function (elt, dir) {
     this.$scrollBarIcon.removeClass('atr-down')
@@ -63,8 +66,39 @@ UserScrollIfNeed.prototype._showScroll = function (elt, dir) {
 
         }
     }
+};
 
+UserScrollIfNeed.prototype._showScrollTooltip = function (scroller, message, dir) {
+    if (!message || !scroller) {
+        this.$scrollTooltip.remove();
+        return;
+    }
+    if (!this.$scrollTooltip.parentElement) document.body.appendChild(this.$scrollTooltip);
+    var sBound = scroller.getBoundingClientRect();
+    var messageElt = this.md2HTMLElements(message);
+    this.$scrollTooltipText.clearChild()
+        .addChild(messageElt);
+    this.$scrollTooltip.addStyle('visibility', 'hidden');
+    var tBound = this.$scrollTooltip.getBoundingClientRect();
 
+    if (dir.dy > 0) {
+        this.$scrollTooltip.removeClass('top')
+            .addClass('bottom');
+        this.$scrollTooltip.addStyle({
+            left: sBound.left + sBound.width / 2 - tBound.width / 2 + 'px',
+            top: sBound.top + 'px',
+            visibility: 'visible'
+        });
+    }
+    else {
+        this.$scrollTooltip.removeClass('bottom')
+            .addClass('top');
+        this.$scrollTooltip.addStyle({
+            left: sBound.left + sBound.width / 2 - tBound.width / 2 + 'px',
+            top: sBound.bottom - tBound.height - 40 + 'px',
+            visibility: 'visible'
+        });
+    }
 };
 
 UserScrollIfNeed.prototype.findVScroller = function (elt, dY) {
@@ -85,17 +119,21 @@ UserScrollIfNeed.prototype._findScrollDir = function (elt) {
     var bound = elt.getBoundingClientRect();
     var dx = 0;
     var dy = 0;
-    if (outBound.bottom < bound.bottom) {
-        dy = -1;
+    if ((outBound.bottom < bound.bottom) !== (outBound.top > bound.top)) {
+        if (outBound.bottom < bound.bottom) {
+            dy = -1;
+        }
+        else if (outBound.top > bound.top) {
+            dy = 1;
+        }
     }
-    else if (outBound.top > bound.top) {
-        dy = 1;
-    }
-    if (outBound.right < bound.right) {
-        dx = -1;
-    }
-    else if (outBound.left > bound.left) {
-        dx = 1;
+    if ((outBound.right < bound.right) !== (outBound.left > bound.left)) {
+        if (outBound.right < bound.right) {
+            dx = -1;
+        }
+        else if (outBound.left > bound.left) {
+            dx = 1;
+        }
     }
     return { dx: dx, dy: dy };
 };
@@ -103,6 +141,8 @@ UserScrollIfNeed.prototype._findScrollDir = function (elt) {
 UserScrollIfNeed.prototype.onStop = function () {
     this._showScroll(null);
     BaseCommand.prototype.onStop.apply(this, arguments);
+    this.$scrollBarIconCtn.remove();
+    this.$scrollTooltip.remove();
 };
 
 
@@ -141,12 +181,18 @@ UserScrollIfNeed.prototype.exec = function () {
                 resolve();
             }
             else {
-                thisC._showScroll(elt, currentDir);
+                thisC._showScroll(vScroller, currentDir);
                 if (currentDir.dy > 0) {
-
+                    if (thisC._prevTootipDir.dy <= 0) {
+                        thisC._showScrollTooltip(vScroller, scrollUpMessage, currentDir);
+                        thisC._prevTootipDir.dy = 1;
+                    }
                 }
                 else {
-
+                    if (thisC._prevTootipDir.dy >= 0) {
+                        thisC._showScrollTooltip(vScroller, scrollDownMessage, currentDir);
+                        thisC._prevTootipDir.dy = -1;
+                    }
                 }
             }
 
