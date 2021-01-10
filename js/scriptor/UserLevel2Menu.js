@@ -122,9 +122,15 @@ UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highli
 
 };
 
+UserLevel2Menu.prototype._verifyMenu = function (elt) {
+    if (!elt.containsClass || !elt.containsClass('as-v-root-menu')) {
+        throw new Error('Type error: not a valid menu!');
+    }
+};
 
 UserLevel2Menu.prototype.requestUserAction = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
+    this._verifyMenu(elt);
     return this._afterSelectRoot(elt, this.args.menuItemPath[0], this.args.menuItemPath[1], false);
 };
 
