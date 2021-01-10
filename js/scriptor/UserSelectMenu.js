@@ -105,9 +105,19 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
     });
 };
 
+UserSelectMenu.prototype._verifySelectMenu = function (elt) {
+    if (!elt.containsClass || !(
+        elt.containsClass('absol-selectmenu')
+        || elt.containsClass('as-select-menu')
+        || elt.containsClass('as-select-tree-menu')
+    )) {
+        throw new Error("Type error: not a select-menu!");
+    }
+};
 
 UserSelectMenu.prototype.requestUserAction = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
+    this._verifySelectMenu(elt);
     var value = this.args.value;
     var items;
     if (elt.$selectlistBox && elt.$selectlistBox.findItemsByValue) {
