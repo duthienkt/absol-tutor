@@ -13,10 +13,22 @@ function UserCheckbox() {
 
 OOP.mixClass(UserCheckbox, UserBaseAction);
 
+UserCheckbox.prototype._verifyCheckbox = function (elt) {
+    if (!elt.containsClass || !(elt.containsClass('absol-checkbox')
+        || elt.containsClass('absol-radio')
+        || elt.containsClass('as-checkbox-input')
+        || elt.containsClass('as-checkbox-input')
+        || elt.containsClass('as-radio-input')
+        || (elt.tagName.toLowerCase() === 'input' && (elt.type === 'checkbox' || elt.type === 'radio'))
+    )) {
+        throw new Error('Type error: not a radio or checkbox');
+    }
+};
 
 UserCheckbox.prototype.requestUserAction = function () {
     var thisC = this;
     var elt = this.tutor.findNode(this.args.eltPath);
+    this._verifyCheckbox(elt);
     var wrongMessage = this.args.wrongMessage;
     var checked = this.args.checked;
     thisC.highlightElt(elt);
