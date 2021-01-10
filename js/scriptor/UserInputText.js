@@ -15,10 +15,21 @@ function UserInputText() {
 
 OOP.mixClass(UserInputText, UserBaseAction);
 
+UserInputText.prototype._verifyTextInput = function (elt){
+    var tagName = elt.tagName.toLowerCase();
+    var ok = true;
+    if (tagName !== 'input' &&tagName !== 'textarea'){
+        ok = false;
+    }
+    if (!ok)
+        throw new Error('Type invalid: not a text input!');
+};
+
 UserInputText.prototype.requestUserAction = function () {
     var matchExpression = this.args.match;
     var thisC = this;
     var elt = this.tutor.findNode(this.args.eltPath);
+    this._verifyTextInput(elt);
     var wrongMessage = this.args.wrongMessage;
     thisC.highlightElt(elt);
     var changed = false;
