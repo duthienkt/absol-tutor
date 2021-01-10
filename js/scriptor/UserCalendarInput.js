@@ -95,9 +95,16 @@ UserCalendarInput.prototype._afterSelectCalendar = function (elt, requestValue, 
     });
 };
 
+UserCalendarInput.prototype._verityCalendarInput = function (elt) {
+    if (!elt.containsClass || !elt.containsClass('absol-calendar-input')){
+        throw new Error("Invalid element type: not a CalendarInput!");
+    }
+};
+
 UserCalendarInput.prototype.requestUserAction = function () {
     var thisC = this;
     var elt = thisC.tutor.findNode(thisC.args.eltPath);
+    this._verityCalendarInput(elt);
     var value = this.args.value;
     return this._afterSelectCalendar(elt, value);
 };

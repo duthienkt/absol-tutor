@@ -109,9 +109,15 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
     });
 };
 
+UserQuickMenu.prototype._verifyQuickMenuTrigger = function (elt) {
+      if (!elt.containsClass || !elt.containsClass('as-quick-menu-trigger')){
+          console.warn(elt , " may not a quick-menu trigger!")
+      }
+};
 
 UserQuickMenu.prototype.requestUserAction = function () {
     var elt = this.tutor.findNode(this.args.eltPath);
+    this._verifyQuickMenuTrigger(elt);
     return this._afterSelectQM(elt, this.args.selectId);
 };
 
