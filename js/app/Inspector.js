@@ -191,11 +191,11 @@ Inspector.prototype.ev_mouseenter = function (event) {
         }
         if (target.classList.contains('absol-selectlist-item') || target.classList.contains('absol-selectmenu')) {
             if (target.value === 0 || target.value)
-                tooltipText.push('value=' + target.value);
+                tooltipText.push('value= <strong>' + target.value+'</strong>');
         }
 
         if (tooltipText.length > 0) {
-            this.$text.firstChild.data = tooltipText.join('  ');
+            this.$text.innerHTML = tooltipText.join('  ');
             var bound = target.getBoundingClientRect();
             this.$box.addStyle({
                 width: bound.width + 2 + 'px',
