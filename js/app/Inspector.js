@@ -180,9 +180,9 @@ Inspector.prototype.ev_mouseenter = function (event) {
     var tagName = 'default';
     if (target) {
         if (idPath.length > 0) {
-            tooltipText.push('id=' + JSON.stringify(idPath[idPath.length - 1]));
+            tooltipText.push('id = ' + JSON.stringify(idPath[idPath.length - 1]));
             if (idPath.length > 1)
-                tooltipText.push('path =' + JSON.stringify(idPath.join(' ')));
+                tooltipText.push('path = ' + JSON.stringify(idPath.join(' ')));
             if (target.classList.contains('absol-selectmenu')) tagName = 'selectmenu';
             if (target.classList.contains('as-quick-menu-trigger')) tagName = 'quickmenutrigger';
             if (target.classList.contains('absol-checkbox')) tagName = 'checkbox';
