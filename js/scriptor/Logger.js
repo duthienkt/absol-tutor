@@ -10,7 +10,7 @@ Logger.attachEnv = function (tutor, env) {
     Object.assign(env, Logger.properties);
 };
 
-TutorNameManager.addAsync('downloadText');
+TutorNameManager.addAsync('log');
 
 TACData.define('log', {
     type: 'function',
