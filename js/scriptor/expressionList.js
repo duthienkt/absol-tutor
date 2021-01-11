@@ -24,6 +24,7 @@ import UserScrollIfNeed from "./UserScrollIfNeed";
 import Net from "./Net";
 import Logger from "./Logger";
 import Debug from "./Debug";
+import UserMulitiSelectMenu from "./UserMulitiSelectMenu";
 
 var commandList = [
     SetRootView,
@@ -49,6 +50,7 @@ var commandList = [
     UserSwitchTab,
     Delay,
     UserScrollIfNeed,
+    UserMulitiSelectMenu,
     Net,
     Logger,
     Debug
