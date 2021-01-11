@@ -8,7 +8,7 @@ var presetEnv = babel.presetEnv;
 var generator = babel.generator;
 
 function moduleTemplate(code, argNames) {
-    return 'module.exports = async function exec(' + argNames.join(',') + ') {' +
+    return 'module.exports = async function exec(' + argNames.join(',') + ') {\n' +
         code +
         '\nreturn 0;' +
         '}'
@@ -21,6 +21,20 @@ function awaitInject(code, ast, asyncFunctionNames) {
         return ac;
     }, {});
     traverse(ast, {
+        ExpressionStatement: function (path) {
+            if (path.node.ignore) return;
+            if (path.node.loc.start.line  === 1) return;
+            var _db = babel.types.callExpression(
+                babel.types.identifier("_db"), [
+                    babel.types.numericLiteral(path.node.loc.start.line),
+                    babel.types.numericLiteral(path.node.loc.start.column),
+                    babel.types.numericLiteral(path.node.start),
+                    babel.types.numericLiteral(path.node.end)
+                ]
+            );
+            _db.ignore = true;
+            path.insertBefore(_db)
+        },
         CallExpression: function (path) {
             var needUpdate = false;
             if (path.parent.type === 'AwaitExpression') {
@@ -77,7 +91,9 @@ export default function buildTutorJavaScript(code) {
     execFn(m, regeneratorRuntime);
     return {
         argNames: argNames,
-        exec: m.exports
+        exec: m.exports, code: code,
+        es6Code:  newCode,
+        transformedCode: transformedCode
     };
 }
 

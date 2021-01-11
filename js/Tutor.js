@@ -20,18 +20,19 @@ function Tutor(view, script, option) {
     this.$view = view;
     this.script = null;
 
-    this.memory = {
-        share: {
-            getCurrentInputText: null
-        },
-        option: {
-            messageDelay: 1000
-        }
-    };
 
     this.option = Object.assign({
         messageDelay: 1000
     }, option);
+    this.debug = {
+        status: "NOT_START",
+        loc: {
+            start: -1,
+            end: -1,
+            row: 0, //indexing from 1
+            col: 0,
+        }
+    };
     this._commandStack = [];
     this._compile(script);
 }
@@ -76,13 +77,15 @@ Tutor.prototype.exec = function () {
     var args = this.script.argNames.map(function (name) {
         return env[name];
     });
-
+    this.debug.status = "RUNNING";
     return this.script.exec.apply(null, args).then(function (result) {
         this.stop();
+        this.debug.status = "FINISH";
         return result;
     }.bind(this)).catch(function (error) {
         this.stop();
         if (error instanceof Error) {
+            this.debug.status = "ERROR";
             throw error;
         }
     }.bind(this));
@@ -106,6 +109,23 @@ Tutor.prototype.findNode = function (query, unsafe) {
 Tutor.prototype.findAllNode = function (query) {
     return findAllNode(query, this.$view);
 };
+
+
+Tutor.prototype.getStatus = function () {
+    if (this.debug.status === "NOT_START") return {
+        status: "NOT_START"
+    };
+    if (this.debug.status === "RUNNING" || this.debug.status === "ERROR")
+        return {
+            status: this.debug.status,
+            code: this.script.code.substr(this.debug.loc.start, this.debug.loc.end - this.debug.loc.start),
+            row: this.debug.loc.row - 1,
+            col: this.debug.loc.col
+        };
+    return {
+        status: "FINISH"
+    };
+}
 
 
 export default Tutor;
