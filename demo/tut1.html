@@ -112,6 +112,18 @@
                     var realSelectMenu = absol._(constructMenuDesc);
                     oldSelectMenu.parentElement.replaceChild(realSelectMenu, oldSelectMenu)
                 });
+
+            absol.$$('multiselectmenu').forEach(function (oldElt) {
+                var realMenu = absol._({
+                    tag: 'selectbox',
+                    props: {
+                        items: Array(20).fill(0).map(function (u, i) {
+                            return { value: i, text: 'Item ' + i }
+                        })
+                    }
+                });
+                oldElt.parentElement.replaceChild(realMenu, oldElt);
+            });
             absol.$$('checkbox').forEach(function (elt) {
                 var constructCheckboxDesc = absol.Dom.getConstructDescriptor(elt);
                 var checked = constructCheckboxDesc.attr && (constructCheckboxDesc.attr.checked || constructCheckboxDesc.attr.checked === 'true');
