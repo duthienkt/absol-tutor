@@ -21,6 +21,8 @@ import Delay from "./Delay";
 import UserSwitchTabIfNeed from "./UserSwitchTabIfNeed";
 import UserSwitchTab from "./UserSwitchTab";
 import UserScrollIfNeed from "./UserScrollIfNeed";
+import Net from "./Net";
+import Logger from "./Logger";
 
 var commandList = [
     SetRootView,
@@ -45,7 +47,9 @@ var commandList = [
     UserSwitchTabIfNeed,
     UserSwitchTab,
     Delay,
-    UserScrollIfNeed
+    UserScrollIfNeed,
+    Net,
+    Logger
 ];
 
 
