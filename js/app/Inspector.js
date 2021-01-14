@@ -9,6 +9,7 @@ import OnScreenWindow from "absol-acomp/js/OnsScreenWindow";
 import ExpTree from "absol-acomp/js/ExpTree";
 import {copyText} from "absol/src/HTML5/Clipboard";
 import SnackBar from "absol-acomp/js/Snackbar";
+import {vScrollIntoView} from "absol-acomp/js/utils";
 
 
 /***
@@ -154,11 +155,13 @@ Inspector.prototype.addNode = function (path, tagName) {
             }
             this.$lastActiveNode = current;
             this.$lastActiveNode.active = true;
+            vScrollIntoView(this.$lastActiveNode.getNode())
         }
     }
 };
 
 Inspector.prototype.ev_mouseenter = function (event) {
+    if (!event.ctrlKey) return;
     var target = event.target;
     var elt;
     var idPath = [];

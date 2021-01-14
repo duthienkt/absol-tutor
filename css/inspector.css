@@ -52,3 +52,12 @@
     overflow-y: auto;
     font-size: 12px;
 }
+
+.atr-inspector-tree-ctn .absol-exp-node.as-active{
+    background-color: darkslategray;
+    color: white;
+}
+
+.atr-inspector-tree-ctn .absol-exp-node.as-active .absol-exp-node-name{
+    color: white;
+}
