@@ -30,6 +30,21 @@ UserMultiSelectMenu.prototype._afterDelete = function (itemElt) {
 
 };
 
+
+/***
+ *
+ * @param {MultiSelectMenu} elt
+ * @param values
+ * @param wrongMessage
+ * @param searchMessage
+ * @returns {Promise}
+ * @private
+ */
+UserMultiSelectMenu.prototype._afterSelect = function (elt, values, wrongMessage, searchMessage){
+    this.onlyClickTo(elt);
+
+};
+
 /***
  *
  * @param {MultiSelectMenu} elt
@@ -50,11 +65,11 @@ UserMultiSelectMenu.prototype._afterChanged = function (elt, values, wrongMessag
         if (wrongMessage)
             thisC.showTooltip(elt, wrongMessage);
     }
-    this.onlyClickTo(elt);
+
     var valueDict = values.reduce(function (ac, cr) {
         ac[cr] = (ac[cr] || 0) + 1;
         return ac;
-    });
+    }, {});
 
     var wrongItem = undefined;
     var cValues = elt.values.slice();
