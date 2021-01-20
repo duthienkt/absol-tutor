@@ -22,7 +22,7 @@ function Tutor(view, script, option) {
 
 
     this.option = Object.assign({
-        messageDelay: 1000
+        messageDelay: 300
     }, option);
     this.debug = {
         status: "NOT_START",
