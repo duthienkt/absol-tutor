@@ -15,10 +15,10 @@ function UserInputText() {
 
 OOP.mixClass(UserInputText, UserBaseAction);
 
-UserInputText.prototype._verifyTextInput = function (elt){
+UserInputText.prototype._verifyTextInput = function (elt) {
     var tagName = elt.tagName.toLowerCase();
     var ok = true;
-    if (tagName !== 'input' &&tagName !== 'textarea'){
+    if (tagName !== 'input' && tagName !== 'textarea') {
         ok = false;
     }
     if (!ok)
@@ -71,6 +71,8 @@ UserInputText.prototype.requestUserAction = function () {
         else if (isMatched) {
             thisC.closeTooltip();
         }
+
+
         return isMatched;
     }
 
@@ -86,6 +88,7 @@ UserInputText.prototype.requestUserAction = function () {
                         .off('change', onChange)
                         .off('blur', onChange)
                         .off('keydown', onKeydown)
+                        .off('onKeyUp', onKeydown)
                         .off('click', onClick);
                     if (changeTimeout >= 0) clearTimeout(changeTimeout);
 
@@ -95,12 +98,51 @@ UserInputText.prototype.requestUserAction = function () {
             }
         }
 
+        var typingTimout = -1;
+
+        function onKeyUp() {
+            if (typingTimout > 0) clearTimeout(typingTimout);
+            typingTimout = setTimeout(function () {
+                typingTimout = -1;
+                if (verify()) {
+                    function preventKey(event) {
+                        if (event.key.length === 1 && !event.ctrlKey && !event.altKey) {
+                            event.preventDefault();
+                        }
+                    }
+
+                    var checkIntv = setInterval(function () {
+                        if (document.activeElement !== elt)
+                            finishPrevent();
+                    }, 100);
+                    elt.on('keydown', preventKey)
+                        .on('blur', finishPrevent);
+
+                    function finishPrevent() {
+                        elt.off('keydown', preventKey)
+                            .off('blur', finishPrevent);
+                        clearInterval(checkIntv);
+                    }
+
+                    elt.off('keyup', verify)
+                        .off('change', onChange)
+                        .off('blur', onChange)
+                        .off('keydown', onKeydown)
+                        .off('onKeyUp', onKeydown)
+                        .off('click', onClick);
+                    resolve();
+                }
+            }, 300);
+
+        }
+
         function onChange(event) {
             if (verify()) {
                 elt.off('keyup', verify)
                     .off('change', onChange)
                     .off('blur', onChange)
                     .off('keydown', onKeydown)
+                    .off('keyup', onKeyUp)
                     .off('click', onClick);
                 if (changeTimeout >= 0) clearTimeout(changeTimeout);
 
@@ -127,7 +169,8 @@ UserInputText.prototype.requestUserAction = function () {
                 changed = true;
             })
             .on('click', onClick)
-            .on('keydown', onKeydown);
+            .on('keydown', onKeydown)
+            .on('keyup', onKeyUp);
         thisC._rejectCb = function () {
             elt.off('keyup', verify)
                 .off('change', onChange)
