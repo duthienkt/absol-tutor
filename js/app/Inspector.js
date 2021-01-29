@@ -9,6 +9,7 @@ import OnScreenWindow from "absol-acomp/js/OnsScreenWindow";
 import ExpTree from "absol-acomp/js/ExpTree";
 import {copyText} from "absol/src/HTML5/Clipboard";
 import SnackBar from "absol-acomp/js/Snackbar";
+import {vScrollIntoView} from "absol-acomp/js/utils";
 
 
 /***
@@ -154,11 +155,13 @@ Inspector.prototype.addNode = function (path, tagName) {
             }
             this.$lastActiveNode = current;
             this.$lastActiveNode.active = true;
+            vScrollIntoView(this.$lastActiveNode.getNode())
         }
     }
 };
 
 Inspector.prototype.ev_mouseenter = function (event) {
+    if (!event.ctrlKey) return;
     var target = event.target;
     var elt;
     var idPath = [];
@@ -180,9 +183,9 @@ Inspector.prototype.ev_mouseenter = function (event) {
     var tagName = 'default';
     if (target) {
         if (idPath.length > 0) {
-            tooltipText.push('id=' + JSON.stringify(idPath[idPath.length - 1]));
+            tooltipText.push('id = ' + JSON.stringify(idPath[idPath.length - 1]));
             if (idPath.length > 1)
-                tooltipText.push('path =' + JSON.stringify(idPath.join(' ')));
+                tooltipText.push('path = ' + JSON.stringify(idPath.join(' ')));
             if (target.classList.contains('absol-selectmenu')) tagName = 'selectmenu';
             if (target.classList.contains('as-quick-menu-trigger')) tagName = 'quickmenutrigger';
             if (target.classList.contains('absol-checkbox')) tagName = 'checkbox';
@@ -191,11 +194,11 @@ Inspector.prototype.ev_mouseenter = function (event) {
         }
         if (target.classList.contains('absol-selectlist-item') || target.classList.contains('absol-selectmenu')) {
             if (target.value === 0 || target.value)
-                tooltipText.push('value=' + target.value);
+                tooltipText.push('value= <strong>' + target.value+'</strong>');
         }
 
         if (tooltipText.length > 0) {
-            this.$text.firstChild.data = tooltipText.join('  ');
+            this.$text.innerHTML = tooltipText.join('  ');
             var bound = target.getBoundingClientRect();
             this.$box.addStyle({
                 width: bound.width + 2 + 'px',

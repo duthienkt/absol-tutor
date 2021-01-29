@@ -14,7 +14,7 @@
     bottom: calc(100% + 1px);
     padding: 2px;
     background-color: rgba(25, 80, 25, 0.5);
-    color: white;
+    color: yellow;
     box-sizing: border-box;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
@@ -51,4 +51,13 @@
     bottom: 16px;
     overflow-y: auto;
     font-size: 12px;
+}
+
+.atr-inspector-tree-ctn .absol-exp-node.as-active{
+    background-color: darkslategray;
+    color: white;
+}
+
+.atr-inspector-tree-ctn .absol-exp-node.as-active .absol-exp-node-name{
+    color: white;
 }

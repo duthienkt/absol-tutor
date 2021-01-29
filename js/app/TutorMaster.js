@@ -263,13 +263,30 @@ TutorMaster.prototype.ev_clickPlayBtn = function () {
     this.$playBtn.disabled = true;
     var onFinish = function (err) {
         if (err instanceof Error) {
+            var status = this.tutor.getStatus();
             Toast.make({
+                class: 'atr-toast-message',
                 props: {
-                    message: err.message,
                     variant: 'error',
                     htitle: "Tutor Runtime Error!",
                     disappearTimeout: 20000
-                }
+                },
+                child: [
+                    {
+                        tag: 'strong',
+                        child: { text: '[Ln ' + status.row + (status.col > 0 ? (', Col ' + status.col) : '') + '] ' }
+                    },
+                    {
+                        tag: 'code',
+                        child: {
+                            text: status.code
+                        }
+                    },
+                    {
+                        tag: 'div',
+                        child: { text: err.message }
+                    }
+                ]
             });
             console.error(err)
         }
