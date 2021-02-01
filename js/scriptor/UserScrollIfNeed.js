@@ -259,14 +259,14 @@ UserScrollIfNeed.prototype.exec = function () {
 };
 
 UserScrollIfNeed.attachEnv = function (tutor, env) {
-    env.userScrollIfNeed = function (eltPath, message, scrollUpMessage, scrollDownMessage, offset) {
+    env.userScrollIfNeed = function (eltPath, message, scrollUpMessage, scrollDownMessage, offset, delta) {
         return new UserScrollIfNeed(tutor, {
             eltPath: eltPath,
             message: message,
             scrollUpMessage: scrollUpMessage,
             scrollDownMessage: scrollDownMessage,
-            offset: (typeof offset === 'number') ? (Math.max(0, Math.min(1, offset))) : 0.5,
-            delta: (typeof offset === 'number') ? (Math.max(0, Math.min(1, offset))) : 0.2
+            offset: (typeof offset === 'number') ? (Math.max(0, Math.min(1, delta))) : 0.5,
+            delta: (typeof delta === 'number') ? (Math.max(0, Math.min(1, delta))) : 0.2
         }).exec();
     };
 };
