@@ -119,7 +119,22 @@ UserScrollIfNeed.prototype._findScrollDir = function (elt) {
     var bound = elt.getBoundingClientRect();
     var dx = 0;
     var dy = 0;
-    if ((outBound.bottom < bound.bottom) !== (outBound.top > bound.top)) {
+    if (outBound.height < bound.height * 1.2 && outBound.height * 1.2 > bound.height) {
+        var delta = outBound.height / 10;
+        var outStart = outBound.top + delta;
+        var outEnd = outBound.bottom + delta;
+        var outX = outStart + this.args.offset * (outEnd - outStart);
+        var x = bound.top + this.args.offset * bound.height;
+        if (Math.abs(x - outX) > delta) {
+            if (outEnd < x) {
+                dy = -1;
+            }
+            else {
+                dy = 1;
+            }
+        }
+    }
+    else if ((outBound.bottom < bound.bottom) !== (outBound.top > bound.top)) {
         if (outBound.bottom < bound.bottom) {
             dy = -1;
         }
@@ -244,12 +259,13 @@ UserScrollIfNeed.prototype.exec = function () {
 };
 
 UserScrollIfNeed.attachEnv = function (tutor, env) {
-    env.userScrollIfNeed = function (eltPath, message, scrollUpMessage, scrollDownMessage) {
+    env.userScrollIfNeed = function (eltPath, message, scrollUpMessage, scrollDownMessage, offset) {
         return new UserScrollIfNeed(tutor, {
             eltPath: eltPath,
             message: message,
             scrollUpMessage: scrollUpMessage,
-            scrollDownMessage: scrollDownMessage
+            scrollDownMessage: scrollDownMessage,
+            offset: (typeof offset === 'number') ? (Math.max(0, Math.min(1, offset))) : 0.5
         }).exec();
     };
 };
