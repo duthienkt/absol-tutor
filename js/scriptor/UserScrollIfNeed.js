@@ -120,9 +120,9 @@ UserScrollIfNeed.prototype._findScrollDir = function (elt) {
     var dx = 0;
     var dy = 0;
     if (outBound.height < bound.height * 1.2 && outBound.height * 1.2 > bound.height) {
-        var delta = outBound.height / 10;
+        var delta = outBound.height *  this.args.delta ;
         var outStart = outBound.top + delta;
-        var outEnd = outBound.bottom + delta;
+        var outEnd = outBound.bottom - delta;
         var outX = outStart + this.args.offset * (outEnd - outStart);
         var x = bound.top + this.args.offset * bound.height;
         if (Math.abs(x - outX) > delta) {
@@ -265,7 +265,8 @@ UserScrollIfNeed.attachEnv = function (tutor, env) {
             message: message,
             scrollUpMessage: scrollUpMessage,
             scrollDownMessage: scrollDownMessage,
-            offset: (typeof offset === 'number') ? (Math.max(0, Math.min(1, offset))) : 0.5
+            offset: (typeof offset === 'number') ? (Math.max(0, Math.min(1, offset))) : 0.5,
+            delta: (typeof offset === 'number') ? (Math.max(0, Math.min(1, offset))) : 0.2
         }).exec();
     };
 };
@@ -278,7 +279,9 @@ TACData.define('userScrollIfNeed', {
         { name: 'eltPath', type: '(string|AElement)' },
         { name: 'message', type: 'string' },
         { name: 'scrollUpMessage', type: 'string' },
-        { name: 'scrollDownMessage', type: 'string' }
+        { name: 'scrollDownMessage', type: 'string' },
+        { name: 'offset', type: 'number(0->1)' },
+        { name: 'delta', type: 'number(0->1)' }
     ],
     desc: "Yêu cầu người dùng scroll, hiện giờ chỉ hỗ trợ scroll dọc"
 });
