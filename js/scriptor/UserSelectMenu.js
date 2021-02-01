@@ -80,7 +80,7 @@ UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, sear
         thisC.highlightElt(null);
         elt.$selectlistBox.addClass('atr-on-top');
 
-        if (searchMessage) {
+        if (searchMessage && elt.enableSearch) {
             thisC.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
         }
         thisC.onlyClickTo(elt.$selectlistBox);
