@@ -235,7 +235,6 @@ BaseCommand.prototype.onlyClickTo = function (elt) {
 /***
  *
  * @param {string} message
- * @param {"se"|"sw"|"ne"|"nw} [pos="se"]
  */
 BaseCommand.prototype.showDelayToast = function (message) {
     var thisC = this;
@@ -269,7 +268,6 @@ BaseCommand.prototype.showTooltip = function (elt, message) {
 /***
  *
  * @param {string} message
- * @param {"se"|"sw"|"ne"|"nw } [pos="se"]
  */
 BaseCommand.prototype.showToast = function (message) {
     if (typeof message !== "string") return;
@@ -286,6 +284,7 @@ BaseCommand.prototype.showToast = function (message) {
 
     }, pos);
     this._tostElts.push(toastElt);
+    this._updateToastPosition();
 };
 
 BaseCommand.prototype.closeAllToasts = function () {
@@ -298,16 +297,27 @@ BaseCommand.prototype.closeAllToasts = function () {
 
 BaseCommand.prototype.assignTarget = function (targetElt) {
     this.$target = targetElt;
+    this._updateToastPosition();
+};
+
+BaseCommand.prototype._updateToastPosition = function () {
+    var targetElt = this.$target;
     if (targetElt) {
         var bound = targetElt.getBoundingClientRect();
         var screenSize = getScreenSize();
-        if (this._currentTostPosition === 'se' && bound.left + 400 >= screenSize.width && bound.top + 150 >= screenSize.height) {
+        var toastListElt = Toast.$toastList4Pos[this._currentTostPosition];
+        var toastListBound = toastListElt.getBoundingClientRect();
+        var boundRect = Rectangle.fromClientRect(bound);
+        var roastListRect = Rectangle.fromClientRect(toastListBound);
+        var isOverlay = roastListRect.isCollapse(boundRect);
+
+
+        if (this._currentTostPosition === 'se' && bound.left + 400 >= screenSize.width && (bound.top + 150 >= screenSize.height || isOverlay)) {
             this._currentTostPosition = 'sw';
         }
-        else if (this._currentTostPosition === 'sw' && bound.left <= 400 && bound.top + 150 >= screenSize.height) {
+        else if (this._currentTostPosition === 'sw' && bound.left <= 400 && (bound.top + 150 >= screenSize.height || isOverlay)) {
             this._currentTostPosition = 'se';
         }
-        var toastListElt = Toast.$toastList4Pos[this._currentTostPosition];
         this._tostElts.forEach(function (elt) {
             if (!elt.parentElement || elt.parentElement === toastListElt) return;
             toastListElt.addChild(elt);
