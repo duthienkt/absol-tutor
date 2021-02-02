@@ -6,6 +6,8 @@ import TutorNameManager from "./TutorNameManager";
 import {$, _} from "../dom/Core";
 import {ScrollBarIco} from "../dom/Icon";
 import ToolTip from "absol-acomp/js/Tooltip";
+import Toast from "absol-acomp/js/Toast";
+import SnackBar from "absol-acomp/js/Snackbar";
 
 /***
  * @extends BaseCommand
@@ -189,7 +191,7 @@ UserScrollIfNeed.prototype.exec = function () {
             pointerLock = true;
         }
 
-        function onPointerUp() {
+        function onPointerUp(event) {
             pointerLock = false;
             if (checkTimeoutId >= 0) {
                 clearTimeout(checkTimeoutId);
@@ -198,28 +200,35 @@ UserScrollIfNeed.prototype.exec = function () {
         }
 
         document.body.addEventListener('pointerdown', onPointerDown);
+        document.body.addEventListener('touchstart', onPointerDown);
+
         document.body.addEventListener('pointerup', onPointerUp);
-        document.body.addEventListener('pointerleave', onPointerUp);
         document.body.addEventListener('pointercancel', onPointerUp);
+        document.body.addEventListener('touchend', onPointerUp);
 
 
         function check() {
-            if (pointerLock) return;
+
             checkTimeoutId = -1;
             currentDir = thisC._findScrollDir(elt);
             if (currentDir.dy === 0 || !vScroller) {
-                thisC._rejectCb = null;
-                if (vScroller) {
-                    vScroller.removeEventListener('scroll', onScroll);
-                    vScroller.removeClass('atr-scroll-only');
+                thisC._showScrollTooltip(null);
+                if (!pointerLock) {
+                    thisC._rejectCb = null;
+                    if (vScroller) {
+                        vScroller.removeEventListener('scroll', onScroll);
+                        vScroller.removeClass('atr-scroll-only');
+                    }
+
+                    document.body.removeEventListener('pointerdown', onPointerDown);
+                    document.body.removeEventListener('touchstart', onPointerDown);
+                    document.body.removeEventListener('pointerup', onPointerUp);
+                    document.body.removeEventListener('pointerleave', onPointerUp);
+                    document.body.removeEventListener('pointercancel', onPointerUp);
+                    document.body.removeEventListener('touchcancel', onPointerUp);
+                    document.body.removeEventListener('touchend', onPointerUp);
+                    resolve();
                 }
-
-                document.body.removeEventListener('pointerdown', onPointerDown);
-                document.body.removeEventListener('pointerup', onPointerUp);
-                document.body.removeEventListener('pointerleave', onPointerUp);
-                document.body.removeEventListener('pointercancel', onPointerUp);
-
-                resolve();
             }
             else {
                 thisC._showScroll(vScroller, currentDir);
@@ -280,10 +289,13 @@ UserScrollIfNeed.prototype.exec = function () {
                 vScroller.removeEventListener('scroll', onScroll);
                 vScroller.removeClass('atr-scroll-only');
             }
-            document.body.addEventListener('pointerdown', onPointerDown);
-            document.body.addEventListener('pointerup', onPointerUp);
-            document.body.addEventListener('pointerleave', onPointerUp);
-            document.body.addEventListener('pointercancel', onPointerUp);
+            document.body.removeEventListener('pointerdown', onPointerDown);
+            document.body.removeEventListener('touchstart', onPointerDown);
+            document.body.removeEventListener('pointerup', onPointerUp);
+            document.body.removeEventListener('pointerleave', onPointerUp);
+            document.body.removeEventListener('pointercancel', onPointerUp);
+            document.body.removeEventListener('touchcancel', onPointerUp);
+            document.body.removeEventListener('touchend', onPointerUp);
 
             reject();
         }
