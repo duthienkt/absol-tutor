@@ -120,7 +120,7 @@ UserScrollIfNeed.prototype._findScrollDir = function (elt) {
     var dx = 0;
     var dy = 0;
     if (outBound.height < bound.height * 1.2 && outBound.height * 1.2 > bound.height) {
-        var delta = outBound.height *  this.args.delta ;
+        var delta = outBound.height * this.args.delta;
         var outStart = outBound.top + delta;
         var outEnd = outBound.bottom - delta;
         var outX = outStart + this.args.offset * (outEnd - outStart);
@@ -183,8 +183,28 @@ UserScrollIfNeed.prototype.exec = function () {
     return new Promise(function (resolve, reject) {
         var checkTimeoutId = -1;
         var currentDir;
+        var pointerLock = false;
+
+        function onPointerDown() {
+            pointerLock = true;
+        }
+
+        function onPointerUp() {
+            pointerLock = false;
+            if (checkTimeoutId >= 0) {
+                clearTimeout(checkTimeoutId);
+            }
+            checkTimeoutId = setTimeout(check, 200);
+        }
+
+        document.body.addEventListener('pointerdown', onPointerDown);
+        document.body.addEventListener('pointerup', onPointerUp);
+        document.body.addEventListener('pointerleave', onPointerUp);
+        document.body.addEventListener('pointercancel', onPointerUp);
+
 
         function check() {
+            if (pointerLock) return;
             checkTimeoutId = -1;
             currentDir = thisC._findScrollDir(elt);
             if (currentDir.dy === 0 || !vScroller) {
@@ -193,6 +213,12 @@ UserScrollIfNeed.prototype.exec = function () {
                     vScroller.removeEventListener('scroll', onScroll);
                     vScroller.removeClass('atr-scroll-only');
                 }
+
+                document.body.removeEventListener('pointerdown', onPointerDown);
+                document.body.removeEventListener('pointerup', onPointerUp);
+                document.body.removeEventListener('pointerleave', onPointerUp);
+                document.body.removeEventListener('pointercancel', onPointerUp);
+
                 resolve();
             }
             else {
@@ -216,7 +242,8 @@ UserScrollIfNeed.prototype.exec = function () {
         var prevScrollTop;
 
         function onScroll(event) {
-            if (checkTimeoutId) {
+            thisC._updateToastPosition();
+            if (checkTimeoutId >= 0) {
                 clearTimeout(checkTimeoutId);
             }
             currentDir = thisC._findScrollDir(elt);
@@ -253,6 +280,11 @@ UserScrollIfNeed.prototype.exec = function () {
                 vScroller.removeEventListener('scroll', onScroll);
                 vScroller.removeClass('atr-scroll-only');
             }
+            document.body.addEventListener('pointerdown', onPointerDown);
+            document.body.addEventListener('pointerup', onPointerUp);
+            document.body.addEventListener('pointerleave', onPointerUp);
+            document.body.addEventListener('pointercancel', onPointerUp);
+
             reject();
         }
     }).then(this.stop.bind(this));
