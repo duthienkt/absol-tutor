@@ -213,6 +213,7 @@ UserScrollIfNeed.prototype.exec = function () {
             currentDir = thisC._findScrollDir(elt);
             if (currentDir.dy === 0 || !vScroller) {
                 thisC._showScrollTooltip(null);
+                thisC._prevTootipDir = 0;
                 if (!pointerLock) {
                     thisC._rejectCb = null;
                     if (vScroller) {
