@@ -24,12 +24,12 @@ ShowConfirmToast.prototype.exec = function () {
     this.start();
     var child = BaseCommand.prototype.md2HTMLElements.call({ $htmlRender: BaseCommand.prototype.$htmlRender }, text);
     if (!(child instanceof Array)) child = [child];
-    return new Promise(function (resolve, reject){
+    return new Promise(function (resolve, reject) {
         child.push({
             class: 'atr-confirm-toast-footer',
             child: {
-                tag: 'button',
-                child: { text: buttonText },
+                tag: 'flexiconbutton',
+                props: { text: buttonText, icon: 'span.mdi.mdi-check-outline' },
                 on: {
                     click: function () {
                         thisC.$toast.disappear();
@@ -50,13 +50,13 @@ ShowConfirmToast.prototype.exec = function () {
             child: child,
 
         });
-        thisC.$toast.$closeBtn.on('click', function (){
+        thisC.$toast.$closeBtn.on('click', function () {
             thisC._rejectCb = null;
             resolve();
         });
         thisC.preventMouse(true);
         thisC.preventKeyBoard(true);
-        thisC._rejectCb = function (){
+        thisC._rejectCb = function () {
             thisC._rejectCb = null;
             thisC.$toast.remove();
             reject();

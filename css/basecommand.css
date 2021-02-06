@@ -62,6 +62,7 @@
     animation: scroll-move 1s linear infinite alternate;
 }
 
+
 @keyframes scroll-move {
     0% {
         transform: translateY(0);
@@ -70,4 +71,13 @@
     100% {
         transform: translateY(40px);
     }
+}
+
+.atr-confirm-toast-footer {
+    padding: 5px;
+    text-align: center;
+}
+
+.atr-confirm-toast-footer button{
+    height: 30px;
 }

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="eb61b6ed-8a19-4579-9cfa-84236a97e67a" name="absol.cf" url="https://absol.cf">
+      <webServer id="eb61b6ed-8a19-4579-9cfa-84236a97e67a" name="absol.cf (project level)" url="https://absol.cf">
         <fileTransfer rootFolder="/var/www/html" accessType="SFTP" host="absol.cf" port="22" sshConfigId="fe45b71c-ceaa-4505-8d5a-b8a7f2520e57" sshConfig="root@absol.cf:22 agent" authAgent="true">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
