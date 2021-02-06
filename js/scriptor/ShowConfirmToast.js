@@ -29,7 +29,7 @@ ShowConfirmToast.prototype.exec = function () {
             class: 'atr-confirm-toast-footer',
             child: {
                 tag: 'flexiconbutton',
-                props: { text: buttonText, icon: 'span.mdi.mdi-check-outline' },
+                props: { text: buttonText },
                 on: {
                     click: function () {
                         thisC.$toast.disappear();
