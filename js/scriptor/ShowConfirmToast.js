@@ -61,7 +61,7 @@ ShowConfirmToast.prototype.exec = function () {
             thisC.$toast.remove();
             reject();
         }
-    });
+    }).bind(this.stop.bind(this));
 };
 
 ShowConfirmToast.attachEnv = function (tutor, env) {
