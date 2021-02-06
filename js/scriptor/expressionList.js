@@ -25,6 +25,7 @@ import Net from "./Net";
 import Logger from "./Logger";
 import Debug from "./Debug";
 import UserMulitiSelectMenu from "./UserMulitiSelectMenu";
+import ShowConfirmToast from "./ShowConfirmToast";
 
 var commandList = [
     SetRootView,
@@ -43,6 +44,7 @@ var commandList = [
     UserInputText,
     UserSelectMenu,
     ShowToastMessage,
+    ShowConfirmToast,
     UserCalendarInput,
     UserQuickMenu,
     UserLevel2Menu,

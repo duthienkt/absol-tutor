@@ -53,12 +53,6 @@ ShowToastMessage.prototype.exec = function () {
     }
 };
 
-ShowToastMessage.prototype.cancel = function () {
-    if (this.$toast) {
-        this.$toast.remove();
-        this.$toast = null;
-    }
-};
 
 ShowToastMessage.attachEnv = function (tutor, env) {
     env.showToastMessage = function (title, text, disappearTimeout, until, variant) {
