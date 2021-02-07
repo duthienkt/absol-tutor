@@ -121,7 +121,7 @@ UserScrollIfNeed.prototype._findScrollDir = function (elt) {
     var bound = elt.getBoundingClientRect();
     var dx = 0;
     var dy = 0;
-    if (true||(outBound.height < bound.height * 1.2 && outBound.height * 1.2 > bound.height)) {
+    if (outBound.height < bound.height * 1.2 && (true || outBound.height * 1.2 > bound.height)) {
         var delta = outBound.height * this.args.delta;
         var outStart = outBound.top + delta;
         var outEnd = outBound.bottom - delta;
