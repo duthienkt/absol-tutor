@@ -1,6 +1,6 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
-import {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import Dom, {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import TACData from "./TACData";
 import TutorNameManager from "./TutorNameManager";
 import {$, _} from "../dom/Core";
@@ -71,7 +71,7 @@ UserScrollIfNeed.prototype._showScroll = function (elt, dir) {
 };
 
 UserScrollIfNeed.prototype._showScrollTooltip = function (scroller, message, dir) {
-    if (!message || !scroller) {
+    if (!message || !scroller || !dir || !dir.dy) {
         this.$scrollTooltip.remove();
         return;
     }
@@ -116,8 +116,15 @@ UserScrollIfNeed.prototype.findVScroller = function (elt, dY) {
     }
 };
 
-UserScrollIfNeed.prototype._findScrollDir = function (elt) {
-    var outBound = traceOutBoundingClientRect(elt);
+
+UserScrollIfNeed.prototype._findScrollDir = function (elt, scroller) {
+    var outBound;
+    if (scroller) {
+        outBound = scroller.getBoundingClientRect();
+    }
+    else {
+        outBound = traceOutBoundingClientRect(elt);
+    }
     var bound = elt.getBoundingClientRect();
     var dx = 0;
     var dy = 0;
@@ -128,7 +135,7 @@ UserScrollIfNeed.prototype._findScrollDir = function (elt) {
         var outX = outStart + this.args.offset * (outEnd - outStart);
         var x = bound.top + this.args.offset * bound.height;
         if (Math.abs(x - outX) > delta) {
-            if (outEnd < x) {
+            if (outX < x) {
                 dy = -1;
             }
             else {
@@ -170,17 +177,16 @@ UserScrollIfNeed.prototype.exec = function () {
     var message = this.args.message;
     var scrollUpMessage = this.args.scrollUpMessage;
     var scrollDownMessage = this.args.scrollDownMessage;
-    var scrollDir = this._findScrollDir(elt);
-    if (scrollDir.dy !== 0) {
-        vScroller = this.findVScroller(elt, scrollDir.dy);
-    }
-    else {
+    var vScroller;
+    vScroller = this.findVScroller(elt);
+    var scrollDir = this._findScrollDir(elt, vScroller);
+    if (scrollDir.dy == 0) {
         return Promise.resolve();
     }
+
     this.assignTarget(elt);
     this.showToast(message);
     this.highlightElt(elt);
-    var vScroller;
 
     return new Promise(function (resolve, reject) {
         var checkTimeoutId = -1;
@@ -210,7 +216,7 @@ UserScrollIfNeed.prototype.exec = function () {
         function check() {
 
             checkTimeoutId = -1;
-            currentDir = thisC._findScrollDir(elt);
+            currentDir = thisC._findScrollDir(elt, vScroller);
             if (currentDir.dy === 0 || !vScroller) {
                 thisC._showScrollTooltip(null);
                 thisC._prevTootipDir = 0;
@@ -233,18 +239,10 @@ UserScrollIfNeed.prototype.exec = function () {
             }
             else {
                 thisC._showScroll(vScroller, currentDir);
-                if (currentDir.dy > 0) {
-                    if (thisC._prevTootipDir.dy <= 0) {
-                        thisC._showScrollTooltip(vScroller, scrollUpMessage, currentDir);
-                        thisC._prevTootipDir.dy = 1;
-                    }
+                if (thisC._prevTootipDir.dy !== currentDir.dy) {
+                    thisC._showScrollTooltip(vScroller, currentDir.dy > 0 ? scrollUpMessage : scrollDownMessage, currentDir);
                 }
-                else {
-                    if (thisC._prevTootipDir.dy >= 0) {
-                        thisC._showScrollTooltip(vScroller, scrollDownMessage, currentDir);
-                        thisC._prevTootipDir.dy = -1;
-                    }
-                }
+                thisC._prevTootipDir.dy = currentDir.dy;
             }
 
         }
@@ -256,7 +254,7 @@ UserScrollIfNeed.prototype.exec = function () {
             if (checkTimeoutId >= 0) {
                 clearTimeout(checkTimeoutId);
             }
-            currentDir = thisC._findScrollDir(elt);
+            currentDir = thisC._findScrollDir(elt, vScroller);
             if (vScroller.scrollTop > prevScrollTop) {
                 if (currentDir.dy > 0) {
                     thisC.hadWrongAction = true;
