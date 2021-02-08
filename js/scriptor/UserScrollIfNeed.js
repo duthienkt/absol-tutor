@@ -269,7 +269,6 @@ UserScrollIfNeed.prototype.exec = function () {
 
             prevScrollTop = vScroller.scrollTop;
             checkTimeoutId = setTimeout(check, 500);
-
         }
 
         if (vScroller) {

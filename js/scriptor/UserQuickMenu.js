@@ -39,6 +39,7 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
         };
         thisC.onlyClickTo(elt);
         thisC.highlightElt(elt);
+        this.assignTarget(elt);
         elt.on('click', onClick);
         thisC._rejectCb = function () {
             elt.off('click', onClick);
@@ -68,6 +69,7 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
                 if (itemElt.isDescendantOf(document.body)) {
                     thisC.onlyClickTo(itemElt);
                     thisC.highlightElt(itemElt);
+                    this.assignTarget(itemElt);
                     if (highlight) {
                         if (wrongMessage)
                             thisC.showTooltip(itemElt, wrongMessage);
