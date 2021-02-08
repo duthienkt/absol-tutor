@@ -312,10 +312,10 @@ BaseCommand.prototype._updateToastPosition = function () {
         var isOverlay = roastListRect.isCollapse(boundRect);
 
 
-        if (this._currentTostPosition === 'se' && bound.left + 400 >= screenSize.width && (bound.top + 150 >= screenSize.height || isOverlay)) {
+        if ((this._currentTostPosition === 'se' && bound.left + 400 >= screenSize.width && (bound.top + 150 >= screenSize.height) || isOverlay)) {
             this._currentTostPosition = 'sw';
         }
-        else if (this._currentTostPosition === 'sw' && bound.left <= 400 && (bound.top + 150 >= screenSize.height || isOverlay)) {
+        else if ((this._currentTostPosition === 'sw' && bound.left <= 400 && (bound.top + 150 >= screenSize.height) || isOverlay)) {
             this._currentTostPosition = 'se';
         }
         this._tostElts.forEach(function (elt) {
