@@ -39,7 +39,7 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
         };
         thisC.onlyClickTo(elt);
         thisC.highlightElt(elt);
-        this.assignTarget(elt);
+        thisC.assignTarget(elt);
         elt.on('click', onClick);
         thisC._rejectCb = function () {
             elt.off('click', onClick);
