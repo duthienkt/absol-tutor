@@ -69,7 +69,7 @@ UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
                 if (itemElt.isDescendantOf(document.body)) {
                     thisC.onlyClickTo(itemElt);
                     thisC.highlightElt(itemElt);
-                    this.assignTarget(itemElt);
+                    thisC.assignTarget(itemElt);
                     if (highlight) {
                         if (wrongMessage)
                             thisC.showTooltip(itemElt, wrongMessage);
