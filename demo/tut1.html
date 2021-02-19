@@ -175,10 +175,15 @@
                 delete constructMenuDesc.attr.value;
 
                 var newInput = absol._({
-                    tag: 'calendarinput',
+                    tag: 'dateinput',
                     attr: constructMenuDesc.attr,
                     props: {
                         value: value
+                    },
+                    on:{
+                        change: function(){
+                            absol.require('SnackBar'.toLowerCase()).show(this.value+'')
+                        }
                     }
                 });
                 $(elt).selfReplace(newInput);
