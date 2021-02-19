@@ -81,3 +81,11 @@
 .atr-confirm-toast-footer button{
     height: 30px;
 }
+
+.as-toast pre{
+    padding: initial;
+    margin: initial;
+    overflow: initial;
+    background-color: transparent;
+    border: none;
+}
