@@ -35,7 +35,13 @@ function BaseCommand(tutor, args) {
      */
     this.args = args;
     this.tooltipToken = null;
-    this._tostElts = [];
+
+    /***
+     *
+     * @type {*[]}
+     * @protected
+     */
+    this._toastElts = [];
     this.hadWrongAction = false;
 
     this.$target = null;
@@ -283,13 +289,13 @@ BaseCommand.prototype.showToast = function (message) {
         child: this.md2HTMLElements(message)
 
     }, pos);
-    this._tostElts.push(toastElt);
+    this._toastElts.push(toastElt);
     this._updateToastPosition();
 };
 
 BaseCommand.prototype.closeAllToasts = function () {
     setTimeout(function () {
-        this._tostElts.forEach(function (elt) {
+        this._toastElts.forEach(function (elt) {
             elt.disappear();
         });
     }.bind(this), 1000)
@@ -300,6 +306,10 @@ BaseCommand.prototype.assignTarget = function (targetElt) {
     this._updateToastPosition();
 };
 
+/***
+ *
+ * @protected
+ */
 BaseCommand.prototype._updateToastPosition = function () {
     var targetElt = this.$target;
     if (targetElt) {
@@ -318,7 +328,7 @@ BaseCommand.prototype._updateToastPosition = function () {
         else if ((this._currentTostPosition === 'sw' && bound.left <= 400 && (bound.top + 150 >= screenSize.height) || isOverlay)) {
             this._currentTostPosition = 'se';
         }
-        this._tostElts.forEach(function (elt) {
+        this._toastElts.forEach(function (elt) {
             if (!elt.parentElement || elt.parentElement === toastListElt) return;
             toastListElt.addChild(elt);
         });

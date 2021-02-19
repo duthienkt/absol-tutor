@@ -3,17 +3,18 @@ import FunctionKeyManager from "./TutorNameManager";
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TACData from "./TACData";
+import ShowToastMessage from "./ShowToastMessage";
 
 /***
- * @extends BaseCommand
+ * @extends ShowToastMessage
  * @constructor
  */
 function ShowConfirmToast() {
-    BaseCommand.apply(this, arguments);
+    ShowToastMessage.apply(this, arguments);
     this.$toast = null;
 }
 
-OOP.mixClass(ShowConfirmToast, BaseCommand);
+OOP.mixClass(ShowConfirmToast, ShowToastMessage);
 
 ShowConfirmToast.prototype.exec = function () {
     var thisC = this;
@@ -61,13 +62,15 @@ ShowConfirmToast.prototype.exec = function () {
             thisC.$toast.remove();
             reject();
         }
+        thisC._avoidOverlay();
     }).then(this.stop.bind(this));
 };
 
 ShowConfirmToast.attachEnv = function (tutor, env) {
-    env.showConfirmToast = function (title, text, buttonText, variant) {
+    env.showConfirmToast = function (title, text, buttonText, variant, avoid) {
         return new ShowConfirmToast(tutor, {
-            title: title, text: text, buttonText: buttonText, variant: variant
+            title: title, text: text, buttonText: buttonText, variant: variant,
+            avoid: avoid
         }).exec();
     }
 };
@@ -80,7 +83,8 @@ TACData.define('showConfirmToast', {
         { name: 'title', type: 'string' },
         { name: 'text', type: 'MarkdownString' },
         { name: 'buttonText', type: 'string' },
-        { name: 'variant', type: 'VariantColorNamesMap' }
+        { name: 'variant', type: 'VariantColorNamesMap' },
+        { name: 'avoid?', type: '(string|AElement)' }
     ],
     desc: 'VariantColorNamesMap("primary" | "secondary" | "success" | "info" | "warning" | "error" | "danger" | "light" | "dark" | "link" | "note")'
 });
