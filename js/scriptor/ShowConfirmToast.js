@@ -23,6 +23,10 @@ ShowConfirmToast.prototype.exec = function () {
     var buttonText = this.args.buttonText;
     var variant = this.args.variant;
     this.start();
+    var pos = 'se';
+    if (["se", "sw", "ne", "nw"].indexOf(this.args.avoid) >= 0) {
+        pos = this.args.avoid;
+    }
     var child = BaseCommand.prototype.md2HTMLElements.call({ $htmlRender: BaseCommand.prototype.$htmlRender }, text);
     if (!(child instanceof Array)) child = [child];
     return new Promise(function (resolve, reject) {
@@ -49,8 +53,7 @@ ShowConfirmToast.prototype.exec = function () {
                 timeText: ''
             },
             child: child,
-
-        });
+        }, pos);
         thisC.$toast.$closeBtn.on('click', function () {
             thisC._rejectCb = null;
             resolve();
@@ -62,6 +65,7 @@ ShowConfirmToast.prototype.exec = function () {
             thisC.$toast.remove();
             reject();
         }
+        console.log(thisC.args)
         thisC._avoidOverlay();
     }).then(this.stop.bind(this));
 };
