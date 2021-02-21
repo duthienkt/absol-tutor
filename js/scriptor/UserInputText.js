@@ -4,6 +4,7 @@ import FunctionKeyManager from "./TutorNameManager";
 import AElement from "absol/src/HTML5/AElement";
 import TACData from "./TACData";
 import UserBaseAction from "./UserBaseAction";
+import {$} from "../dom/Core";
 
 /***
  * @extends UserBaseAction
@@ -16,20 +17,17 @@ function UserInputText() {
 OOP.mixClass(UserInputText, UserBaseAction);
 
 UserInputText.prototype._verifyTextInput = function (elt) {
-    var tagName = elt.tagName.toLowerCase();
-    var ok = true;
-    if (tagName !== 'input' && tagName !== 'textarea') {
-        ok = false;
-    }
-    if (!ok)
-        throw new Error('Type invalid: not a text input!');
+    var res = $('input', elt) || $('textarea', elt);
+    if (!res)
+        throw new Error('Type invalid: not a text input or not contains text input!');
+    return res;
 };
 
 UserInputText.prototype.requestUserAction = function () {
     var matchExpression = this.args.match;
     var thisC = this;
     var elt = this.tutor.findNode(this.args.eltPath);
-    this._verifyTextInput(elt);
+    elt = this._verifyTextInput(elt);
     var wrongMessage = this.args.wrongMessage;
     thisC.highlightElt(elt);
     var changed = false;

@@ -112,7 +112,20 @@
                     var realSelectMenu = absol._(constructMenuDesc);
                     oldSelectMenu.parentElement.replaceChild(realSelectMenu, oldSelectMenu)
                 });
+            var inputTexts = $$('input[type="text"]')
+            .filter(function(elt){
+                return !elt.disabled && !elt.getAttribute('class');
+            });
 
+            inputTexts.forEach(function(elt, i){
+                $(elt).selfReplace(_({
+                    tag:'searchtextinput',
+                    attr:{
+                        'data-tutor-id':'search-'+ i
+                    }
+                }));
+            });
+            console.log(inputTexts);
             absol.$$('multiselectmenu').forEach(function (oldElt) {
                 var realMenu = absol._({
                     tag: 'selectbox',
@@ -189,6 +202,8 @@
                 $(elt).selfReplace(newInput);
             });
         });
+
+
 
 
         var menuItems = [
