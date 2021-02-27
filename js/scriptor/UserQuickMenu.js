@@ -27,6 +27,7 @@ UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
                     elt.off('click', onClick);
                     if (highlight)
                         thisC.showTooltip(quickMenuElt, wrongMessage);
+                    thisC.assignTarget(quickMenuElt);
                     thisC._rejectCb = null;
                     resolve({ quickMenuElt: quickMenuElt, highlight: highlight });
                 }
