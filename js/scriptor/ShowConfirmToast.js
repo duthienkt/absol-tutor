@@ -65,7 +65,6 @@ ShowConfirmToast.prototype.exec = function () {
             thisC.$toast.remove();
             reject();
         }
-        console.log(thisC.args)
         thisC._avoidOverlay();
     }).then(this.stop.bind(this));
 };
