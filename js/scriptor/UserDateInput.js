@@ -3,10 +3,10 @@ import TutorNameManager from "./TutorNameManager";
 import OOP from "absol/src/HTML5/OOP";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
 import ChromeCalendar from "absol-acomp/js/ChromeCalendar";
-import {compareDate, compareMonth, parseDateString} from "absol/src/Time/datetime";
+import   {compareDate, compareMonth, parseDateString} from "absol/src/Time/datetime";
 import {$} from "../dom/Core";
 import TemplateString from "absol/src/JSMaker/TemplateString";
-
+import * as datetime from "absol/src/Time/datetime";
 /***
  * @extends UserBaseAction
  * @constructor
@@ -27,28 +27,30 @@ UserDateInput.prototype.requestUserAction = function () {
     var thisC = this;
     /***
      *
-     * @type {DateInput}
+     * @type {DateInput2}
      */
+
     var elt = thisC.tutor.findNode(thisC.args.eltPath);
     this.assignTarget(elt);
     var message = this.args.message;
     var wrongMessage = this.args.wrongMessage;
-    var inputTextHintFunc = this.args.inputTextHint
-        && new Function('return ' + TemplateString.parse(this.args.inputTextHint).toJSCode());
+    var inputTextHintFunc = this.args.inputTextHint && new Function('return ' + _TemplateString.default.parse(this.args.inputTextHint).toJSCode());
+
     inputTextHintFunc = inputTextHintFunc || function () {
         return null;
     };
+
     var inputTextHint;
     var value = this.args.value;
     return new Promise(function (resolve, reject) {
         thisC.onlyClickTo(elt);
         thisC.highlightElt(elt);
-        var calendarOn = !!(ChromeCalendar.$calendar && ChromeCalendar.$calendar.isDescendantOf(document.body));
+        var calendarOn = !!(elt.share.$calendar && elt.share.$calendar.isDescendantOf(document.body));
         /***
          * @type {ChromeCalendar}
          */
-        var calendar;
 
+        var calendar;
         var lastKey;
 
         function onClick(event) {
@@ -58,16 +60,17 @@ UserDateInput.prototype.requestUserAction = function () {
         }
 
         function onCalendarOpen() {
-            calendar = ChromeCalendar.$calendar;
-            thisC.onlyClickTo(ChromeCalendar.$calendar);
-            thisC.highlightElt(ChromeCalendar.$calendar);
+            calendar = elt.share.$calendar;
+            thisC.onlyClickTo(elt.share.$calendar);
+            thisC.highlightElt(elt.share.$calendar);
             onCalendarStep();
         }
 
         function onCalendarClose() {
             thisC.onlyClickTo(elt);
             thisC.highlightElt(elt);
-            if (compareDate(elt.value, value) === 0) {
+
+            if (datetime.compareDate(elt.value, value) === 0) {
                 clearListener();
                 resolve();
             }
@@ -77,40 +80,36 @@ UserDateInput.prototype.requestUserAction = function () {
             var viewDate = calendar._viewDate;
             if (!viewDate) return;
             var dM = compareMonth(value, viewDate);
+
             if (dM === 0) {
                 $('.absol-chrome-calendar-week-in-mounth>div', calendar, function (dateElt) {
-                    if (compareDate(dateElt.__date__, value) === 0
-                        && !dateElt.containsClass('absol-chrome-calendar-not-in-month')) {
+                    if (dateElt.__date__ && datetime.compareDate(dateElt.__date__, value) === 0 && !dateElt.containsClass('absol-chrome-calendar-not-in-month')) {
                         thisC.highlightElt(dateElt);
                     }
                 });
-            }
-            else if (dM < 0) {
+            } else if (dM < 0) {
                 thisC.highlightElt(calendar.$prevBtn);
-            }
-            else if (dM > 0) {
+            } else if (dM > 0) {
                 thisC.highlightElt(calendar.$nextBtn);
-
             }
         }
 
         function checkCalendar() {
             setTimeout(function () {
-                var isDisplay = !!(ChromeCalendar.$calendar && ChromeCalendar.$calendar.isDescendantOf(document.body));
+                var isDisplay = !!(elt.share.$calendar && elt.share.$calendar.isDescendantOf(document.body));
+
                 if (calendarOn !== isDisplay) {
                     calendarOn = isDisplay;
+
                     if (calendarOn) {
                         onCalendarOpen();
-                    }
-                    else {
+                    } else {
                         onCalendarClose();
                     }
-                }
-                else if (calendarOn) {
+                } else if (calendarOn) {
                     onCalendarStep();
                 }
             }, 10);
-
         }
 
         function onKeyUp(event) {
@@ -123,13 +122,15 @@ UserDateInput.prototype.requestUserAction = function () {
         function checkInput() {
             setTimeout(function () {
                 inputTextHint = inputTextHintFunc.call(elt);
-                if (thisC._isFocus(elt.$input) && lastKey!== 'Enter') {
+
+                if (thisC._isFocus(elt.$input) && lastKey !== 'Enter') {
                     thisC.highlightElt(null);
                     var text = elt.$input.value;
+
                     try {
                         var expectedValue = parseDateString(text, elt.format || 'dd/mm/yyyy');
-                        if (!prevented && expectedValue && compareDate(expectedValue, value) === 0) {
 
+                        if (!prevented && expectedValue && compareDate(expectedValue, value) === 0) {
                             function preventKey(event) {
                                 if (event.key.length === 1 && !event.ctrlKey && !event.altKey) {
                                     event.preventDefault();
@@ -137,48 +138,37 @@ UserDateInput.prototype.requestUserAction = function () {
                             }
 
                             var checkIntv = setInterval(function () {
-                                if (document.activeElement !== elt.$input)
-                                    finishPrevent();
+                                if (document.activeElement !== elt.$input) finishPrevent();
                             }, 100);
-                            elt.$input.on('keydown', preventKey)
-                                .on('blur', finishPrevent);
+                            elt.$input.on('keydown', preventKey).on('blur', finishPrevent);
 
                             function finishPrevent() {
-                                elt.$input.off('keydown', preventKey)
-                                    .off('blur', finishPrevent);
+                                elt.$input.off('keydown', preventKey).off('blur', finishPrevent);
                                 clearInterval(checkIntv);
                             }
 
                             resolve();
-                        }
-                        else {
-                            if (inputTextHint)
-                                thisC.showTooltip(elt.$input, inputTextHint);
+                        } else {
+                            if (inputTextHint) thisC.showTooltip(elt.$input, inputTextHint);
                         }
                     } catch (error) {
-                        if (inputTextHint)
-                            thisC.showTooltip(elt.$input, inputTextHint);
+                        if (inputTextHint) thisC.showTooltip(elt.$input, inputTextHint);
                     }
-
-                }
-                else {
+                } else {
                     if (compareDate(elt.value, value) !== 0) {
-                        if (wrongMessage)
-                            thisC.showTooltip(elt, wrongMessage);
-                        if (lastKey !== 'Enter' &&!(ChromeCalendar.$calendar && ChromeCalendar.$calendar.isDescendantOf(document.body)))
-                            thisC.highlightElt(elt);
-                        if (lastKey === 'Enter'){
+                        if (wrongMessage) thisC.showTooltip(elt, wrongMessage);
+                        if (lastKey !== 'Enter' && !(elt.share.$calendar && elt.share.$calendar.isDescendantOf(document.body))) thisC.highlightElt(elt);
+
+                        if (lastKey === 'Enter') {
                             elt.$input.focus();
                             elt.$input.select && elt.$input.select();
                         }
-                    }
-                    else{
+                    } else {
                         clearListener();
                         resolve();
                     }
                 }
-            }, 10)
-
+            }, 10);
         }
 
         function clearListener() {
@@ -186,11 +176,10 @@ UserDateInput.prototype.requestUserAction = function () {
             document.body.removeEventListener('keyup', onKeyUp);
         }
 
-
         thisC._rejectCb = function () {
             clearListener();
             reject();
-        }
+        };
 
         document.body.addEventListener('click', onClick);
         document.body.addEventListener('keyup', onKeyUp);
@@ -207,7 +196,7 @@ UserDateInput.attachEnv = function (tutor, env) {
             wrongMessage: wrongMessage,
             inputTextHint: inputTextHint
         }).exec();
-    }
+    };
 };
 
 
