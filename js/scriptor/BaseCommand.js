@@ -15,7 +15,7 @@ import {getScreenSize} from "absol/src/HTML5/Dom";
 var showdownConverter = new Converter();
 
 /***
- * @typedef {{eltPath:string, message:string, wrongMessage:string, text: string, query: string, value:(string|number|null), until:(BaseCommand|(function():Promise))}} TutorCommandArgs
+ * @typedef {{eltPath:string, message:string, wrongMessage:string, finishMessage:string, text: string, query: string, value:(string|number|null)>,until:(BaseCommand|(function():Promise))}} TutorCommandArgs
  */
 
 /***
@@ -114,12 +114,29 @@ BaseCommand.prototype.ev_docKeyboard = function (event) {
     }
 };
 
+/***
+ *
+ * @param {function|null} cb
+ */
+BaseCommand.prototype.ifPressKey = function (cb) {
+    this._keyCb = cb;
+};
+
+
 BaseCommand.prototype.ev_clickModal = function (event) {
     this.hadWrongAction = true;
     if (this._clickCb)
         this._clickCb();
 };
 
+
+/***
+ *
+ * @param {function|null} cb
+ */
+BaseCommand.prototype.ifClickModal = function (cb) {
+    this._clickCb = cb;
+};
 
 /***
  * @param {HTMLElement} elt
@@ -157,6 +174,15 @@ BaseCommand.prototype.cancel = function () {
     }
 };
 
+
+/***
+ *
+ * @param {function|null} cb
+ */
+BaseCommand.prototype.ifCancel = function (cb) {
+    this._rejectCb = cb;
+};
+
 BaseCommand.prototype.onStop = function () {
     /** modal **/
     this.$puncturedModal.off('click', this.ev_clickModal);
@@ -164,7 +190,6 @@ BaseCommand.prototype.onStop = function () {
 
     this._clickCb = null;
     this._keyCb = null;
-
     this.cancel && this.cancel();
     this.closeTooltip();
     this.closeAllToasts();
@@ -187,8 +212,7 @@ BaseCommand.prototype.preventMouse = function (flag) {
     }
     if (flag) {
         this.$transparentModal.removeClass('as-hidden');
-    }
-    else {
+    } else {
         this.$transparentModal.addClass('as-hidden');
 
     }
@@ -200,8 +224,7 @@ BaseCommand.prototype.preventKeyBoard = function (flag) {
             this._keyboardPrevented = true;
             document.addEventListener('keydown', this.ev_docKeyboard);
         }
-    }
-    else {
+    } else {
         if (this._keyboardPrevented) {
             this._keyboardPrevented = false;
             document.removeEventListener('keydown', this.ev_docKeyboard);
@@ -216,8 +239,7 @@ BaseCommand.prototype.highlightElt = function (elt) {
     this.$highlightModal.follow(elt);
     if (elt) {
         this.$highlightModal.removeClass('as-transparent');
-    }
-    else {
+    } else {
         this.$highlightModal.addClass('as-transparent');
         this.$highlightModal.reset();
     }
@@ -230,8 +252,7 @@ BaseCommand.prototype.onlyClickTo = function (elt) {
     if (elt) {
         this.$puncturedModal.follow(elt);
         this.$puncturedModal.removeClass('as-hidden');
-    }
-    else {
+    } else {
         this.$puncturedModal.follow(null);
         this.$puncturedModal.addClass('as-hidden');
         this.$puncturedModal.onInteractOut = null;
@@ -324,8 +345,7 @@ BaseCommand.prototype._updateToastPosition = function () {
 
         if ((this._currentTostPosition === 'se' && bound.left + 400 >= screenSize.width && (bound.top + 150 >= screenSize.height) || isOverlay)) {
             this._currentTostPosition = 'sw';
-        }
-        else if ((this._currentTostPosition === 'sw' && bound.left <= 400 && (bound.top + 150 >= screenSize.height) || isOverlay)) {
+        } else if ((this._currentTostPosition === 'sw' && bound.left <= 400 && (bound.top + 150 >= screenSize.height) || isOverlay)) {
             this._currentTostPosition = 'se';
         }
         this._toastElts.forEach(function (elt) {
@@ -357,8 +377,7 @@ BaseCommand.prototype.depthClone = function () {
     var newArgs = Object.keys(args).reduce(function (ac, cr) {
         if (args[cr] && args[cr].depthClone) {
             ac[cr] = args[cr].depthClone();
-        }
-        else {
+        } else {
             ac[cr] = args[cr];
         }
         return ac;
@@ -372,8 +391,7 @@ BaseCommand.prototype.asyncGetElt = function (val) {
     var res;
     if (typeof val === "string") {
         res = wrapAsync(this.tutor.findNode(val));
-    }
-    else {
+    } else {
         res = wrapAsync(val);
     }
     return res.then(function (result) {
