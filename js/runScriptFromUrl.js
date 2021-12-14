@@ -1,7 +1,7 @@
 import Tutor from "./Tutor";
 
 export default function runScriptFromUrl(url, elt) {
-    fetch(url).then(function (res) {
+    return fetch(url).then(function (res) {
         return res.text();
     }).then(function (text) {
         elt = elt || document.body;
