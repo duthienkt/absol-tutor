@@ -24,9 +24,11 @@ import UserScrollIfNeed from "./UserScrollIfNeed";
 import Net from "./Net";
 import Logger from "./Logger";
 import Debug from "./Debug";
-import UserMulitiSelectMenu from "./UserMulitiSelectMenu";
+import UserMultiSelectMenu from "./UserMultiSelectMenu";
 import ShowConfirmToast from "./ShowConfirmToast";
 import UserDateInput from "./UserDateInput";
+import UserDateInYearInput from "./UserDateInYearInput";
+import UserFileInputBox from "./UserFileInputBox";
 
 var commandList = [
     SetRootView,
@@ -54,7 +56,9 @@ var commandList = [
     UserSwitchTab,
     Delay,
     UserScrollIfNeed,
-    UserMulitiSelectMenu,
+    UserMultiSelectMenu,
+    UserDateInYearInput,
+    UserFileInputBox,
     Net,
     Logger,
     Debug
