@@ -14,13 +14,14 @@ function UserCheckbox() {
 OOP.mixClass(UserCheckbox, UserBaseAction);
 
 UserCheckbox.prototype._verifyCheckbox = function (elt) {
-    if (!elt.containsClass || !(elt.containsClass('absol-checkbox')
+    if (!elt.containsClass || !((elt.containsClass('absol-checkbox')
         || elt.containsClass('absol-radio')
         || elt.containsClass('as-checkbox-input')
         || elt.containsClass('as-checkbox-input')
         || elt.containsClass('as-radio-input')
+        || elt.containsClass('absol-switch')
         || (elt.tagName.toLowerCase() === 'input' && (elt.type === 'checkbox' || elt.type === 'radio'))
-    )) {
+    ))) {
         throw new Error('Type error: not a radio or checkbox');
     }
 };
@@ -84,7 +85,9 @@ UserCheckbox.attachEnv = function (tutor, env) {
             message: message,
             wrongMessage: wrongMessage
         }).exec();
-    }
+    };
+
+    env.userSwitch = env.userCheckbox;
 
     env.userRadio = function (eltPath, checked, message, wrongMessage) {
         return new UserCheckbox(tutor, {
@@ -98,23 +101,25 @@ UserCheckbox.attachEnv = function (tutor, env) {
 };
 
 FunctionNameManager.addAsync('userCheckbox');
+FunctionNameManager.addAsync('userSwitch');
+FunctionNameManager.addAsync('userRadio');
 
 
 TACData.define('userCheckbox', {
     type: 'function',
     args: [
-        { name: 'eltPath', type: '(string|AElement)' },
-        { name: 'checked', type: 'boolean' },
-        { name: 'message', type: 'string' },
-        { name: 'wrongMessage', type: 'string' }
+        {name: 'eltPath', type: '(string|AElement)'},
+        {name: 'checked', type: 'boolean'},
+        {name: 'message', type: 'string'},
+        {name: 'wrongMessage', type: 'string'}
     ]
 }).define('userRadio', {
     type: 'function',
     args: [
-        { name: 'eltPath', type: '(string|AElement)' },
-        { name: 'checked', type: 'boolean' },
-        { name: 'message', type: 'string' },
-        { name: 'wrongMessage', type: 'string' }
+        {name: 'eltPath', type: '(string|AElement)'},
+        {name: 'checked', type: 'boolean'},
+        {name: 'message', type: 'string'},
+        {name: 'wrongMessage', type: 'string'}
     ]
 });
 
