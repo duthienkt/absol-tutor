@@ -11,9 +11,9 @@ function TutorPath() {
 
 TutorPath.prototype.match = function (elt, query) {
     var res = JSPath.prototype.match.call(this, elt, query);
-    res = res || elt.getAttribute('data-tutor-id') === query.tagName;
-    res = res || elt.getAttribute('data-tutor-id') === query.id;
-    res = res || elt['data-tutor-id'] === query.tagName;
+    res = res || (query.tagName && elt.getAttribute('data-tutor-id') === query.tagName);
+    res = res || (query.id && elt.getAttribute('data-tutor-id') === query.id);
+    res = res || (query.tagName && elt['data-tutor-id'] === query.tagName);
     return res;
 };
 
