@@ -2,6 +2,43 @@ import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import { inheritCommand } from "../engine/TCommand";
+import BaseState from "./BaseState";
+import TutorEngine from "./TutorEngine";
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateRunTrigger() {
+    BaseState.apply(this, arguments);
+    this.expression = this.args.until;
+    if (this.expression && this.expression.depthClone) {
+        this.expression = this.expression.depthClone();
+    }
+    this.toId = -1;
+
+}
+
+OOP.mixClass(StateRunTrigger, BaseState);
+
+StateRunTrigger.prototype.onStart = function () {
+    if (typeof this.expression === "number") {
+        this.toId = setTimeout(this.goto.bind(this, 'finish'), this.expression);
+    }
+    else if (this.expression && this.expression.exec) {
+        this.expression.exec().then(this.goto.bind(this, 'finish'));
+    }
+    else {
+        throw new Error("\"until\" argument is not valid!");
+    }
+};
+
+StateRunTrigger.prototype.onStop = function () {
+    if (this.toId > 0) {
+        clearTimeout(this.toId);
+    }
+};
 
 /***
  * @extends BaseCommand
@@ -9,52 +46,20 @@ import TACData from "./TACData";
  */
 function Delay() {
     BaseCommand.apply(this, arguments);
-    this._timeoutId = -1;
-    this._rejectCb = null;
+
 }
 
-OOP.mixClass(Delay, BaseCommand);
+inheritCommand(Delay, BaseCommand);
 
-Delay.prototype.exec = function () {
-    var thisC = this;
-    this.start();
-    this.preventMouse(true);
-    var trigger = this.args.trigger;
-    if (trigger.exec) {
-        if (trigger.depthClone) trigger = trigger.depthClone();
-        return trigger.exec().then(this.stop.bind(this));
-    }
-    else if (typeof trigger === "number") {
-        return new Promise(function (resolve, reject) {
-            thisC._rejectCb = reject;
-            thisC._timeoutId = setTimeout(resolve, trigger);
-        }).then(this.stop.bind(this));
-    }
-    else {
-        this.stop();
-        return Promise.resolve();
-    }
-};
+Delay.prototype.argNames = ['until'];
 
-Delay.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
-    if (this._timeoutId >= 0) {
-        clearTimeout(this._timeoutId);
-        this._timeoutId = -1;
-    }
-};
+Delay.prototype.className = 'Delay';
+Delay.prototype.name = 'delay';
+
+Delay.prototype.stateClasses.entry = StateRunTrigger;
 
 
-Delay.attachEnv = function (tutor, env) {
-    env.delay = function (trigger) {
-        return new Delay(tutor, {
-            trigger: trigger
-        }).exec();
-    };
-}
+TutorEngine.installClass(Delay);
 
 TutorNameManager.addAsync('delay');
 
@@ -63,7 +68,7 @@ TACData.define('delay', {
     args: [
         { name: 'trigger', type: 'Trigger|number' }
     ],
-    desc:"Chờ trong khoảng thời gian hoặc trigger kích hoạt"
+    desc: "Chờ trong khoảng thời gian hoặc trigger kích hoạt"
 })
 
 export default Delay;
