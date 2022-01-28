@@ -2,6 +2,42 @@ import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import TACData from "./TACData";
 import UserBaseAction from "./UserBaseAction";
+import TutorEngine from "./TutorEngine";
+import BaseState from "./BaseState";
+
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitClick(){
+    BaseState.apply(this, arguments);
+}
+
+OOP.mixClass(StateWaitClick,BaseState);
+
+StateWaitClick.prototype.onStart = function (){
+    this.command.highlightElt(this.command.elt);
+    this.command.onlyClickTo(this.command.elt);
+    this.command.clickCb = this.ev_clickOut;
+    this.command.elt.addEventListener('click', this.ev_click);
+};
+
+StateWaitClick.prototype.onStop = function (){
+    this.command.elt.removeEventListener('click', this.ev_click);
+};
+
+StateWaitClick.prototype.ev_clickOut = function (){
+   if (this.args.wrongMessage){
+       this.command.showTooltip(this.command.elt, this.args.wrongMessage);
+   }
+};
+
+StateWaitClick.prototype.ev_click = function (){
+    this.goto('finish');
+}
+
+
 
 /***
  * @extends UserBaseAction
@@ -12,6 +48,11 @@ function UserClick() {
 }
 
 OOP.mixClass(UserClick, UserBaseAction);
+
+UserClick.prototype.name = 'userClick';
+UserClick.prototype.argNames = ['eltPath', 'message', 'wrongMessage'];
+
+UserClick.prototype.stateClass.user_begin = StateWaitClick;
 
 UserClick.prototype.requestUserAction = function (){
     var thisC = this;
@@ -44,14 +85,7 @@ UserClick.prototype.requestUserAction = function (){
 
         elt.once('click', onClick);
         document.body.addEventListener("click", clickForceGround);
-    })
-
-};
-
-UserClick.attachEnv = function (tutor, env) {
-    env.userClick = function (eltPath, message, wrongMessage) {
-        return new UserClick(tutor, { eltPath: eltPath, message: message, wrongMessage: wrongMessage }).exec();
-    };
+    });
 };
 
 TutorNameManager.addAsync('userClick');
@@ -64,6 +98,8 @@ TACData.define('userClick', {
         { name: 'wrongMessage', type: 'string' }
     ]
 });
+
+TutorEngine.installCommand(UserClick);
 
 
 export default UserClick;
