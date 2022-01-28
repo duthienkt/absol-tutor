@@ -11,29 +11,27 @@ import Vec2 from "absol/src/Math/Vec2";
 import Rectangle from "absol/src/Math/Rectangle";
 import BlinkMask from "../dom/BlinkMask";
 import {getScreenSize} from "absol/src/HTML5/Dom";
+import AsyncCommand from "../engine/AsyncCommand";
+import { inheritCommand } from "../engine/TCommand";
+import TState from "../engine/TState";
 
 var showdownConverter = new Converter();
+
+
+
 
 /***
  * @typedef {{eltPath:string, message:string, wrongMessage:string, finishMessage:string, text: string, query: string, value:(string|number|null)>,until:(BaseCommand|(function():Promise))}} TutorCommandArgs
  */
 
 /***
- * @extends Context
- * @param tutor
+ * @extends AsyncCommand
+ * @param process
  * @param {TutorCommandArgs} args
  * @constructor
  */
-function BaseCommand(tutor, args) {
-    Context.call(this);
-    /***
-     * @type Tutor
-     */
-    this.tutor = tutor;
-    /***
-     * @type {TutorCommandArgs}
-     */
-    this.args = args;
+function BaseCommand(process, args) {
+    AsyncCommand.apply(this, arguments);
     this.tooltipToken = null;
 
     /***
@@ -55,28 +53,21 @@ function BaseCommand(tutor, args) {
     /***
      * only call if prevented keyboard
      * @type {function():void}
-     * @protected
      */
-    this._keyCb = null;
+    this.keyCb = null;
     /** Mouse **/
     this.ev_clickModal = this.ev_clickModal.bind(this);
 
     /***
      * only call if prevented mouse
      * @type {function():void}
-     * @protected
      */
-    this._clickCb = null;
+    this.clickCb = null;
 
 
-    /***
-     * @type {function():void}
-     * @protected
-     */
-    this._rejectCb = null;
 }
 
-OOP.mixClass(BaseCommand, Context);
+inheritCommand(BaseCommand, AsyncCommand);
 
 BaseCommand.prototype.$htmlRender = _('div');
 
@@ -109,8 +100,8 @@ BaseCommand.prototype.$tooltipContent = _({
 BaseCommand.prototype.ev_docKeyboard = function (event) {
     this.hadWrongAction = true;
     event.preventDefault();
-    if (this._keyCb) {
-        this._keyCb();
+    if (this.keyCb) {
+        this.keyCb();
     }
 };
 
@@ -119,14 +110,14 @@ BaseCommand.prototype.ev_docKeyboard = function (event) {
  * @param {function|null} cb
  */
 BaseCommand.prototype.ifPressKey = function (cb) {
-    this._keyCb = cb;
+    this.keyCb = cb;
 };
 
 
 BaseCommand.prototype.ev_clickModal = function (event) {
     this.hadWrongAction = true;
-    if (this._clickCb)
-        this._clickCb();
+    if (this.clickCb)
+        this.clickCb();
 };
 
 
@@ -135,7 +126,7 @@ BaseCommand.prototype.ev_clickModal = function (event) {
  * @param {function|null} cb
  */
 BaseCommand.prototype.ifClickModal = function (cb) {
-    this._clickCb = cb;
+    this.clickCb = cb;
 };
 
 /***
@@ -161,18 +152,11 @@ BaseCommand.prototype.hitSomeOf = function (elt, event) {
 
 
 BaseCommand.prototype.onStart = function () {
-    this.tutor.commandPush(this);
     this.$puncturedModal.on('click', this.ev_clickModal);
     this.$transparentModal.on('click', this.ev_clickModal);
 };
 
 
-BaseCommand.prototype.cancel = function () {
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
-};
 
 
 /***
@@ -180,7 +164,6 @@ BaseCommand.prototype.cancel = function () {
  * @param {function|null} cb
  */
 BaseCommand.prototype.ifCancel = function (cb) {
-    this._rejectCb = cb;
 };
 
 BaseCommand.prototype.onStop = function () {
@@ -188,16 +171,14 @@ BaseCommand.prototype.onStop = function () {
     this.$puncturedModal.off('click', this.ev_clickModal);
     this.$transparentModal.off('click', this.ev_clickModal);
 
-    this._clickCb = null;
-    this._keyCb = null;
-    this.cancel && this.cancel();
+    this.clickCb = null;
+    this.keyCb = null;
     this.closeTooltip();
     this.closeAllToasts();
     this.highlightElt(null);
     this.onlyClickTo(null);
     this.preventMouse(false);
     this.preventKeyBoard(false);
-    this.tutor.commandPop(this);
 };
 
 
@@ -268,16 +249,11 @@ BaseCommand.prototype.showDelayToast = function (message) {
     this.preventMouse(true);
     this.showToast(message);
     return new Promise(function (resolve, reject) {
-        var resolveTimoutId = setTimeout(function () {
-            thisC._rejectCb = null;
+        setTimeout(function () {
             thisC.preventMouse(false);
             resolve();
 
         }, thisC.tutor.option.messageDelay);
-        thisC._rejectCb = function () {
-            clearTimeout(resolveTimoutId);
-            reject();
-        }
     });
 };
 
@@ -363,14 +339,6 @@ BaseCommand.prototype.closeTooltip = function () {
 };
 
 
-/***
- * @returns {Promise}
- *
- **/
-BaseCommand.prototype.exec = function () {
-    return Promise.resolve();
-};
-
 
 BaseCommand.prototype.depthClone = function () {
     var args = this.args;
@@ -383,8 +351,7 @@ BaseCommand.prototype.depthClone = function () {
         return ac;
     }, {});
 
-    return new this.constructor(this.tutor, newArgs);
-
+    return new this.constructor(this.process, newArgs);
 };
 
 BaseCommand.prototype.asyncGetElt = function (val) {
@@ -413,5 +380,12 @@ BaseCommand.prototype.findNode = function (query, unsafe) {
 
 BaseCommand.attachEnv = function (tutor, env) {
 };
+
+
+Object.defineProperty(BaseCommand.prototype, 'tutor', {
+    get: function (){
+        return this.process.tutor;
+    }
+});
 
 export default BaseCommand;
