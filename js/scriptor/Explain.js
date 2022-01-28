@@ -1,34 +1,62 @@
 import '../../css/explain.css';
-import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import TutorNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import { inheritCommand } from "../engine/TCommand";
+import BaseState from "./BaseState";
+import UserBaseAction from "./UserBaseAction";
+import TutorEngine from "./TutorEngine";
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateShowMessage(){
+    BaseState.apply(this, arguments);
+}
+
+OOP.mixClass(StateShowMessage,BaseState);
+
+StateShowMessage.prototype.onStart = function (){
+    this.command.showTooltip(this.command.elt, this.args.text);
+    var until = this.args.until;
+    if (!until){
+        this.goto('finish');
+        return;
+    }
+    if (until.depthClone){
+        until.depthClone().exec().then(this.goto.bind(this, 'finish'));
+    }
+    else if (until.exec){
+        until.depthClone().exec().then(this.goto.bind(this, 'finish'));
+    }
+    else if (until.exec){
+        until.exec().then(this.goto.bind(this, 'finish'));
+    }
+    else if (until.then){
+        until.then(this.goto.bind(this, 'finish'));
+    }
+    else {
+        this.goto('finish');
+    }
+};
 
 
 /***
- * @extends {BaseCommand}
+ * @extends {UserBaseAction}
  */
 function Explain() {
-    BaseCommand.apply(this, arguments);
+    UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(Explain, BaseCommand);
+inheritCommand(Explain, UserBaseAction);
 
-Explain.prototype.exec = function () {
-    this.start();
-    var targetElt = this.tutor.findNode(this.args.eltPath);
-    var text = this.args.text;
-    this.showTooltip(targetElt, text);
-    this.preventMouse(true);
-    return this.args.until.exec().then(this.stop.bind(this));
-};
+Explain.prototype.argNames = ['eltPath', 'text', 'until'];
+Explain.prototype.name = 'explain';
+Explain.prototype.stateClasses.user_begin = StateShowMessage;
 
+TutorEngine.installClass(Explain);
 
-Explain.attachEnv = function (tutor, env) {
-    env.explain = function (eltPath, text, until) {
-        return new Explain(tutor, { eltPath: eltPath, text: text, until: until }).exec();
-    };
-};
 
 TutorNameManager.addAsync('explain');
 
