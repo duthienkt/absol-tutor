@@ -117,7 +117,7 @@ ScriptEngine.prototype.makeEnvVariable = function (process, name) {
         return;
     }
 
-    var func = this.syncCommandFunctions[name];
+    var func = this.syncCommandFunctions[name] || this.asyncCommandFunctions[name];
     if (func) {
         process.env[name] = func;
         return;
@@ -147,7 +147,7 @@ ScriptEngine.prototype.ProgramClass = TProgram;
 ScriptEngine.prototype.compile = function (code) {
     var argNames = Object.keys(Object.assign({},
         this.asyncCommandClasses, this.syncCommandClasses,
-        this.constantClasses, this.syncCommandFunctions,
+        this.constantClasses, this.syncCommandFunctions,this.asyncCommandFunctions,
         this.constants));
     code = this.makeModuleTemplate(code, argNames);
     var ast = parse(code);
