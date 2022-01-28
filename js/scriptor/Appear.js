@@ -9,19 +9,19 @@ import TutorEngine from "./TutorEngine";
  * @extends BaseState
  * @constructor
  */
-function StateWaitElt() {
+export function StateWaitEltAppear() {
     BaseState.apply(this, arguments);
     this.timeOut = -1;
 }
 
-OOP.mixClass(StateWaitElt, BaseState);
+OOP.mixClass(StateWaitEltAppear, BaseState);
 
-StateWaitElt.prototype.onStart = function () {
+StateWaitEltAppear.prototype.onStart = function () {
     this.endTime = new Date().getTime() + (this.args.timeout || 100);
     this.checkElt();
 };
 
-StateWaitElt.prototype.onStop = function () {
+StateWaitEltAppear.prototype.onStop = function () {
     if (this.timeOut >= 0) {
         clearTimeout(this.timeOut);
         this.timeOut = -1;
@@ -30,7 +30,7 @@ StateWaitElt.prototype.onStop = function () {
 };
 
 
-StateWaitElt.prototype.isVisibility = function (elt) {
+StateWaitEltAppear.prototype.isVisibility = function (elt) {
     var eltBound;
     if (elt) {
         eltBound = elt.getBoundingClientRect();
@@ -44,7 +44,7 @@ StateWaitElt.prototype.isVisibility = function (elt) {
     return false;
 };
 
-StateWaitElt.prototype.checkElt = function () {
+StateWaitEltAppear.prototype.checkElt = function () {
     var now = new Date().getTime();
     this.timeOut = -1;
     var elt = this.command.findNode(this.args.eltPath, true);
@@ -73,7 +73,8 @@ inheritCommand(Appear, BaseCommand);
 Appear.prototype.className = 'Appear';
 Appear.prototype.argNames = ['eltPath', 'timeout'];
 Appear.prototype.name = 'APPEAR';
-Appear.prototype.stateClasses.entry = StateWaitElt;
+Appear.prototype.stateClasses.entry = StateWaitEltAppear;
+Appear.prototype.type = 'sync';
 
 TutorEngine.installClass(Appear);
 
