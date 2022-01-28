@@ -26,6 +26,9 @@ StateRunTrigger.prototype.onStart = function () {
     if (typeof this.expression === "number") {
         this.toId = setTimeout(this.goto.bind(this, 'finish'), this.expression);
     }
+    else if (this.expression && this.expression.then){
+        this.expression.then(this.goto.bind(this, 'finish'));
+    }
     else if (this.expression && this.expression.exec) {
         this.expression.exec().then(this.goto.bind(this, 'finish'));
     }
