@@ -1,5 +1,6 @@
 import TutorNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import TutorEngine from "./TutorEngine";
 
 var Net = {};
 
@@ -10,9 +11,8 @@ Net.properties.downloadText = function (rqi) {
     });
 };
 
-Net.attachEnv = function (tutor, env) {
-    Object.assign(env, Net.properties);
-};
+console.log(Net.properties.downloadText)
+TutorEngine.installFunction('downloadText', Net.properties.downloadText, true);
 
 TutorNameManager.addAsync('downloadText');
 
