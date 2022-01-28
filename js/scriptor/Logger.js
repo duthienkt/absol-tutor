@@ -1,14 +1,13 @@
 import TutorNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import TutorEngine from "./TutorEngine";
 
 var Logger = {};
 
 Logger.properties = {};
 Logger.properties.log = console.log.bind(console);
 
-Logger.attachEnv = function (tutor, env) {
-    Object.assign(env, Logger.properties);
-};
+TutorEngine.installFunction('log', Logger.properties.log, false);
 
 TutorNameManager.addAsync('log');
 
