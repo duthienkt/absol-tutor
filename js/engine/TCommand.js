@@ -13,8 +13,8 @@ export function inheritCommand() {
     var des = {};
     for (var i = 0; i < classes.length; ++i) {
         Object.assign(des, Object.getOwnPropertyDescriptors(classes[i].prototype));
-        if (classes[i].prototype.stateClass) {
-            stateClasses = Object.assign(stateClasses || {}, classes[i].prototype.stateClass);
+        if (classes[i].prototype.stateClasses) {
+            stateClasses = Object.assign(stateClasses || {}, classes[i].prototype.stateClasses);
         }
         if (classes[i].prototype.argNames) {
             argNames = classes[i].prototype.argNames;
@@ -25,7 +25,7 @@ export function inheritCommand() {
     Object.defineProperties(clazz.prototype, des);
     clazz.prototype.argNames = argNames.slice();
     if (stateClasses) {
-        clazz.prototype.stateClass = stateClasses;
+        clazz.prototype.stateClasses = stateClasses;
     }
 }
 
