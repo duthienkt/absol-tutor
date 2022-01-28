@@ -14,10 +14,11 @@ var generator = babel.generator;
 function ScriptEngine() {
     this.asyncCommandClasses = {};
     this.syncCommandClasses = {};
+    this.constantClasses = {};
     this.asyncCommandFunctions = {};
     this.syncCommandFunctions = {};
     this.constants = {};
-    this.installCommand(TDebug);
+    this.installClass(TDebug);
 }
 
 ScriptEngine.prototype.makeModuleTemplate = function (code, argNames) {
@@ -105,6 +106,17 @@ ScriptEngine.prototype.makeEnvVariable = function (process, name) {
         return;
     }
 
+    clazz = this.constantClasses[name];
+    if (clazz){
+        if (clazz.attachEnv) {
+            clazz.attachEnv(process, process.env);
+        }
+        else {
+            process.env[name] = new clazz(process, {});
+        }
+        return;
+    }
+
     var func = this.syncCommandFunctions[name];
     if (func) {
         process.env[name] = func;
@@ -133,7 +145,10 @@ ScriptEngine.prototype.ProgramClass = TProgram;
  * @returns TProgram
  */
 ScriptEngine.prototype.compile = function (code) {
-    var argNames = Object.keys(Object.assign({}, this.asyncCommandClasses, this.syncCommandClasses, this.constants));
+    var argNames = Object.keys(Object.assign({},
+        this.asyncCommandClasses, this.syncCommandClasses,
+        this.constantClasses, this.syncCommandFunctions,
+        this.constants));
     code = this.makeModuleTemplate(code, argNames);
     var ast = parse(code);
     this.awaitInject(code, ast);
@@ -161,13 +176,20 @@ ScriptEngine.prototype.compile = function (code) {
 };
 
 
-ScriptEngine.prototype.installCommand = function (clazz) {
-    var isAsync = clazz.prototype.type === 'async';
-    if (isAsync) {
-        this.asyncCommandClasses[clazz.prototype.name] = clazz;
-    }
-    else {
-        this.syncCommandClasses[clazz.prototype.name] = clazz;
+ScriptEngine.prototype.installClass = function (clazz) {
+    console.log(clazz)
+    var type = clazz.prototype.type;
+    var name = clazz.prototype.name;
+    switch (type) {
+        case 'async':
+            this.asyncCommandClasses[name] = clazz;
+            break;
+        case 'sync':
+            this.syncCommandClasses[name] = clazz;
+            break;
+        case 'const':
+            this.constantClasses[name] = clazz;
+            break;
     }
     return this;
 };
