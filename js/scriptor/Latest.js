@@ -1,5 +1,6 @@
 import BaseCommand from './BaseCommand';
-import OOP from 'absol/src/HTML5/OOP';
+import TutorEngine from "./TutorEngine";
+import { inheritCommand } from "../engine/TCommand";
 
 /***
  * @extends {BaseCommand}
@@ -8,19 +9,29 @@ function Latest() {
     BaseCommand.apply(this, arguments);
 }
 
-OOP.mixClass(Latest, BaseCommand);
+inheritCommand(Latest, BaseCommand);
+
+
+Latest.prototype.name = 'LATEST';
+Latest.prototype.type = 'sync';
+Latest.prototype.argNames = [];
 
 Latest.prototype.exec = function () {
-    var expressions = this.args.expressions;
-    return Promise.all(expressions.map(function (exp) {
-        return exp.exec();
-    }));
+    var expressions = this.args.arguments.map(function (e){
+        if (e.depthClone){
+            return  e.depthClone().exec();
+        }
+        else  if (e.then){
+            return  e;
+        }
+        else if (e.exec){
+            return  e.exec();
+        }
+        return Promise.resolve();
+    });
+    return Promise.all(expressions);
 };
 
-Latest.attachEnv = function (tutor, env) {
-    env.LATEST = function () {
-        return new Latest(tutor, { expressions: Array.prototype.slice.call(arguments) });
-    };
-};
+TutorEngine.installClass(Latest);
 
 export default Latest;
