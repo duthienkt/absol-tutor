@@ -38,7 +38,7 @@ function AsyncCommand(process, args) {
     }.bind(this));
 }
 
-StateFinish.prototype.className = 'AsyncCommand';
+AsyncCommand.prototype.type = 'async';
 
 AsyncCommand.prototype.argNames = [];
 
@@ -49,7 +49,7 @@ AsyncCommand.prototype.onStop = noop;
 
 AsyncCommand.prototype.goto = function (state) {
     if (!this.state) return;// stop or not start, can not goto
-    var clazz = this.stateClass[state];
+    var clazz = this.stateClasses[state];
     this.state.onStop();
     this.state = new clazz(this);
     this.state.onStart();
@@ -90,17 +90,17 @@ AsyncCommand.prototype.exec = function () {
     if (!this.state) {
         this.process.stack.push(this);
         this.onStart();
-        this.state = new this.stateClass.entry(this);
+        this.state = new this.stateClasses.entry(this);
         this.state.onStart();
     }
     return this.promise;
 };
 
 
-AsyncCommand.prototype.stateClass = {};
+AsyncCommand.prototype.stateClasses = {};
 
-AsyncCommand.prototype.stateClass.finish = StateFinish;
-AsyncCommand.prototype.stateClass.entry = StateFinish;
+AsyncCommand.prototype.stateClasses.finish = StateFinish;
+AsyncCommand.prototype.stateClasses.entry = StateFinish;
 
 
 export default AsyncCommand;
