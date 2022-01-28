@@ -133,7 +133,7 @@ ScriptEngine.prototype.ProgramClass = TProgram;
  * @returns TProgram
  */
 ScriptEngine.prototype.compile = function (code) {
-    var argNames = Object.keys(Object.assign(this.asyncCommandClasses, this.syncCommandClasses, this.constants));
+    var argNames = Object.keys(Object.assign({}, this.asyncCommandClasses, this.syncCommandClasses, this.constants));
     code = this.makeModuleTemplate(code, argNames);
     var ast = parse(code);
     this.awaitInject(code, ast);
@@ -182,5 +182,8 @@ ScriptEngine.prototype.installFunction = function (name, func, async) {
     return this;
 };
 
+ScriptEngine.prototype.installConst = function (name, value) {
+    this.constants[name] = value;
+};
 
 export default ScriptEngine;
