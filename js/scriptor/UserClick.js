@@ -99,7 +99,7 @@ TACData.define('userClick', {
     ]
 });
 
-TutorEngine.installCommand(UserClick);
+TutorEngine.installClass(UserClick);
 
 
 export default UserClick;

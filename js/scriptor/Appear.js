@@ -75,6 +75,6 @@ Appear.prototype.argNames = ['eltPath', 'timeout'];
 Appear.prototype.name = 'APPEAR';
 Appear.prototype.stateClasses.entry = StateWaitElt;
 
-TutorEngine.installCommand(Appear);
+TutorEngine.installClass(Appear);
 
 export default Appear;
