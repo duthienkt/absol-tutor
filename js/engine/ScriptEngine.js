@@ -98,7 +98,7 @@ ScriptEngine.prototype.makeEnvVariable = function (process, name) {
                 + 'return new ' + className + '(process, {' +
                 clazz.prototype.argNames.map(function (argName) {
                     return argName + ': ' + argName;
-                }).join(',\n')
+                }).concat('arguments: Array.prototype.slice.call(arguments)').join(',\n')
                 + '}).exec();'
                 + '}'
             ))(process, process.env, clazz);
@@ -177,7 +177,6 @@ ScriptEngine.prototype.compile = function (code) {
 
 
 ScriptEngine.prototype.installClass = function (clazz) {
-    console.log(clazz)
     var type = clazz.prototype.type;
     var name = clazz.prototype.name;
     switch (type) {
