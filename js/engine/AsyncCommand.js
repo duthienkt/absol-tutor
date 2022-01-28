@@ -56,11 +56,16 @@ AsyncCommand.prototype.goto = function (state) {
 };
 
 AsyncCommand.prototype.resolve = function (result) {
+    var stackIdx;
     if (this.state) {
         this.state.onStop();
         this.onStop();
         this.state = null;
-        if (this.process.stack.pop() !== this) {
+        stackIdx = this.process.stack.indexOf(this);
+        if (stackIdx >= 0) {
+            this.process.stack.splice(stackIdx, 1);
+        }
+        else {
             throw new Error('Stack error: process.stack run incorrectly!');
         }
     }
