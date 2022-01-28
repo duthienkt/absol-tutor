@@ -1,6 +1,7 @@
 import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import FunctionNameManager from "./TutorNameManager";
+import TutorEngine from "./TutorEngine";
 
 /***
  * @extends {BaseCommand}
@@ -11,31 +12,30 @@ function Earliest() {
 
 OOP.mixClass(Earliest, BaseCommand);
 
+
+Earliest.prototype.name = 'EARLIEST';
+Earliest.prototype.type = 'sync';
+Earliest.prototype.argNames = [];
+
 Earliest.prototype.exec = function () {
-    var expressions = this.args.expressions.map(function (e){
-        return e.depthClone();
+    var expressions = this.args.arguments.map(function (e){
+        if (e.depthClone){
+            return  e.depthClone().exec();
+        }
+        else  if (e.then){
+            return  e;
+        }
+        else if (e.exec){
+            return  e.exec();
+        }
+        return Promise.resolve();
     });
-    return Promise.any(expressions.map(function (exp) {
-        return exp.exec();
-    })).then(function (result) {
-        expressions.forEach(function (expression) {
-            expression.cancel && expression.cancel();
-        });
-        return result;
-    });
+    return Promise.any(expressions);
 };
 
-Earliest.attachEnv = function (tutor, env) {
-    env.EARLIEST = function () {
-        return new Earliest(tutor, { expressions: Array.prototype.slice.call(arguments) });
-    };
+TutorEngine.installClass(Earliest);
 
-    env.waitEarliest = function () {
-        return new Earliest(tutor, { expressions: Array.prototype.slice.call(arguments) }).exec();
-    };
-};
-
-FunctionNameManager.addAsync('waitEarliest')
+FunctionNameManager
     .addSync('EARLIEST');
 
 export default Earliest;
