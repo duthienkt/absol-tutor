@@ -52,7 +52,7 @@ OOP.mixClass(UserClick, UserBaseAction);
 UserClick.prototype.name = 'userClick';
 UserClick.prototype.argNames = ['eltPath', 'message', 'wrongMessage'];
 
-UserClick.prototype.stateClass.user_begin = StateWaitClick;
+UserClick.prototype.stateClasses.user_begin = StateWaitClick;
 
 UserClick.prototype.requestUserAction = function (){
     var thisC = this;

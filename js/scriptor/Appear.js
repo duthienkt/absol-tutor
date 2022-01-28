@@ -73,7 +73,7 @@ inheritCommand(Appear, BaseCommand);
 Appear.prototype.className = 'Appear';
 Appear.prototype.argNames = ['eltPath', 'timeout'];
 Appear.prototype.name = 'APPEAR';
-Appear.prototype.stateClass.entry = StateWaitElt;
+Appear.prototype.stateClasses.entry = StateWaitElt;
 
 TutorEngine.installCommand(Appear);
 

@@ -77,9 +77,9 @@ UserBaseAction.prototype.requestUserAction = function () {
     return Promise.resolve();
 };
 
-UserBaseAction.prototype.stateClass.entry = StateWaitElt;
-UserBaseAction.prototype.stateClass.show_message = StateShowMessage;
-UserBaseAction.prototype.stateClass.user_begin = UserBaseAction.prototype.stateClass.finish;
+UserBaseAction.prototype.stateClasses.entry = StateWaitElt;
+UserBaseAction.prototype.stateClasses.show_message = StateShowMessage;
+UserBaseAction.prototype.stateClasses.user_begin = UserBaseAction.prototype.stateClasses.finish;
 
 
 export default UserBaseAction;
