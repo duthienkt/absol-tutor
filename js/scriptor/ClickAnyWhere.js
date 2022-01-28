@@ -2,44 +2,49 @@ import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import TutorNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import TutorEngine from "./TutorEngine";
+import { inheritCommand } from "../engine/TCommand";
+import BaseState from "./BaseState";
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitClick() {
+    BaseState.apply(this, arguments);
+}
+
+
+OOP.mixClass(StateWaitClick, BaseState);
+
+StateWaitClick.prototype.onStart = function () {
+    document.addEventListener('click',this.ev_click);
+};
+
+StateWaitClick.prototype.ev_click = function (event) {
+    this.goto('finish');
+};
+
+StateWaitClick.prototype.onStop = function (){
+    document.removeEventListener('click',this.ev_click);
+};
+
 
 /***
  * @extends {BaseCommand}
  */
 function ClickAnyWhere() {
     BaseCommand.apply(this, arguments);
-    this.ev_click = this.ev_click.bind(this);
-    this._resolveCb = null;
 }
 
-OOP.mixClass(ClickAnyWhere, BaseCommand);
+inheritCommand(ClickAnyWhere, BaseCommand);
 
+ClickAnyWhere.prototype.type = 'const';
+ClickAnyWhere.prototype.name = 'CLICK_ANY_WHERE';
 
-ClickAnyWhere.prototype.exec = function () {
-    this.start();
-    document.addEventListener('click', this.ev_click);
-    return new Promise(function (rs) {
-        this._resolveCb = rs;
-    }.bind(this)).then(this.stop.bind(this));
+ClickAnyWhere.prototype.stateClasses.entry = StateWaitClick;
 
-};
-
-ClickAnyWhere.prototype.cancel = function () {
-    document.removeEventListener('click', this.ev_click);
-};
-
-
-ClickAnyWhere.prototype.ev_click = function (event) {
-    if (this._resolveCb) {
-        this._resolveCb();
-        this._resolveCb = null;
-    }
-};
-
-
-ClickAnyWhere.attachEnv = function (tutor, env) {
-    env.CLICK_ANY_WHERE = new ClickAnyWhere(tutor, {});
-};
+TutorEngine.installClass(ClickAnyWhere);
 
 TutorNameManager.addConst('CLICK_ANY_WHERE');
 
