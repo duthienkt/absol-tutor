@@ -11,7 +11,6 @@ Net.properties.downloadText = function (rqi) {
     });
 };
 
-console.log(Net.properties.downloadText)
 TutorEngine.installFunction('downloadText', Net.properties.downloadText, true);
 
 TutorNameManager.addAsync('downloadText');
