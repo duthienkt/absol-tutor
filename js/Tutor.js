@@ -37,6 +37,7 @@ function Tutor(view, script, option) {
     this.option = Object.assign({
         messageDelay: 300
     }, option);
+    this.debug.status = 'NOT_START';
 }
 
 OOP.mixClass(Tutor, EventEmitter, Context);
@@ -45,7 +46,9 @@ Tutor.prototype.programCache = {};
 
 
 Tutor.prototype.exec = function () {
+    this.debug.status = "RUNNING";
     return this.process.exec().then(function (result) {
+        this.debug.status = "FINISH";
         return result;
     }.bind(this)).catch(function (error) {
         safeThrow(error)
