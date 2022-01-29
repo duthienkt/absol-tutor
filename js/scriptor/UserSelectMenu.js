@@ -5,6 +5,7 @@ import FunctionNameManager from "./TutorNameManager";
 import TACData from "./TACData";
 import TutorEngine from "./TutorEngine";
 import BaseState from "./BaseState";
+import { inheritCommand } from "../engine/TCommand";
 
 /***
  * @extends BaseState
@@ -113,7 +114,7 @@ function UserSelectMenu() {
     UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserSelectMenu, UserBaseAction);
+inheritCommand(UserSelectMenu, UserBaseAction);
 
 UserSelectMenu.prototype.className = 'UserSelectMenu';
 UserSelectMenu.prototype.name = 'userSelectMenu';
