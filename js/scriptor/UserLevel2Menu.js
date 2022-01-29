@@ -3,149 +3,170 @@ import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
 import findNode from "../util/findNode";
 import TACData from "./TACData";
+import TutorEngine from "./TutorEngine";
+import { inheritCommand } from "../engine/TCommand";
+import BaseState from "./BaseState";
+import AElement from "absol/src/HTML5/AElement";
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitSelectRoot() {
+    BaseState.apply(this, arguments);
+    this.toIdx = -1;
+}
+
+OOP.mixClass(StateWaitSelectRoot, BaseState);
+
+StateWaitSelectRoot.prototype.onStart = function () {
+    this.command.menuLevel = 0;
+    this.command.highlightElt(this.command.elt);
+    var itemElt = findNode(this.args.menuItemPath[0], this.command.elt);
+    this.command.menuItemElt = itemElt;
+    if (this.command.hadWrongAction && this.args.wrongMessage)
+        this.command.showTooltip(this.command.menuItemElt, this.args.wrongMessage);
+    this.command.onlyClickTo(itemElt);
+    this.toIdx = setTimeout(function () {
+        this.command.highlightElt(itemElt);
+    }.bind(this), 400);
+    itemElt.on('click', this.ev_click);
+    this.command.clickCb = this.ev_clickOut;
+};
+
+StateWaitSelectRoot.prototype.onStop = function () {
+    clearTimeout(this.toIdx);
+    this.command.menuItemElt.off('click', this.ev_click);
+    this.command.clickCb = null;
+};
+
+
+StateWaitSelectRoot.prototype.ev_click = function () {
+    this.goto('hover_next');
+};
+
+StateWaitSelectRoot.prototype.ev_clickOut = function () {
+    this.command.hadWrongAction = true;
+    if (this.args.wrongMessage)
+        this.command.showTooltip(this.command.menuItemElt, this.args.wrongMessage);
+};
+
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateHoverNext() {
+    BaseState.apply(this, arguments);
+    this.toIdx = -1;
+    this.checkInv = -1;
+}
+
+OOP.mixClass(StateHoverNext, BaseState);
+
+StateHoverNext.prototype.onStart = function () {
+    this.command.menuLevel++;
+    this.command.highlightElt(this.command.menuItemElt.$container);
+    var itemElt = findNode(this.args.menuItemPath[this.command.menuLevel], this.command.menuItemElt.$container);
+    this.command.menuItemElt = itemElt;
+    if (this.command.hadWrongAction && (this.args.wrongMessage1 || this.args.wrongMessage))
+        this.command.showTooltip(this.command.menuItemElt, (this.args.wrongMessage1 || this.args.wrongMessage))
+    this.command.onlyClickTo(itemElt);
+    this.toIdx = setTimeout(function () {
+        this.command.highlightElt(itemElt);
+    }.bind(this), 100);
+    this.command.menuItemElt.once('mouseenter', this.ev_mouseenter);
+    this.checkInv = setInterval(this.checkItemVisibility.bind(this), 300);
+};
+
+StateHoverNext.prototype.checkItemVisibility = function () {
+    var c = this.command.menuItemElt;
+    while (c) {
+        if (c.getBoundingClientRect().width === 0) return false;
+        if (AElement.prototype.getComputedStyleValue.call(c, 'visibility') !== 'visible') {
+            clearInterval(this.checkInv);
+            this.command.hadWrongAction = true;
+            this.goto('user_begin');
+            break;
+        }
+        c = c.parentElement;
+    }
+};
+
+StateHoverNext.prototype.onStop = function () {
+    this.command.menuItemElt.off('mouseenter', this.ev_mouseenter);
+};
+
+StateHoverNext.prototype.ev_mouseenter = function () {
+    if (this.command.menuLevel + 1 >= this.args.menuItemPath.length) {
+        this.goto('wait_click_current');
+    }
+    else {
+        this.goto('hover_next');
+    }
+};
+
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitClickCurrent() {
+    BaseState.apply(this, arguments);
+    this.checkInv = -1;
+}
+
+OOP.mixClass(StateWaitClickCurrent, BaseState);
+
+StateWaitClickCurrent.prototype.onStart = function () {
+    this.command.onlyClickTo(this.command.menuItemElt);
+    this.command.highlightElt(this.command.menuItemElt);
+    this.checkInv = setInterval(this.checkItemVisibility.bind(this), 300);
+    this.command.menuItemElt.once('click', this.ev_click);
+};
+
+StateWaitClickCurrent.prototype.onStop = function () {
+    clearInterval(this.checkInv);
+    this.command.menuItemElt.off('click', this.ev_click);
+};
+
+StateWaitClickCurrent.prototype.ev_click = function () {
+    this.goto('finish');
+}
+
+StateWaitClickCurrent.prototype.checkItemVisibility = StateHoverNext.prototype.checkItemVisibility;
+
 
 /***
  * @extends UserBaseAction
  * @constructor
  */
+
 function UserLevel2Menu() {
     UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserLevel2Menu, UserBaseAction);
+inheritCommand(UserLevel2Menu, UserBaseAction);
+
+UserLevel2Menu.prototype.argNames = ['eltPath', 'menuItemPath', 'message', 'wrongMessage', 'wrongMessage1'];
+UserLevel2Menu.prototype.name = 'userLevel2Menu';
+UserLevel2Menu.prototype.className = 'UserLevel2Menu';
 
 
-UserLevel2Menu.prototype._afterSelectRoot = function (rootElt, id, subId, highlight) {
-    var thisC = this;
-    return new Promise(function (resolve, reject) {
-        thisC.highlightElt(rootElt);
+UserLevel2Menu.prototype.stateClasses.user_begin = StateWaitSelectRoot;
+UserLevel2Menu.prototype.stateClasses.hover_next = StateHoverNext;
+UserLevel2Menu.prototype.stateClasses.wait_click_current = StateWaitClickCurrent;
 
-        var wrongMessage = thisC.args.wrongMessage;
-        var wrongMessage1 = thisC.args.wrongMessage1 || thisC.args.wrongMessage;
-        var itemElt = findNode(id, rootElt);
-        if (!itemElt) {
-            throw new Error("Not found menu id=" + JSON.stringify(id));
-        }
-        var highlightTimeout = setTimeout(function () {
-            highlightTimeout = -1;
-            thisC.highlightElt(itemElt);
-        }, 400);
-        var itemIndex = rootElt.$items.indexOf(itemElt);
-        var subItem = findNode(subId, itemElt.$vmenu);
-        if (!subItem) {
-            throw new Error("Not found menu id=" + subId);
-        }
-        thisC._clickCb = function () {
-            highlight = true;
-            thisC.highlightElt(rootElt);
-            if (highlightTimeout) {
-                highlightTimeout = -1;
 
-            }
-            highlightTimeout = setTimeout(function () {
-                highlightTimeout = -1;
-                thisC.highlightElt(itemElt);
-            }, 400);
-            if (wrongMessage) {
-                thisC.showTooltip(rootElt, wrongMessage);
-            }
-        }
-        thisC.onlyClickTo(rootElt);
-        if (highlight) {
-            if (wrongMessage) {
-                thisC.showTooltip(itemElt, wrongMessage);
-            }
-        }
-
-        function onActiveTab(event) {
-            if (event.tabIndex === itemIndex) {
-                thisC.onlyClickTo(subItem);
-                thisC.highlightElt(itemElt.$vmenu);
-                if (highlightTimeout) {
-                    highlightTimeout = -1;
-                }
-                highlightTimeout = setTimeout(function () {
-                    thisC.highlightElt(subItem);
-                }, 400);
-                if (highlight) {
-                    if (wrongMessage1) {
-                        thisC.showTooltip(subItem, wrongMessage1);
-                    }
-
-                }
-            }
-        }
-
-        var cancelTimeout = -1;
-
-        function onCancel(event) {
-            cancelTimeout = setTimeout(function () {
-                highlight = true;
-                rootElt.off('activetab', onActiveTab)
-                    .off('cancel', onCancel)
-                    .off('press', onPressItem);
-                thisC._rejectCb = null;
-                resolve(false);
-            }, 200)
-        }
-
-        function onPressItem(event) {
-            if (cancelTimeout >= 0) clearTimeout(cancelTimeout);
-            if (highlightTimeout) {
-                highlightTimeout = -1;
-                clearTimeout(highlightTimeout);
-            }
-            rootElt.off('activetab', onActiveTab)
-                .off('cancel', onCancel)
-                .off('press', onPressItem);
-            thisC._rejectCb = null;
-            resolve(event.menuItem === subItem);
-        }
-
-        rootElt.on('activetab', onActiveTab)
-            .on('cancel', onCancel)
-            .on('press', onPressItem);
-        thisC._rejectCb = function () {
-            if (highlightTimeout) {
-                highlightTimeout = -1;
-                clearTimeout(highlightTimeout);
-            }
-            rootElt.off('activetab', onActiveTab)
-                .off('cancel', onCancel)
-                .off('press', onPressItem);
-            reject();
-        }
-    }).then(function (ok) {
-        if (ok) return;
-        return thisC._afterSelectRoot(rootElt, id, subId, true);
-    });
-
-};
-
-UserLevel2Menu.prototype._verifyMenu = function (elt) {
+UserLevel2Menu.prototype.verifyElt = function () {
+    var elt = this.elt;
     if (!elt.containsClass || !elt.containsClass('as-v-root-menu')) {
-        throw new Error('Type error: not a valid menu!');
+        return new Error('Type error: not a valid menu!');
     }
 };
 
-UserLevel2Menu.prototype.requestUserAction = function () {
-    var elt = this.tutor.findNode(this.args.eltPath);
-    this._verifyMenu(elt);
-    return this._afterSelectRoot(elt, this.args.menuItemPath[0], this.args.menuItemPath[1], false);
-};
 
-
-UserLevel2Menu.attachEnv = function (tutor, env) {
-    env.userLevel2Menu = function (eltPath, menuItemPath, message, wrongMessage, wrongMessage1) {
-        return new UserLevel2Menu(tutor, {
-            eltPath: eltPath,
-            menuItemPath: menuItemPath,
-            message: message,
-            wrongMessage: wrongMessage,
-            wrongMessage1: wrongMessage1
-        }).exec();
-    };
-};
+TutorEngine.installClass(UserLevel2Menu);
 
 TutorNameManager.addAsync('userLevel2Menu');
 
