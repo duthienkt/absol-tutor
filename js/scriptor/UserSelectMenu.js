@@ -3,6 +3,107 @@ import OOP from "absol/src/HTML5/OOP";
 import '../../css/basecommand.css';
 import FunctionNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import TutorEngine from "./TutorEngine";
+import BaseState from "./BaseState";
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitOpenModal() {
+    BaseState.apply(this, arguments);
+}
+
+OOP.mixClass(StateWaitOpenModal, BaseState);
+
+StateWaitOpenModal.prototype.onStart = function () {
+    this.command.elt.on('click', this.ev_click);
+    this.command.onlyClickTo(this.command.elt);
+    this.command.highlightElt(this.command.elt);
+};
+
+
+StateWaitOpenModal.prototype.onStop = function () {
+    this.command.elt.off('click', this.ev_click);
+    this.command.highlightElt(null);
+    clearTimeout(this._checkTO);
+    this.command.onlyClickTo(null);
+
+};
+
+StateWaitOpenModal.prototype.checkSelectBox = function () {
+    var selectListBox = this.command.elt.$selectlistBox;
+    if (selectListBox.getBoundingClientRect().width > 0) {
+        this.goto('user_wait_close_modal');
+    }
+
+};
+
+StateWaitOpenModal.prototype.ev_click = function () {
+    this._checkTO = setTimeout(this.checkSelectBox.bind(this), 50);
+};
+
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitCloseModal() {
+    BaseState.apply(this, arguments);
+
+}
+
+OOP.mixClass(StateWaitCloseModal, BaseState);
+
+
+StateWaitCloseModal.prototype.onStart = function () {
+    this.inv = setInterval(this.checkSelectBox.bind(this), 150);
+    var elt = this.command.elt;
+    this.command.onlyClickTo(elt.$selectlistBox);
+    var searchMessage = this.args.searchMessage;
+    if (searchMessage && elt.enableSearch) {
+        this.command.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
+    }
+};
+
+
+StateWaitCloseModal.prototype.onStop = function () {
+    clearInterval(this.inv);
+    this.command.showTooltip(null);
+};
+
+StateWaitCloseModal.prototype.checkSelectBox = function () {
+    var selectListBox = this.command.elt.$selectlistBox;
+    var bound = selectListBox.getBoundingClientRect();
+    if (bound.width === 0) {
+        this.goto('check_value');
+    }
+};
+
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateCheckValue() {
+    BaseState.apply(this, arguments);
+
+}
+
+OOP.mixClass(StateCheckValue, BaseState);
+
+StateCheckValue.prototype.onStart = function () {
+    if (this.command.elt.value === this.args.value) {
+        this.goto('finish');
+    }
+    else {
+        this.goto('user_begin');
+        if (this.args.wrongMessage) {
+            this.command.showTooltip(this.command.elt, this.args.wrongMessage);
+        }
+    }
+};
+
 
 /***
  * @extends UserBaseAction
@@ -14,132 +115,30 @@ function UserSelectMenu() {
 
 OOP.mixClass(UserSelectMenu, UserBaseAction);
 
+UserSelectMenu.prototype.className = 'UserSelectMenu';
+UserSelectMenu.prototype.name = 'userSelectMenu';
+UserSelectMenu.prototype.argNames = ['eltPath', 'value', 'message', 'wrongMessage', 'searchMessage'];
 
-UserSelectMenu.prototype._afterOpenList = function (menuElt) {
-    var thisC = this;
-    return new Promise(function (resolve, reject) {
-        function listenter() {
-            setTimeout(function () {
-                if (menuElt.isFocus) {
-                    menuElt.off('click', listenter);
-                    thisC._rejectCb = null;
-                    resolve();
-                }
-            }, 10);
-        }
+UserSelectMenu.prototype.stateClasses.user_begin = StateWaitOpenModal;
 
-        thisC._rejectCb = function () {
-            menuElt.off('click', listenter);
-            reject();
-        };
-        menuElt.on('click', listenter);
-    });
-};
+UserSelectMenu.prototype.stateClasses.user_wait_close_modal = StateWaitCloseModal;
+UserSelectMenu.prototype.stateClasses.check_value = StateCheckValue;
 
-UserSelectMenu.prototype._afterCloseList = function (menuElt) {
-    var thisC = this;
-    return new Promise(function (resolve, reject) {
-        function listenter() {
-            setTimeout(function () {
-                if (!menuElt.isFocus) {
-                    document.body.removeEventListener('pointerdown', listenter);
-                    thisC._rejectCb = null;
-                    resolve();
-                }
-            }, 200);
-        }
 
-        thisC._rejectCb = function () {
-            document.body.removeEventListener('pointerdown', listenter);
-            reject();
-        };
-        document.body.addEventListener('pointerdown', listenter);
-    });
-};
-
-/***
- *
- * @param {SelectTreeMenu} elt
- * @param value
- * @param wrongMessage
- * @param searchMessage
- * @return {Promise<unknown>}
- * @private
- */
-UserSelectMenu.prototype._afterSelect = function (elt, value, wrongMessage, searchMessage, highlight) {
-    var thisC = this;
-    if (highlight) thisC.highlightElt(elt);
-    thisC.highlightElt(elt);
-    this._clickCb = function () {
-        if (wrongMessage)
-            thisC.showTooltip(elt, wrongMessage);
-        highlight = true;
-    }
-    thisC.onlyClickTo(elt);
-    return thisC._afterOpenList(elt).then(function () {
-        thisC.highlightElt(null);
-        elt.$selectlistBox.addClass('atr-on-top');
-
-        if (searchMessage && elt.enableSearch) {
-            thisC.showTooltip(elt.$selectlistBox.$searchInput, searchMessage);
-        }
-        thisC.onlyClickTo(elt.$selectlistBox);
-        thisC._rejectCb1 = function () {
-            elt.$selectlistBox.removeClass('atr-on-top');
-        }
-        return thisC._afterCloseList(elt).then(function () {
-            thisC.onlyClickTo(null);
-            elt.$selectlistBox.removeClass('atr-on-top');
-            thisC._rejectCb1 = null;
-            if (elt.value === value) {
-                return true;
-            }
-            else {
-                thisC.showTooltip(elt, wrongMessage);
-                return false;
-            }
-        });
-    }).then(function (success) {
-        if (success) return true;
-        return thisC._afterSelect(elt, value, wrongMessage, searchMessage, true);
-    });
-};
-
-UserSelectMenu.prototype._verifySelectMenu = function (elt) {
+UserSelectMenu.prototype.verifyElt = function () {
+    var elt = this.elt;
     if (!elt.containsClass || !(
         elt.containsClass('absol-selectmenu')
         || elt.containsClass('as-select-menu')
         || elt.containsClass('as-select-tree-menu')
     )) {
-        throw new Error("Type error: not a select-menu!");
+        return new Error("Type error: not a select-menu!");
     }
-};
-
-UserSelectMenu.prototype.requestUserAction = function () {
-    var elt = this.tutor.findNode(this.args.eltPath);
-    this._verifySelectMenu(elt);
-    var value = this.args.value;
-    var items;
-    if (elt.$selectlistBox && elt.$selectlistBox.findItemsByValue) {
-        items = elt.$selectlistBox.findItemsByValue(value);
-        if (!items || items.length === 0) {
-            throw new Error("Not found value=" + (JSON.stringify(value) || value) + ' in SelectMenu');
-        }
-    }
-
-    var wrongMessage = this.args.wrongMessage;
-    var searchMessage = this.args.searchMessage;
-    return this._afterSelect(elt, value, wrongMessage, searchMessage);
+    return null;
 };
 
 
-UserSelectMenu.attachEnv = function (tutor, env) {
-    env.userSelectMenu = function (eltPath, value, message, wrongMessage, searchMessage) {
-        return new UserSelectMenu(tutor, {
-            eltPath: eltPath, value: value, message: message, wrongMessage: wrongMessage, searchMessage: searchMessage
-        }).exec();
-    };
-};
+TutorEngine.installClass(UserSelectMenu);
 
 TACData.define('userSelectMenu', {
     type: 'function',
