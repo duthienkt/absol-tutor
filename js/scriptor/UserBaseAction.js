@@ -34,9 +34,16 @@ StateWaitElt.prototype.checkElt = function () {
         this.command.reject(new Error("Could not find " + this.args.eltPath));
         return;
     }
+    var error;
     if (this.command.elt) {
-        this.command.assignTarget(this.command.elt);
-        this.goto('show_message');
+        error = this.command.verifyElt();
+        if (error) {
+            this.command.reject(error);
+        }
+        else {
+            this.command.assignTarget(this.command.elt);
+            this.goto('show_message');
+        }
     }
 };
 
@@ -64,6 +71,11 @@ StateShowMessage.prototype.onStart = function () {
  */
 function UserBaseAction() {
     BaseCommand.apply(this, arguments);
+    /***
+     *
+     * @type {null|AElement}
+     */
+    this.elt = null;
 }
 
 inheritCommand(UserBaseAction, BaseCommand);
@@ -75,6 +87,14 @@ inheritCommand(UserBaseAction, BaseCommand);
  */
 UserBaseAction.prototype.requestUserAction = function () {
     return Promise.resolve();
+};
+
+/***
+ *
+ * @returns {null|Error}
+ */
+UserBaseAction.prototype.verifyElt = function () {
+    return null;
 };
 
 UserBaseAction.prototype.stateClasses.entry = StateWaitElt;
