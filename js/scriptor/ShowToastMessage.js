@@ -3,6 +3,77 @@ import FunctionKeyManager from "./TutorNameManager";
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
 import TACData from "./TACData";
+import { inheritCommand } from "../engine/TCommand";
+import TutorEngine from "./TutorEngine";
+import BaseState from "./BaseState";
+
+/****
+ * @extends BaseState
+ * @constructor
+ */
+function StateShowMessage() {
+    BaseState.apply(this, arguments);
+}
+
+OOP.mixClass(StateShowMessage, BaseState);
+
+StateShowMessage.prototype.onStart = function () {
+    var title = this.args.title;
+    var text = this.args.text;
+    var variant = this.args.variant;
+    var avoid = this.args.avoid;
+    var disappearTimeout = this.args.disappearTimeout;
+    var pos = 'se';
+    if (["se", "sw", "ne", "nw"].indexOf(avoid) >= 0) {
+        pos = avoid;
+    }
+    this.command.$toast = Toast.make({
+        class: ['as-variant-background', 'atr-toast-message'],
+        props: {
+            htitle: title,
+            disappearTimeout: disappearTimeout,
+            variant: variant,
+            timeText: ''
+        },
+        child: BaseCommand.prototype.md2HTMLElements.call({ $htmlRender: BaseCommand.prototype.$htmlRender }, text)
+    }, pos);
+    this.command.avoidOverlay();
+    this.goto('wait_until')
+
+};
+
+
+/****
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitUntil() {
+    BaseState.apply(this, arguments);
+}
+
+OOP.mixClass(StateWaitUntil, BaseState);
+
+StateWaitUntil.prototype.onStart = function () {
+    var until = this.args.until;
+    if (!until) until = Promise.resolve();
+    if (typeof until === 'number') {
+        until = new Promise(function (resolve) {
+            setTimeout(resolve, until);
+        })
+    }
+    else if (typeof until === "function") {
+        until = until();
+    }
+    if (until.depthClone) until = until.depthClone();
+    if (until.exec) until = until.exec();
+    if (until.then) {
+        until.then(this.goto.bind(this, 'finish'));
+    }
+    else {
+        this.goto('finish');
+    }
+};
+
 
 /***
  * @extends BaseCommand
@@ -13,13 +84,19 @@ function ShowToastMessage() {
     this.$toast = null;
 }
 
-OOP.mixClass(ShowToastMessage, BaseCommand);
+inheritCommand(ShowToastMessage, BaseCommand);
+
+ShowToastMessage.prototype.argNames = ['title', 'text', 'disappearTimeout', 'until', 'variant', 'avoid'];
+
+ShowToastMessage.prototype.name = 'showToastMessage';
+ShowToastMessage.prototype.stateClasses.entry = StateShowMessage;
+ShowToastMessage.prototype.stateClasses.wait_until = StateWaitUntil;
 
 /***
  *
  * @protected
  */
-ShowToastMessage.prototype._avoidOverlay = function () {
+ShowToastMessage.prototype.avoidOverlay = function () {
     var thisC = this;
     var avoidElt = null;
     this._toastElts.push(this.$toast);
@@ -37,60 +114,9 @@ ShowToastMessage.prototype._avoidOverlay = function () {
     }
 }
 
-ShowToastMessage.prototype.exec = function () {
-    var thisC = this;
-    var title = this.args.title;
-    var text = this.args.text;
-    var until = this.args.until;
-    var variant = this.args.variant;
-    var disappearTimeout = this.args.disappearTimeout;
+TutorEngine.installClass(ShowToastMessage);
 
-    this.start();
-    var pos = 'se';
-    if (["se", "sw", "ne", "nw"].indexOf(this.args.avoid) >= 0) {
-        pos = this.args.avoid;
-    }
-    this.$toast = Toast.make({
-        class: ['as-variant-background', 'atr-toast-message'],
-        props: {
-            htitle: title,
-            disappearTimeout: disappearTimeout,
-            variant: variant,
-            timeText: ''
-        },
-        child: BaseCommand.prototype.md2HTMLElements.call({ $htmlRender: BaseCommand.prototype.$htmlRender }, text)
-    }, pos);
-    this._avoidOverlay();
-    if (typeof until === "function") {
-        thisC.preventMouse(true);
-        thisC.preventKeyBoard(true);
-        return until().then(function () {
-            thisC.$toast = null;
-            this.stop();
-        });
-    }
-    else if (until && until.exec && until.depthClone) {
-        thisC.preventMouse(true);
-        return until.depthClone().exec().then(function () {
-            thisC.$toast = null;
-            thisC.stop();
-        });
-    }
-    else {
-        thisC.$toast = null;
-    }
-}
-;
-
-
-ShowToastMessage.attachEnv = function (tutor, env) {
-    env.showToastMessage = function (title, text, disappearTimeout, until, variant, avoid) {
-        return new ShowToastMessage(tutor, {
-            title: title, text: text, disappearTimeout: disappearTimeout, until: until, variant: variant,
-            avoid: avoid
-        }).exec();
-    }
-};
+TutorEngine.installClass(ShowToastMessage);
 
 FunctionKeyManager.addAsync('showToastMessage');
 
