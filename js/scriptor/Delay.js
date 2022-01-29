@@ -23,6 +23,9 @@ function StateRunTrigger() {
 OOP.mixClass(StateRunTrigger, BaseState);
 
 StateRunTrigger.prototype.onStart = function () {
+    this.command.preventKeyBoard(true);
+    this.command.preventMouse(true);
+
     if (typeof this.expression === "number") {
         this.toId = setTimeout(this.goto.bind(this, 'finish'), this.expression);
     }
@@ -41,6 +44,8 @@ StateRunTrigger.prototype.onStop = function () {
     if (this.toId > 0) {
         clearTimeout(this.toId);
     }
+    this.command.preventKeyBoard(false);
+    this.command.preventMouse(false);
 };
 
 /***
