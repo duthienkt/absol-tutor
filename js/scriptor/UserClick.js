@@ -4,6 +4,7 @@ import TACData from "./TACData";
 import UserBaseAction from "./UserBaseAction";
 import TutorEngine from "./TutorEngine";
 import BaseState from "./BaseState";
+import { inheritCommand } from "../engine/TCommand";
 
 
 /***
@@ -47,46 +48,12 @@ function UserClick() {
     UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserClick, UserBaseAction);
+inheritCommand(UserClick, UserBaseAction);
 
 UserClick.prototype.name = 'userClick';
 UserClick.prototype.argNames = ['eltPath', 'message', 'wrongMessage'];
 
 UserClick.prototype.stateClasses.user_begin = StateWaitClick;
-
-UserClick.prototype.requestUserAction = function (){
-    var thisC = this;
-    var elt = this.tutor.findNode(this.args.eltPath);
-    var wrongMessage = this.args.wrongMessage;
-    thisC.highlightElt(elt);
-    this._clickCb = function (){
-        if (wrongMessage)
-            thisC.showTooltip(elt, wrongMessage);
-    };
-    this.onlyClickTo(elt);
-    this.preventKeyBoard(true);
-    return new Promise(function (resolve, reject) {
-        function onClick() {
-            thisC._rejectCb = null;
-            resolve();
-        }
-
-        thisC._rejectCb = function () {
-            elt.off(onClick);
-            document.body.removeEventListener("click", clickForceGround);
-            reject();
-        };
-
-        function clickForceGround(event) {
-            if (thisC.hitSomeOf(elt, event)) {
-                reject(new Error("Duplicated id detected!"));
-            }
-        }
-
-        elt.once('click', onClick);
-        document.body.addEventListener("click", clickForceGround);
-    });
-};
 
 TutorNameManager.addAsync('userClick');
 
