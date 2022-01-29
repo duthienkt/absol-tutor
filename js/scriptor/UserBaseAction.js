@@ -76,6 +76,7 @@ function UserBaseAction() {
      * @type {null|AElement}
      */
     this.elt = null;
+    this.hadWrongAction = false;
 }
 
 inheritCommand(UserBaseAction, BaseCommand);
