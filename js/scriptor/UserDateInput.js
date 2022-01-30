@@ -1,12 +1,175 @@
 import UserBaseAction from "./UserBaseAction";
 import TutorNameManager from "./TutorNameManager";
 import OOP from "absol/src/HTML5/OOP";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
-import ChromeCalendar from "absol-acomp/js/ChromeCalendar";
-import   {compareDate, compareMonth, parseDateString} from "absol/src/Time/datetime";
-import {$} from "../dom/Core";
+import { compareDate, compareMonth, parseDateString } from "absol/src/Time/datetime";
+import { $ } from "../dom/Core";
 import TemplateString from "absol/src/JSMaker/TemplateString";
 import * as datetime from "absol/src/Time/datetime";
+import { inheritCommand } from "../engine/TCommand";
+import TutorEngine from "./TutorEngine";
+import BaseState from "./BaseState";
+
+/***
+ * @extends BaseState
+ * @param {BaseCommand} command
+ * @constructor
+ */
+function StateWaitCalendar(command) {
+    BaseState.call(this, command);
+    this.blindIdx = -1;
+    this.checkIdx = -1;
+}
+
+OOP.mixClass(StateWaitCalendar, BaseState);
+
+
+StateWaitCalendar.prototype.onStart = function () {
+    var elt = this.command.elt;
+    var message = this.args.message;
+    var wrongMessage = this.args.wrongMessage;
+    var inputTextHintFunc = this.args.inputTextHint && new Function('return ' + TemplateString.parse(this.args.inputTextHint).toJSCode());
+    inputTextHintFunc = inputTextHintFunc || function () {
+        return null;
+    };
+    if (this.command.hadWrongAction && wrongMessage)
+        this.command.showTooltip(this.command.elt, wrongMessage);
+
+    this.command.onlyClickTo(elt.$calendarBtn);
+    this.command.elt.$calendarBtn.on('click', this.ev_click);
+    this.command.highlightElt(elt);
+    this.command.clickCb = this.ev_clickOut;
+    this.blindIdx = setTimeout(function () {
+        this.blindIdx = -1;
+        this.command.highlightElt(elt.$calendarBtn);
+    }.bind(this), 400);
+};
+
+StateWaitCalendar.prototype.onStop = function () {
+    clearTimeout(this.blindIdx);
+    clearTimeout(this.checkIdx);
+    this.command.elt.$calendarBtn.off('click', this.ev_click);
+};
+
+StateWaitCalendar.prototype.checkCalendar = function () {
+    var elt = this.command.elt;
+    var isOn = !!(elt.share.$calendar && elt.share.$calendar.isDescendantOf(document.body));
+    if (isOn) {
+        this.goto('choose_date');
+    }
+}
+
+StateWaitCalendar.prototype.ev_click = function () {
+    this.checkIdx = setTimeout(this.checkCalendar.bind(this), 50);
+};
+
+StateWaitCalendar.prototype.ev_clickOut = function () {
+    this.command.hadWrongAction = true;
+    if (this.args.wrongMessage)
+        this.command.showTooltip(this.command.elt, this.args.wrongMessage);
+};
+
+
+/***
+ * @extends BaseState
+ * @param {BaseCommand} command
+ * @constructor
+ */
+function StateChooseDate(command) {
+    BaseState.call(this, command);
+    this.blindIdx = -1;
+    this.checkIdx = -1;
+}
+
+OOP.mixClass(StateChooseDate, BaseState);
+
+StateChooseDate.prototype.onStart = function () {
+    this.calendarElt = this.command.elt.share.$calendar;
+    this.command.highlightElt(this.calendarElt);
+    this.blindIdx = setTimeout(this.highlightTarget.bind(this), 400);
+    this.command.onlyClickTo(this.calendarElt);
+    document.addEventListener('click', this.ev_click);
+
+};
+
+StateChooseDate.prototype.onStop = function () {
+    document.removeEventListener('click', this.ev_click);
+    clearTimeout(this.blindIdx);
+    clearTimeout(this.checkIdx);
+};
+
+StateChooseDate.prototype.highlightTarget = function () {
+    var calendar = this.calendarElt;
+    var value = this.args.value;
+    var thisC = this.command;
+    var viewDate = calendar._viewDate;
+    if (!viewDate) return;
+    var dM = compareMonth(value, viewDate);
+
+    if (dM === 0) {
+        $('.absol-chrome-calendar-week-in-month>div', calendar, function (dateElt) {
+            if (dateElt.__date__ && datetime.compareDate(dateElt.__date__, value) === 0 && !dateElt.hasClass('absol-chrome-calendar-not-in-month')) {
+                thisC.highlightElt(dateElt);
+            }
+        });
+    }
+    else if (dM < 0) {
+        thisC.highlightElt(calendar.$prevBtn);
+    }
+    else if (dM > 0) {
+        thisC.highlightElt(calendar.$nextBtn);
+    }
+};
+
+StateChooseDate.prototype.checkCalendar = function () {
+    var elt = this.command.elt;
+    var isOn = !!(elt.share.$calendar && elt.share.$calendar.isDescendantOf(document.body));
+    if (isOn) {
+        this.highlightTarget();
+    }
+    else {
+        this.goto('check_value');
+    }
+}
+
+StateChooseDate.prototype.ev_click = function () {
+    this.checkIdx = setTimeout(this.checkCalendar.bind(this), 50);
+};
+
+
+/***
+ * @extends BaseState
+ * @param {BaseCommand} command
+ * @constructor
+ */
+function StateCheckValue(command) {
+    BaseState.call(this, command);
+
+}
+
+OOP.mixClass(StateCheckValue, BaseState);
+
+StateCheckValue.prototype.onStart = function () {
+    var value = this.args.value;
+    var inputValue = this.command.elt.value;
+    if (value === inputValue) {
+        this.goto('finish');
+    }
+    else if (value && inputValue) {
+        if (compareDate(value, inputValue) === 0) {
+            this.goto('finish');
+        }
+        else {
+
+            this.command.hadWrongAction = true;
+            this.goto('user_begin');
+        }
+    }
+};
+
+
+//To do: user focus to input
+
+
 /***
  * @extends UserBaseAction
  * @constructor
@@ -15,13 +178,25 @@ function UserDateInput() {
     UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserDateInput, UserBaseAction);
+inheritCommand(UserDateInput, UserBaseAction);
+
+UserDateInput.prototype.name = 'userDateInput';
+UserDateInput.prototype.argNames = ['eltPath', 'value', 'message', 'wrongMessage', 'inputTextHint'];
+
+UserDateInput.prototype.stateClasses['user_begin'] = StateWaitCalendar;
+UserDateInput.prototype.stateClasses['choose_date'] = StateChooseDate;
+UserDateInput.prototype.stateClasses['check_value'] = StateCheckValue;
 
 
 UserDateInput.prototype._isFocus = function (elt) {
     return document.hasFocus() && document.activeElement === elt;
 };
 
+UserDateInput.prototype.verifyElt = function () {
+    if (!this.elt.hasClass && !this.elt.hasClass('as-date-time-input')) {
+        return new Error('Type error: not a date-input!')
+    }
+};
 
 UserDateInput.prototype.requestUserAction = function () {
     var thisC = this;
@@ -87,9 +262,11 @@ UserDateInput.prototype.requestUserAction = function () {
                         thisC.highlightElt(dateElt);
                     }
                 });
-            } else if (dM < 0) {
+            }
+            else if (dM < 0) {
                 thisC.highlightElt(calendar.$prevBtn);
-            } else if (dM > 0) {
+            }
+            else if (dM > 0) {
                 thisC.highlightElt(calendar.$nextBtn);
             }
         }
@@ -103,10 +280,12 @@ UserDateInput.prototype.requestUserAction = function () {
 
                     if (calendarOn) {
                         onCalendarOpen();
-                    } else {
+                    }
+                    else {
                         onCalendarClose();
                     }
-                } else if (calendarOn) {
+                }
+                else if (calendarOn) {
                     onCalendarStep();
                 }
             }, 10);
@@ -148,13 +327,15 @@ UserDateInput.prototype.requestUserAction = function () {
                             }
 
                             resolve();
-                        } else {
+                        }
+                        else {
                             if (inputTextHint) thisC.showTooltip(elt.$input, inputTextHint);
                         }
                     } catch (error) {
                         if (inputTextHint) thisC.showTooltip(elt.$input, inputTextHint);
                     }
-                } else {
+                }
+                else {
                     if (compareDate(elt.value, value) !== 0) {
                         if (wrongMessage) thisC.showTooltip(elt, wrongMessage);
                         if (lastKey !== 'Enter' && !(elt.share.$calendar && elt.share.$calendar.isDescendantOf(document.body))) thisC.highlightElt(elt);
@@ -163,7 +344,8 @@ UserDateInput.prototype.requestUserAction = function () {
                             elt.$input.focus();
                             elt.$input.select && elt.$input.select();
                         }
-                    } else {
+                    }
+                    else {
                         clearListener();
                         resolve();
                     }
@@ -198,6 +380,8 @@ UserDateInput.attachEnv = function (tutor, env) {
         }).exec();
     };
 };
+
+TutorEngine.installClass(UserDateInput);
 
 
 TutorNameManager.addAsync('userDateInput');
