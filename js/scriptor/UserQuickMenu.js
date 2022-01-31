@@ -1,9 +1,105 @@
 import UserBaseAction from "./UserBaseAction";
 import OOP from "absol/src/HTML5/OOP";
 import TutorNameManager from "./TutorNameManager";
-import {$, $$} from "../dom/Core";
+import { $, $$ } from "../dom/Core";
 import findNode from "../util/findNode";
 import TACData from "./TACData";
+import TutorEngine from "./TutorEngine";
+import { inheritCommand } from "../engine/TCommand";
+import BaseState from "./BaseState";
+import QuickMenu from "absol-acomp/js/QuickMenu";
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitMenu() {
+    BaseState.apply(this, arguments);
+    this.wcIdx = -1;
+}
+
+OOP.mixClass(StateWaitMenu, BaseState);
+
+StateWaitMenu.prototype.onStart = function () {
+    this.command.highlightElt(this.command.elt);
+    this.command.onlyClickTo(this.command.elt);
+    if (this.command.hadWrongAction && this.args.wrongMessage)
+        this.command.showTooltip(this.args.wrongMessage);
+    this.command.elt.on('click', this.ev_click);
+    this.command.clickCb = this.ev_clickOut
+};
+
+
+StateWaitMenu.prototype.onStop = function () {
+    clearTimeout(this.wcIdx);
+};
+
+StateWaitMenu.prototype.ev_clickOut = function () {
+    this.command.hadWrongAction = true;
+    if (this.args.wrongMessage)
+        this.command.showTooltip(this.args.wrongMessage);
+};
+
+
+StateWaitMenu.prototype.checkMenu = function () {
+    if (QuickMenu.$elt && QuickMenu.$elt.getBoundingClientRect().width > 0) {
+        this.goto('wait_click');
+    }
+};
+
+StateWaitMenu.prototype.ev_click = function () {
+    clearTimeout(this.wcIdx);
+    this.wcIdx = setTimeout(this.checkMenu.bind(this), 10);
+};
+
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitClick() {
+    BaseState.apply(this, arguments);
+    this.checkMenuIdx = -1;
+    this.blindIdx = -1;
+}
+
+OOP.mixClass(StateWaitClick, BaseState);
+
+
+StateWaitClick.prototype.onStart = function () {
+    this.command.highlightElt(QuickMenu.$elt);
+    this.itemElt = findNode(this.args.selectId, QuickMenu.$elt);
+    if (!this.itemElt) {
+        this.command.reject(new Error("QuickMenu do not contain " + this.args.selectId));
+        return;
+    }
+    this.itemElt.once('click', this.ev_clickItem);
+    this.command.onlyClickTo(this.itemElt);
+    this.blindIdx = setTimeout(function () {
+        this.command.highlightElt(this.itemElt);
+    }.bind(this), 400);
+    this.checkMenuIdx = setInterval(this.checkMenu.bind(this), 200);
+    this.command.clickCb = this.checkMenu.bind(this);
+};
+
+
+StateWaitClick.prototype.onStop = function () {
+    clearInterval(this.checkMenuIdx);
+    clearInterval(this.blindIdx);
+    this.itemElt.off('click', this.ev_clickItem)
+    this.command.clickCb = null;
+};
+
+StateWaitClick.prototype.checkMenu = function () {
+    if (QuickMenu.$elt.getBoundingClientRect().width === 0) {
+        this.goto('user_begin');
+    }
+};
+
+StateWaitClick.prototype.ev_clickItem = function (){
+    this.goto('finish');
+};
+
 
 /***
  * @extends UserBaseAction
@@ -11,133 +107,28 @@ import TACData from "./TACData";
  */
 function UserQuickMenu() {
     UserBaseAction.apply(this, arguments);
-    this._rejectCb = null;
 }
 
-OOP.mixClass(UserQuickMenu, UserBaseAction);
+inheritCommand(UserQuickMenu, UserBaseAction);
 
-UserQuickMenu.prototype._afterOpenQuickMenu = function (elt, highlight) {
-    var thisC = this;
-    var wrongMessage = thisC.args.wrongMessage;
-    return new Promise(function (resolve, reject) {
-        function onClick() {
-            setTimeout(function () {
-                var quickMenuElt = $('quickmenu');
-                if (quickMenuElt) {
-                    elt.off('click', onClick);
-                    if (highlight)
-                        thisC.showTooltip(quickMenuElt, wrongMessage);
-                    thisC.assignTarget(quickMenuElt);
-                    thisC._rejectCb = null;
-                    resolve({ quickMenuElt: quickMenuElt, highlight: highlight });
-                }
-            }, 100);
-        }
+UserQuickMenu.prototype.className = 'UserQuickMenu';
+UserQuickMenu.prototype.name = 'userQuickMenu';
+UserQuickMenu.prototype.argNames = ['eltPath', 'selectId', 'message', 'wrongMessage'];
+UserQuickMenu.prototype.stateClasses['user_begin'] = StateWaitMenu;
+UserQuickMenu.prototype.stateClasses['wait_click'] = StateWaitClick;
 
-        thisC._clickCb = function () {
-            thisC.showTooltip(elt, wrongMessage);
-            highlight = true;
-        };
-        thisC.onlyClickTo(elt);
-        thisC.highlightElt(elt);
-        thisC.assignTarget(elt);
-        elt.on('click', onClick);
-        thisC._rejectCb = function () {
-            elt.off('click', onClick);
-            reject();
-        }
-        if (highlight) {
-            thisC.showTooltip(elt, wrongMessage);
-        }
-    });
+UserQuickMenu.prototype.verifyElt = function () {
+    if (!this.elt.classList.contains('as-quick-menu-trigger')) {
+        return new Error('Type error: not a quick-menu trigger');
+    }
+    return null;
 };
 
-UserQuickMenu.prototype._afterSelectQM = function (elt, selectId, highlight) {
-    var thisC = this;
-    return this._afterOpenQuickMenu(elt, highlight).then(function (result) {
-        var menuElt = result.quickMenuElt;
-        highlight = result.highlight;
-        return new Promise(function (resolve, reject) {
-            var wrongMessage = thisC.args.wrongMessage;
-            var itemElt = findNode(selectId, menuElt);
-            if (!itemElt) {
-                throw new Error("Not found menu id=" + selectId);
-            }
 
-
-            setTimeout(function () {
-                if (thisC.state !== 'RUNNING') return;
-                if (itemElt.isDescendantOf(document.body)) {
-                    thisC.onlyClickTo(itemElt);
-                    thisC.highlightElt(itemElt);
-                    thisC.assignTarget(itemElt);
-                    if (highlight) {
-                        if (wrongMessage)
-                            thisC.showTooltip(itemElt, wrongMessage);
-                    }
-                }
-            }, 50);
-
-            function onSelect(ev) {
-                document.body.removeEventListener('click', onClose);
-                menuElt.off('press', onSelect);
-                var id = ev.menuItem["data-tutor-id"] || ev.menuItem.id || ev.menuItem.text;
-                thisC._rejectCb = null;
-                resolve(id === selectId);
-            }
-
-            function onClose() {
-                setTimeout(function () {
-                    document.body.removeEventListener('click', onClose);
-                    menuElt.off('press', onSelect);
-                    thisC._rejectCb = null;
-                    thisC.closeTooltip();
-                    resolve(false);
-                }, 100)
-            }
-
-            document.body.addEventListener('click', onClose);
-            menuElt.on('press', onSelect);
-            thisC._rejectCb = function () {
-                document.body.removeEventListener('click', onClose);
-                menuElt.off('press', onSelect);
-                reject();
-            }
-        });
-    }).then(function (isOK) {
-        if (!isOK) {
-            return thisC._afterSelectQM(elt, thisC.args.selectId, true);
-        }
-        return true;
-    });
-};
-
-UserQuickMenu.prototype._verifyQuickMenuTrigger = function (elt) {
-      if (!elt.containsClass || !elt.containsClass('as-quick-menu-trigger')){
-          console.warn(elt , " may not a quick-menu trigger!")
-      }
-};
-
-UserQuickMenu.prototype.requestUserAction = function () {
-    var elt = this.tutor.findNode(this.args.eltPath);
-    this._verifyQuickMenuTrigger(elt);
-    return this._afterSelectQM(elt, this.args.selectId);
-};
-
-UserQuickMenu.attachEnv = function (tutor, env) {
-    env.userQuickMenu = function (eltPath, selectId, message, wrongMessage) {
-        return new UserQuickMenu(tutor, {
-            eltPath: eltPath,
-            selectId: selectId,
-            message: message,
-            wrongMessage: wrongMessage
-        }).exec();
-    };
-
-    env.getAllQuickMenuTriggers = function () {
-        return $$('.as-quick-menu-trigger');
-    };
-};
+TutorEngine.installClass(UserQuickMenu);
+TutorEngine.installFunction('getAllQuickMenuTriggers', function () {
+    return $$('.as-quick-menu-trigger');
+});
 
 TutorNameManager.addAsync('userQuickMenu')
     .addSync('getAllQuickMenuTriggers');
