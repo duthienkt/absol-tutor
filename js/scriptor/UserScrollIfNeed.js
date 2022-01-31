@@ -1,13 +1,138 @@
 import BaseCommand from "./BaseCommand";
 import OOP from "absol/src/HTML5/OOP";
-import Dom, {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import Dom, { traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import TACData from "./TACData";
 import TutorNameManager from "./TutorNameManager";
-import {$, _} from "../dom/Core";
-import {ScrollBarIco} from "../dom/Icon";
+import { $, _ } from "../dom/Core";
+import { ScrollBarIco } from "../dom/Icon";
 import ToolTip from "absol-acomp/js/Tooltip";
-import Toast from "absol-acomp/js/Toast";
-import SnackBar from "absol-acomp/js/Snackbar";
+import { inheritCommand } from "../engine/TCommand";
+import TutorEngine from "./TutorEngine";
+import UserBaseAction from "./UserBaseAction";
+import BaseState from "./BaseState";
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateBeforeScroll() {
+    BaseState.apply(this, arguments);
+}
+
+OOP.mixClass(StateBeforeScroll, BaseState);
+
+StateBeforeScroll.prototype.onStart = function () {
+    this.command.scrollerElt = this.command.findVScroller(this.command.elt);
+    this.command.highlightElt(this.command.elt);
+    this.goto('begin_scrolling');
+};
+
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateBeginScrolling() {
+    BaseState.apply(this, arguments);
+    this.checkIdx = -1;
+    this.pointerLock = false;
+    this.currentDir = 0;
+}
+
+OOP.mixClass(StateBeginScrolling, BaseState);
+
+StateBeginScrolling.prototype.onStart = function () {
+    console.log('start')
+    this.command.scrollerElt.addEventListener('scroll', this.ev_scroll);
+    document.addEventListener('scroll', this.ev_scroll);
+    this.command.scrollerElt.classList.add('atr-scroll-only');
+
+    document.body.addEventListener('pointerdown', this.ev_pointerDown);
+    document.body.addEventListener('touchstart', this.ev_pointerDown);
+
+    document.body.addEventListener('pointerup', this.ev_pointerUp);
+    document.body.addEventListener('pointercancel', this.ev_pointerUp);
+    document.body.addEventListener('touchend', this.ev_pointerUp);
+
+    this.scrollDir = this.command.findScrollDir(this.command.elt, this.command.scrollerElt);
+    this.prevScrollTop = this.command.scrollerElt.scrollTop;
+    this.command._showScroll(this.command.scrollerElt, this.scrollDir);
+    this.command.onlyClickTo(this.command.scrollerElt);
+};
+
+StateBeginScrolling.prototype.onStop = function () {
+    this.command.scrollerElt.removeEventListener('scroll', this.ev_scroll);
+    document.removeEventListener('scroll', this.ev_scroll);
+    this.command.scrollerElt.classList.remove('atr-scroll-only');
+    if (this.checkIdx > 0) clearTimeout(this.checkIdx);
+
+    document.body.removeEventListener('pointerdown', this.ev_pointerDown);
+    document.body.removeEventListener('touchstart', this.ev_pointerDown);
+
+    document.body.removeEventListener('pointerup', this.ev_pointerUp);
+    document.body.removeEventListener('pointercancel', this.ev_pointerUp);
+    document.body.removeEventListener('touchend', this.ev_pointerUp);
+};
+
+StateBeginScrolling.prototype.delayCheck = function () {
+    if (this.checkIdx > 0) {
+        clearTimeout(this.checkIdx);
+    }
+    var thisC = this.command;
+    var vScroller = this.command.scrollerElt;
+    this.checkIdx = setTimeout(function () {
+        this.checkIdx = -1;
+        var currentDir = thisC.findScrollDir(this.command.elt, vScroller);
+        this.currentDir = currentDir;
+        var pointerLock = this.pointerLock;
+        if (currentDir.dy === 0 || !vScroller) {
+            thisC._showScrollTooltip(null);
+            thisC._prevTootipDir = 0;
+            if (!pointerLock) {
+                this.goto('finish');
+            }
+        }
+        else {
+            thisC._showScroll(vScroller, currentDir);
+            if (thisC._prevTootipDir.dy !== currentDir.dy) {
+                thisC._showScrollTooltip(vScroller, currentDir.dy > 0 ? this.command.args.scrollUpMessage : this.command.args.scrollDownMessage, currentDir);
+            }
+            thisC._prevTootipDir.dy = currentDir.dy;
+        }
+    }.bind(this), 100);
+};
+
+
+StateBeginScrolling.prototype.ev_scroll = function (event) {
+    this.command._updateToastPosition();
+
+    this.currentDir = this.command.findScrollDir(this.command.elt, this.command.scrollerElt);
+    var vScroller = this.command.scrollerElt;
+    if (vScroller.scrollTop > this.prevScrollTop) {
+        if (this.currentDir.dy > 0) {
+            this.command.hadWrongAction = true;
+        }
+    }
+    else if (vScroller.scrollTop < this.prevScrollTop) {
+        if (this.currentDir.dy < 0) {
+            this.command.hadWrongAction = true;
+        }
+    }
+
+
+    this.prevScrollTop = this.command.scrollerElt.scrollTop;
+    this.delayCheck();
+};
+
+StateBeginScrolling.prototype.ev_pointerUp = function () {
+    this.pointerLock = true;
+};
+
+StateBeginScrolling.prototype.ev_pointerDown = function () {
+    this.pointerLock = false;
+};
+
+
 
 /***
  * @extends BaseCommand
@@ -18,7 +143,12 @@ function UserScrollIfNeed() {
     this._prevTootipDir = { dy: 0, dx: 0 };
 }
 
-OOP.mixClass(UserScrollIfNeed, BaseCommand);
+inheritCommand(UserScrollIfNeed, UserBaseAction);
+UserScrollIfNeed.prototype.name = 'userScrollIfNeed';
+UserScrollIfNeed.prototype.argNames = ['eltPath', 'message', 'scrollUpMessage', 'scrollDownMessage', 'offset', 'delta'];
+UserScrollIfNeed.prototype.stateClasses['user_begin'] = StateBeforeScroll;
+UserScrollIfNeed.prototype.stateClasses['begin_scrolling'] = StateBeginScrolling;
+
 
 UserScrollIfNeed.prototype.$scrollBarIcon = $(ScrollBarIco.cloneNode(true));
 UserScrollIfNeed.prototype.$scrollBarIconCtn = _({
@@ -117,7 +247,7 @@ UserScrollIfNeed.prototype.findVScroller = function (elt, dY) {
 };
 
 
-UserScrollIfNeed.prototype._findScrollDir = function (elt, scroller) {
+UserScrollIfNeed.prototype.findScrollDir = function (elt, scroller) {
     var outBound;
     if (scroller) {
         outBound = scroller.getBoundingClientRect();
@@ -170,148 +300,9 @@ UserScrollIfNeed.prototype.onStop = function () {
 };
 
 
-UserScrollIfNeed.prototype.exec = function () {
-    this.start();
-    var thisC = this;
-    var elt = this.tutor.findNode(this.args.eltPath);
-    var message = this.args.message;
-    var scrollUpMessage = this.args.scrollUpMessage;
-    var scrollDownMessage = this.args.scrollDownMessage;
-    var vScroller;
-    vScroller = this.findVScroller(elt);
-    var scrollDir = this._findScrollDir(elt, vScroller);
-    if (scrollDir.dy == 0) {
-        return Promise.resolve();
-    }
 
-    this.assignTarget(elt);
-    this.showToast(message);
-    this.highlightElt(elt);
+TutorEngine.installClass(UserScrollIfNeed);
 
-    return new Promise(function (resolve, reject) {
-        var checkTimeoutId = -1;
-        var currentDir;
-        var pointerLock = false;
-
-        function onPointerDown() {
-            pointerLock = true;
-        }
-
-        function onPointerUp(event) {
-            pointerLock = false;
-            if (checkTimeoutId >= 0) {
-                clearTimeout(checkTimeoutId);
-            }
-            checkTimeoutId = setTimeout(check, 200);
-        }
-
-        document.body.addEventListener('pointerdown', onPointerDown);
-        document.body.addEventListener('touchstart', onPointerDown);
-
-        document.body.addEventListener('pointerup', onPointerUp);
-        document.body.addEventListener('pointercancel', onPointerUp);
-        document.body.addEventListener('touchend', onPointerUp);
-
-
-        function check() {
-
-            checkTimeoutId = -1;
-            currentDir = thisC._findScrollDir(elt, vScroller);
-            if (currentDir.dy === 0 || !vScroller) {
-                thisC._showScrollTooltip(null);
-                thisC._prevTootipDir = 0;
-                if (!pointerLock) {
-                    thisC._rejectCb = null;
-                    if (vScroller) {
-                        vScroller.removeEventListener('scroll', onScroll);
-                        vScroller.removeClass('atr-scroll-only');
-                    }
-
-                    document.body.removeEventListener('pointerdown', onPointerDown);
-                    document.body.removeEventListener('touchstart', onPointerDown);
-                    document.body.removeEventListener('pointerup', onPointerUp);
-                    document.body.removeEventListener('pointerleave', onPointerUp);
-                    document.body.removeEventListener('pointercancel', onPointerUp);
-                    document.body.removeEventListener('touchcancel', onPointerUp);
-                    document.body.removeEventListener('touchend', onPointerUp);
-                    resolve();
-                }
-            }
-            else {
-                thisC._showScroll(vScroller, currentDir);
-                if (thisC._prevTootipDir.dy !== currentDir.dy) {
-                    thisC._showScrollTooltip(vScroller, currentDir.dy > 0 ? scrollUpMessage : scrollDownMessage, currentDir);
-                }
-                thisC._prevTootipDir.dy = currentDir.dy;
-            }
-
-        }
-
-        var prevScrollTop;
-
-        function onScroll(event) {
-            thisC._updateToastPosition();
-            if (checkTimeoutId >= 0) {
-                clearTimeout(checkTimeoutId);
-            }
-            currentDir = thisC._findScrollDir(elt, vScroller);
-            if (vScroller.scrollTop > prevScrollTop) {
-                if (currentDir.dy > 0) {
-                    thisC.hadWrongAction = true;
-                }
-            }
-            else if (vScroller.scrollTop < prevScrollTop) {
-                if (currentDir.dy < 0) {
-                    thisC.hadWrongAction = true;
-                }
-            }
-
-
-            prevScrollTop = vScroller.scrollTop;
-            checkTimeoutId = setTimeout(check, 500);
-        }
-
-        if (vScroller) {
-            prevScrollTop = vScroller.scrollTop;
-            thisC._showScroll(vScroller, scrollDir);
-            vScroller.addClass('atr-scroll-only');
-            thisC.onlyClickTo(vScroller);
-            vScroller.addEventListener('scroll', onScroll);
-        }
-
-        thisC._rejectCb = function () {
-            if (checkTimeoutId) {
-                clearTimeout(checkTimeoutId);
-            }
-            if (vScroller) {
-                vScroller.removeEventListener('scroll', onScroll);
-                vScroller.removeClass('atr-scroll-only');
-            }
-            document.body.removeEventListener('pointerdown', onPointerDown);
-            document.body.removeEventListener('touchstart', onPointerDown);
-            document.body.removeEventListener('pointerup', onPointerUp);
-            document.body.removeEventListener('pointerleave', onPointerUp);
-            document.body.removeEventListener('pointercancel', onPointerUp);
-            document.body.removeEventListener('touchcancel', onPointerUp);
-            document.body.removeEventListener('touchend', onPointerUp);
-
-            reject();
-        }
-    }).then(this.stop.bind(this));
-};
-
-UserScrollIfNeed.attachEnv = function (tutor, env) {
-    env.userScrollIfNeed = function (eltPath, message, scrollUpMessage, scrollDownMessage, offset, delta) {
-        return new UserScrollIfNeed(tutor, {
-            eltPath: eltPath,
-            message: message,
-            scrollUpMessage: scrollUpMessage,
-            scrollDownMessage: scrollDownMessage,
-            offset: (typeof offset === 'number') ? (Math.max(0, Math.min(1, delta))) : 0.5,
-            delta: (typeof delta === 'number') ? (Math.max(0, Math.min(1, delta))) : 0.2
-        }).exec();
-    };
-};
 
 TutorNameManager.addAsync('userScrollIfNeed');
 
