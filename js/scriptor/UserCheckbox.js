@@ -2,6 +2,48 @@ import OOP from "absol/src/HTML5/OOP";
 import FunctionNameManager from "./TutorNameManager";
 import TACData from "./TACData";
 import UserBaseAction from "./UserBaseAction";
+import { inheritCommand } from "../engine/TCommand";
+import BaseState from "./BaseState";
+import TutorEngine from "./TutorEngine";
+
+/****
+ * @extends BaseState
+ * @constructor
+ */
+function StateWaitCheck() {
+    BaseState.apply(this, arguments);
+    this.checkTO = -1;
+}
+
+OOP.mixClass(StateWaitCheck, BaseState);
+
+StateWaitCheck.prototype.onStart = function () {
+    this.command.elt.on('click', this.ev_click);
+    this.command.highlightElt(this.command.elt);
+    this.command.onlyClickTo(this.command.elt);
+    this.command.clickCb = function () {
+        this.command.showTooltip(this.command.elt, this.command.args.wrongMessage);
+    }.bind(this);
+};
+
+
+StateWaitCheck.prototype.onStop = function () {
+    this.command.elt.off('click', this.ev_click);
+    clearTimeout(this.checkTO);
+};
+
+StateWaitCheck.prototype.delayCheck = function () {
+    this.checkTO = setTimeout(function () {
+        if (!!this.command.elt.checked === !!this.args.checked) {
+            this.goto('finish');
+        }
+    }.bind(this), 50)
+};
+
+StateWaitCheck.prototype.ev_click = function () {
+    this.delayCheck();
+};
+
 
 /***
  * @extends UserBaseAction
@@ -11,20 +53,27 @@ function UserCheckbox() {
     UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserCheckbox, UserBaseAction);
+inheritCommand(UserCheckbox, UserBaseAction);
 
-UserCheckbox.prototype._verifyCheckbox = function (elt) {
-    if (!elt.containsClass || !((elt.containsClass('absol-checkbox')
-        || elt.containsClass('absol-radio')
-        || elt.containsClass('as-checkbox-input')
-        || elt.containsClass('as-checkbox-input')
-        || elt.containsClass('as-radio-input')
-        || elt.containsClass('absol-switch')
+UserCheckbox.prototype.name = 'userCheckbox';
+UserCheckbox.prototype.stateClasses['user_begin'] = StateWaitCheck;
+
+
+UserCheckbox.prototype.verifyElt = function () {
+    var elt = this.elt;
+    if (!elt.hasClass || !((elt.hasClass('absol-checkbox')
+        || elt.hasClass('absol-radio')
+        || elt.hasClass('as-checkbox-input')
+        || elt.hasClass('as-checkbox-input')
+        || elt.hasClass('as-radio-input')
+        || elt.hasClass('absol-switch')
         || (elt.tagName.toLowerCase() === 'input' && (elt.type === 'checkbox' || elt.type === 'radio'))
     ))) {
-        throw new Error('Type error: not a radio or checkbox');
+        return new Error('Type error: not a radio or checkbox');
     }
+    return null;
 };
+
 
 UserCheckbox.prototype.requestUserAction = function () {
     var thisC = this;
@@ -100,6 +149,8 @@ UserCheckbox.attachEnv = function (tutor, env) {
 
 };
 
+TutorEngine.installClass(UserCheckbox);
+
 FunctionNameManager.addAsync('userCheckbox');
 FunctionNameManager.addAsync('userSwitch');
 FunctionNameManager.addAsync('userRadio');
@@ -108,18 +159,18 @@ FunctionNameManager.addAsync('userRadio');
 TACData.define('userCheckbox', {
     type: 'function',
     args: [
-        {name: 'eltPath', type: '(string|AElement)'},
-        {name: 'checked', type: 'boolean'},
-        {name: 'message', type: 'string'},
-        {name: 'wrongMessage', type: 'string'}
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'checked', type: 'boolean' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
     ]
 }).define('userRadio', {
     type: 'function',
     args: [
-        {name: 'eltPath', type: '(string|AElement)'},
-        {name: 'checked', type: 'boolean'},
-        {name: 'message', type: 'string'},
-        {name: 'wrongMessage', type: 'string'}
+        { name: 'eltPath', type: '(string|AElement)' },
+        { name: 'checked', type: 'boolean' },
+        { name: 'message', type: 'string' },
+        { name: 'wrongMessage', type: 'string' }
     ]
 });
 
