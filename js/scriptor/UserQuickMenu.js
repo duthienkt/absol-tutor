@@ -24,7 +24,7 @@ StateWaitMenu.prototype.onStart = function () {
     this.command.highlightElt(this.command.elt);
     this.command.onlyClickTo(this.command.elt);
     if (this.command.hadWrongAction && this.args.wrongMessage)
-        this.command.showTooltip(this.args.wrongMessage);
+        this.command.showTooltip(this.command.elt, this.args.wrongMessage);
     this.command.elt.on('click', this.ev_click);
     this.command.clickCb = this.ev_clickOut
 };
@@ -37,7 +37,7 @@ StateWaitMenu.prototype.onStop = function () {
 StateWaitMenu.prototype.ev_clickOut = function () {
     this.command.hadWrongAction = true;
     if (this.args.wrongMessage)
-        this.command.showTooltip(this.args.wrongMessage);
+        this.command.showTooltip(this.command.elt, this.args.wrongMessage);
 };
 
 
@@ -74,6 +74,8 @@ StateWaitClick.prototype.onStart = function () {
         return;
     }
     this.itemElt.once('click', this.ev_clickItem);
+    if (this.command.hadWrongAction && this.args.wrongMessage)
+        this.command.showTooltip(QuickMenu.$elt, this.args.wrongMessage);
     this.command.onlyClickTo(this.itemElt);
     this.blindIdx = setTimeout(function () {
         this.command.highlightElt(this.itemElt);
@@ -96,7 +98,7 @@ StateWaitClick.prototype.checkMenu = function () {
     }
 };
 
-StateWaitClick.prototype.ev_clickItem = function (){
+StateWaitClick.prototype.ev_clickItem = function () {
     this.goto('finish');
 };
 
