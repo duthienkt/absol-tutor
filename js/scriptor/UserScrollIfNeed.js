@@ -23,6 +23,15 @@ OOP.mixClass(StateBeforeScroll, BaseState);
 
 StateBeforeScroll.prototype.onStart = function () {
     this.command.scrollerElt = this.command.findVScroller(this.command.elt);
+    if (!this.command.scrollerElt) {
+        this.goto('finish');
+        return;
+    }
+    this.scrollDir = this.command.findScrollDir(this.command.elt, this.command.scrollerElt);
+    if (this.scrollDir.dy === 0) {
+        this.goto('finish');
+        return;
+    }
     this.command.highlightElt(this.command.elt);
     this.goto('begin_scrolling');
 };
@@ -42,7 +51,6 @@ function StateBeginScrolling() {
 OOP.mixClass(StateBeginScrolling, BaseState);
 
 StateBeginScrolling.prototype.onStart = function () {
-    console.log('start')
     this.command.scrollerElt.addEventListener('scroll', this.ev_scroll);
     document.addEventListener('scroll', this.ev_scroll);
     this.command.scrollerElt.classList.add('atr-scroll-only');
@@ -131,7 +139,6 @@ StateBeginScrolling.prototype.ev_pointerUp = function () {
 StateBeginScrolling.prototype.ev_pointerDown = function () {
     this.pointerLock = false;
 };
-
 
 
 /***
@@ -298,7 +305,6 @@ UserScrollIfNeed.prototype.onStop = function () {
     this.$scrollBarIconCtn.remove();
     this.$scrollTooltip.remove();
 };
-
 
 
 TutorEngine.installClass(UserScrollIfNeed);
