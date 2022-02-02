@@ -57,6 +57,8 @@ inheritCommand(UserCheckbox, UserBaseAction);
 
 UserCheckbox.prototype.name = 'userCheckbox';
 UserCheckbox.prototype.stateClasses['user_begin'] = StateWaitCheck;
+UserCheckbox.prototype.argNames = ['eltPath', 'checked', 'message', 'wrongMessage'];
+
 
 
 UserCheckbox.prototype.verifyElt = function () {
@@ -74,82 +76,33 @@ UserCheckbox.prototype.verifyElt = function () {
     return null;
 };
 
+/***
+ * @extends UserCheckbox
+ * @constructor
+ */
+function UserSwitch(){
+    UserCheckbox.apply(this, arguments);
+}
 
-UserCheckbox.prototype.requestUserAction = function () {
-    var thisC = this;
-    var elt = this.tutor.findNode(this.args.eltPath);
-    this._verifyCheckbox(elt);
-    var wrongMessage = this.args.wrongMessage;
-    var checked = this.args.checked;
-    thisC.highlightElt(elt);
-    this._clickCb = function () {
-        if (wrongMessage) {
-            thisC.showTooltip(elt, wrongMessage);
-        }
-    }
-    this.onlyClickTo(elt);
-    return new Promise(function (resolve, reject) {
-        var clickTimeout = -1;
+inheritCommand(UserSwitch, UserCheckbox);
+UserSwitch.prototype.name = 'userSwitch';
 
-        function onChange() {
-            if (clickTimeout > 0) {
-                clearTimeout(clickTimeout);
-                clickTimeout = -1;
-            }
-            if (elt.checked === checked) {
-                elt.off('change', onChange)
-                    .off('click', onClick);
-                resolve();
-            }
-        }
-
-        function onClick() {
-            if (clickTimeout > 0) clearTimeout(clickTimeout);
-            setTimeout(function () {
-                clickTimeout = -1;
-                if (elt.checked === checked) {
-                    elt.off('change', onChange)
-                        .off('click', onClick);
-                    resolve();
-                }
-            }, 50);
-        }
-
-        elt.on('change', onChange)
-            .on('click', onClick);
-        thisC._rejectCb = function () {
-            elt.off('change', onChange)
-                .off('click', onClick);
-            reject();
-        }
-    });
-};
+/***
+ * @extends UserCheckbox
+ * @constructor
+ */
+function UserRadio(){
+    UserCheckbox.apply(this, arguments);
+}
+inheritCommand(UserRadio, UserCheckbox);
+UserRadio.prototype.name = 'userRadio';
 
 
-UserCheckbox.attachEnv = function (tutor, env) {
-    env.userCheckbox = function (eltPath, checked, message, wrongMessage) {
-        return new UserCheckbox(tutor, {
-            eltPath: eltPath,
-            checked: checked,
-            message: message,
-            wrongMessage: wrongMessage
-        }).exec();
-    };
 
-    env.userSwitch = env.userCheckbox;
-
-    env.userRadio = function (eltPath, checked, message, wrongMessage) {
-        return new UserCheckbox(tutor, {
-            eltPath: eltPath,
-            checked: checked,
-            message: message,
-            wrongMessage: wrongMessage
-        }).exec();
-    }
-
-};
 
 TutorEngine.installClass(UserCheckbox);
+TutorEngine.installClass(UserSwitch);
+TutorEngine.installClass(UserRadio);
 
 FunctionNameManager.addAsync('userCheckbox');
 FunctionNameManager.addAsync('userSwitch');
