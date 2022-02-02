@@ -95,7 +95,7 @@ StateBeginScrolling.prototype.delayCheck = function () {
         var pointerLock = this.pointerLock;
         if (currentDir.dy === 0 || !vScroller) {
             thisC._showScrollTooltip(null);
-            thisC._prevTootipDir = 0;
+            thisC._prevTootipDir.dy = 0;
             if (!pointerLock) {
                 this.goto('finish');
             }
