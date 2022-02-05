@@ -2,42 +2,48 @@ import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import TutorNameManager from "./TutorNameManager";
 import TACData from "./TACData";
+import BaseState from "./BaseState";
+import { inheritCommand } from "../engine/TCommand";
+import TutorEngine from "./TutorEngine";
+import safeThrow from "absol/src/Code/safeThrow";
+
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function WaitPressKey() {
+    BaseState.apply(this, arguments);
+}
+
+OOP.mixClass(WaitPressKey, BaseState);
+
+WaitPressKey.prototype.onStart = function () {
+    document.addEventListener('keydown', this.ev_keyPress);
+};
+
+
+WaitPressKey.prototype.onStop = function () {
+    document.removeEventListener('keydown', this.ev_keyPress);
+};
+
+WaitPressKey.prototype.ev_keyPress = function () {
+    this.goto('finish');
+};
+
 
 /***
  * @extends {BaseCommand}
  */
 function PressAnyKey() {
     BaseCommand.apply(this, arguments);
-    this.ev_keyPress = this.ev_keyPress.bind(this);
-    this._resolveCb = null;
 }
 
-OOP.mixClass(PressAnyKey, BaseCommand);
+inheritCommand(PressAnyKey, BaseCommand);
+PressAnyKey.prototype.type = 'const';
+PressAnyKey.prototype.name = 'PRESS_ANY_KEY';
+PressAnyKey.prototype.stateClasses['entry'] = WaitPressKey;
 
-PressAnyKey.prototype.exec = function () {
-    this.start();
-    document.addEventListener('keydown', this.ev_keyPress);
-    return new Promise(function (rs) {
-        this._resolveCb = rs;
-    }.bind(this)).then(this.stop.bind(this));
-
-};
-
-PressAnyKey.prototype.cancel = function () {
-    document.removeEventListener('keydown', this.ev_keyPress);
-};
-
-
-PressAnyKey.prototype.ev_keyPress = function (event) {
-    if (this._resolveCb) {
-        this._resolveCb();
-        this._resolveCb = null;
-    }
-};
-
-PressAnyKey.attachEnv = function (tutor, env) {
-    env.PRESS_ANY_KEY = new PressAnyKey(tutor, {});
-};
+TutorEngine.installClass(PressAnyKey);
 
 TutorNameManager.addConst('PRESS_ANY_KEY');
 
