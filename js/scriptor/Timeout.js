@@ -2,60 +2,49 @@ import BaseCommand from './BaseCommand';
 import OOP from 'absol/src/HTML5/OOP';
 import FunctionKeyManager from "./TutorNameManager";
 import TACData from "./TACData";
+import BaseState from "./BaseState";
+import { inheritCommand } from "../engine/TCommand";
+import TutorEngine from "./TutorEngine";
+
+/***
+ * @extends BaseCommand
+ * @constructor
+ */
+function StateWait() {
+    BaseState.apply(this, arguments);
+    this.toIdx = -1;
+}
+
+OOP.mixClass(StateWait, BaseState);
+
+StateWait.prototype.onStart = function () {
+    this.toIdx = setTimeout(this.goto.bind(this, 'finish'), this.args.millis);
+};
+
+
+StateWait.prototype.onStart = function () {
+    clearTimeout(this.toIdx);
+};
+
 
 /***
  * @extends {BaseCommand}
  */
 function Timeout() {
     BaseCommand.apply(this, arguments);
-    this._timeoutId = -1;
-    this._rejectCb = null;
 }
 
-OOP.mixClass(Timeout, BaseCommand);
+inheritCommand(Timeout, BaseCommand);
+
+Timeout.prototype.type = 'sync';
+Timeout.prototype.name = 'TIME_OUT';
+Timeout.prototype.stateClasses['entry'] = StateWait;
+Timeout.prototype.argNames = ['millis'];
+
+TutorEngine.installClass(Timeout);
 
 
-Timeout.prototype.exec = function () {
-    this.start();
-    var thisC = this;
-    if (thisC._timeoutId > 0) {
-        throw  new Error("Trigger TIMEOUT is not finish before started again!");
-    }
-    return new Promise(function (resolve, reject) {
-        thisC._timeoutId = setTimeout(function () {
-            thisC._rejectCb = null;
-            thisC._timeoutId = -1;
-            resolve();
-        }, thisC.args.millis);
-        thisC._rejectCb = reject;
-    }).then(this.stop.bind(this));
-};
 
-Timeout.prototype.cancel = function () {
-    if (this._timeoutId > 0) {
-        clearTimeout(this._timeoutId);
-        this._timeoutId = -1;
-    }
-    if (this._rejectCb) {
-        this._rejectCb();
-        this._rejectCb = null;
-    }
-};
-
-Timeout.attachEnv = function (tutor, env) {
-    env.TIME_OUT = function (millis) {
-        return new Timeout(tutor, {
-            millis: millis
-        });
-    };
-
-    env.delayUntil = function (trigger) {
-        if (!trigger || !trigger.exec)
-            throw new Error("delayUntil: param " + trigger + " is not a Trigger!");
-        trigger = trigger.depthClone();
-        return trigger.exec();
-    };
-};
 
 FunctionKeyManager.addSync('TIME_OUT')
     .addAsync('delay')
