@@ -140,6 +140,28 @@ StateBeginScrolling.prototype.ev_pointerDown = function () {
     this.pointerLock = false;
 };
 
+/***
+ * @extends BaseState
+ * @constructor
+ */
+function StateShowMessage() {
+    BaseState.apply(this, arguments);
+}
+
+OOP.mixClass(StateShowMessage, BaseState);
+
+StateShowMessage.prototype.onStart = function () {
+    this.currentDir = this.command.findScrollDir(this.command.elt, this.command.scrollerElt);
+    if (this.currentDir.dy === 0) {
+        this.goto('finish');
+    }
+    else {
+        this.command.showDelayToast(this.args.message).then(function () {
+            this.goto('user_begin');
+        }.bind(this));
+    }
+};
+
 
 /***
  * @extends BaseCommand
@@ -155,6 +177,7 @@ UserScrollIfNeed.prototype.name = 'userScrollIfNeed';
 UserScrollIfNeed.prototype.argNames = ['eltPath', 'message', 'scrollUpMessage', 'scrollDownMessage', 'offset', 'delta'];
 UserScrollIfNeed.prototype.stateClasses['user_begin'] = StateBeforeScroll;
 UserScrollIfNeed.prototype.stateClasses['begin_scrolling'] = StateBeginScrolling;
+UserScrollIfNeed.prototype.stateClasses['show_message'] = StateShowMessage;
 
 
 UserScrollIfNeed.prototype.$scrollBarIcon = $(ScrollBarIco.cloneNode(true));
