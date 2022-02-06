@@ -2,7 +2,7 @@ import {isDomNode} from "absol/src/HTML5/Dom";
 import {$} from "../dom/Core";
 import TutorPath from "../TutorPath";
 
-export default function findAllNode(query, root) {
+export default function findAllNodes(query, root) {
     if (isDomNode(query)) return $(query);
     root = root || document.body;
     if (typeof query != 'string') return null;
