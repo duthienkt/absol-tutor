@@ -74,7 +74,7 @@ StateWaitCalendar.prototype.ev_clickOut = function () {
  * @param {BaseCommand} command
  * @constructor
  */
-function StateChooseDate(command) {
+export function StateChooseDate(command) {
     BaseState.call(this, command);
     this.blindIdx = -1;
     this.checkIdx = -1;
@@ -122,7 +122,7 @@ StateChooseDate.prototype.highlightTarget = function () {
 
 StateChooseDate.prototype.checkCalendar = function () {
     var elt = this.command.elt;
-    var isOn = !!(elt.share.$calendar && elt.share.$calendar.isDescendantOf(document.body));
+    var isOn = !!(this.calendarElt && this.calendarElt.isDescendantOf(document.body));
     if (isOn) {
         this.highlightTarget();
     }
@@ -141,14 +141,14 @@ StateChooseDate.prototype.ev_click = function () {
  * @param {BaseCommand} command
  * @constructor
  */
-function StateCheckValue(command) {
+export function StateCheckDateValue(command) {
     BaseState.call(this, command);
 
 }
 
-OOP.mixClass(StateCheckValue, BaseState);
+OOP.mixClass(StateCheckDateValue, BaseState);
 
-StateCheckValue.prototype.onStart = function () {
+StateCheckDateValue.prototype.onStart = function () {
     var value = this.args.value;
     var inputValue = this.command.elt.value;
     if (value === inputValue) {
@@ -185,7 +185,7 @@ UserDateInput.prototype.argNames = ['eltPath', 'value', 'message', 'wrongMessage
 
 UserDateInput.prototype.stateClasses['user_begin'] = StateWaitCalendar;
 UserDateInput.prototype.stateClasses['choose_date'] = StateChooseDate;
-UserDateInput.prototype.stateClasses['check_value'] = StateCheckValue;
+UserDateInput.prototype.stateClasses['check_value'] = StateCheckDateValue;
 
 
 UserDateInput.prototype._isFocus = function (elt) {
