@@ -1,24 +1,30 @@
-import FunctionNameManager from "./TutorNameManager";
+import TCommand, { inheritCommand } from "../engine/TCommand";
+import findNode from "../util/findNode";
+import TutorEngine from "./TutorEngine";
 
-var QuerySelector = {};
+/***
+ * @extends TCommand
+ * @constructor
+ */
+function QuerySelector() {
+    TCommand.apply(this, arguments);
+}
 
-QuerySelector.attachEnv = function (tutor, env) {
-    env.querySelector = function (query) {
-        var elt = tutor.findNode(query, true);
-        if (!elt) throw new Error('Can not query element \"' + query + '"');
-        return elt;
-    };
-    env.$ = env.querySelector;
-    env.querySelectorAll = function (query) {
-        return tutor.findAllNode(query);
-    };
-    env.$$ = env.querySelectorAll;
+inheritCommand(QuerySelector, TCommand);
+
+QuerySelector.prototype.className = 'QuerySelector';
+QuerySelector.prototype.name = '$';
+QuerySelector.prototype.type = 'sync';
+QuerySelector.prototype.argNames = ['query', 'inNode'];
+
+QuerySelector.prototype.exec = function (){
+  return findNode(this.args.query, this.args.inNode)  ;
 };
 
 
-FunctionNameManager.addSync('$')
-    .addSync('querySelector')
-    .addSync('$$')
-    .addSync('querySelectoAllr');
+
+
+TutorEngine.installClass(QuerySelector);
+
 
 export default QuerySelector;
