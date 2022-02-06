@@ -22,7 +22,7 @@ StateWait.prototype.onStart = function () {
 };
 
 
-StateWait.prototype.onStart = function () {
+StateWait.prototype.onStop = function () {
     clearTimeout(this.toIdx);
 };
 
@@ -41,10 +41,14 @@ Timeout.prototype.name = 'TIME_OUT';
 Timeout.prototype.stateClasses['entry'] = StateWait;
 Timeout.prototype.argNames = ['millis'];
 
+
+Timeout.attachEnv = function (tutor, env) {
+    env.TIME_OUT = function (millis) {
+        return new Timeout(tutor, { millis: millis || 0 });
+    }
+};
+
 TutorEngine.installClass(Timeout);
-
-
-
 
 FunctionKeyManager.addSync('TIME_OUT')
     .addAsync('delay')
