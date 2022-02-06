@@ -1,7 +1,6 @@
 import expressionList from './scriptor/expressionList';
 import findNode from './util/findNode';
-import buildTutorJavaScript from "./buildTutorJavaScript";
-import findAllNode from "./util/findAllNode";
+import findAllNodes from "./util/findAllNodes";
 import Context from "absol/src/AppPattern/Context";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
@@ -71,7 +70,7 @@ Tutor.prototype.findNode = function (query, unsafe) {
 };
 
 Tutor.prototype.findAllNode = function (query) {
-    return findAllNode(query, this.$view);
+    return findAllNodes(query, this.$view);
 };
 
 
