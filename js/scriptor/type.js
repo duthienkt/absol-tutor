@@ -91,6 +91,16 @@
  * @param {MarkdownString} wrongMessage
  */
 
+/***
+ * Yêu cầu người bật hoặc tắt, nếu giá trị checked ban đầu đúng thì phải nhấn 2 lần
+ * @function
+ * @name userSwitch
+ * @param {string|AElement} query
+ * @param {boolean} checked
+ * @param {MarkdownString} message
+ * @param {MarkdownString} wrongMessage
+ */
+
 
 /***
  * Yêu cầu người dùng nhập vào chuỗi, kiểm tra bởi match,
@@ -136,10 +146,44 @@
 
 
 /***
- * Trì hoãn trong một thời gian, mọi thao tác chuột bị chặn
+ * Yêu cầu người dùng nhập ngày tháng trong năm
+ * @function
+ * @name userDateInYearInput
+ * @param {string|AElement} eltPath
+ * @param {string|{month: number, date: number}} value
+ * @param {MarkdownString} message
+ * @param {string} wrongMessage
+ * @param {string} finishMessage
+ */
+
+/***
+ * Yêu cầu người dùng nhập file
+ * @function
+ * @name userFileInputBox
+ * @param {string|AElement} eltPath
+ * @param {string} message
+ * @param {string} wrongMessage
+ */
+
+
+/***
+ * Yêu cầu người dùng nhập nhiều file
+ * @function
+ * @name userFileListInput
+ * @param {string|AElement} eltPath
+ * @param {string} fileCount
+ * @param {string} message
+ * @param {string} wrongMessage
+ */
+
+
+
+
+ /***
+ * Trì hoãn trong một thời gian hoặc cho đến khi trigger được gọi, mọi thao tác chuột bị chặn
  * @function
  * @name delay
- * @param {number} millis - trên thực tế, với bất kì giá trị nào, thời gian delay tối thiểu là ~4ms
+ * @param {number|Promise|*} until - trên thực tế, với bất kì giá trị nào, thời gian delay tối thiểu là ~4ms
  */
 
 /***
@@ -153,3 +197,4 @@
  * @constant {number} EMAIL_REGEX
  *
  */
+
