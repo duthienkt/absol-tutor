@@ -378,8 +378,6 @@ BaseCommand.prototype.findNode = function (query, unsafe) {
     return this.tutor.findNode(query, unsafe);
 };
 
-BaseCommand.attachEnv = function (tutor, env) {
-};
 
 
 Object.defineProperty(BaseCommand.prototype, 'tutor', {
