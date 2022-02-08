@@ -29,8 +29,12 @@ import UserDateInput from "./UserDateInput";
 import UserDateInYearInput from "./UserDateInYearInput";
 import UserFileInputBox from "./UserFileInputBox";
 import UserFileListInput from "./UserFileListInput";
+import Disappear from "./Disappear";
+import QuerySelectorAll from "./QuerySelectorAll";
 
 var commandList = [
+    QuerySelector,
+    QuerySelectorAll,
     SetRootView,
     Explain,
     Timeout,
@@ -41,6 +45,7 @@ var commandList = [
     Latest,
     ShowSnackBar,
     Appear,
+    Disappear,
     QuerySelector,
     UserClick,
     UserCheckbox,
