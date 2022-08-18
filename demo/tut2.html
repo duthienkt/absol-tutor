@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tut2</title>
+    <link rel="stylesheet" href="//cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css">
+    <script src="../dist/absol.dependents.js?<?php  echo stat('../dist/absol.dependents.js')['mtime'];?>"></script>
+    <script src="../dist/absol-tutor.js?<?php  echo stat('../dist/absol-tutor.js')['mtime'];?>"></script>
+    <link rel="icon" href="//absol.cf/favicon.ico">
+    <style>
+        body {
+            min-height: 90vh;
+        }
+    </style>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        _('<h3>MultiSelectMenu</h3>').addTo(document.body);
+
+        var menu0 = _({
+            tag: 'multiselectmenu',
+            attr: {
+                'data-tutor-id': 'menu0'
+            },
+            props: {
+                enableSearch: true,
+                items: Array(1000).fill('').map(function (u, i) {
+                    return {
+                        text: `[${i}] ${absol.string.randomPhrase(30)}`,
+                        value: i,
+                        desc: absol.string.randomPhrase(30)
+                    }
+                })
+            }
+        }).addTo(document.body);
+        _('<h3>MultiCheckMenu</h3>').addTo(document.body);
+        var menu1 = _({
+            tag: 'multicheckmenu',
+            props: {
+                enableSearch: true,
+                items: Array(1000).fill('').map(function (u, i) {
+                    return {
+                        text: `[${i}] ${absol.string.randomPhrase(30)}`,
+                        value: i,
+                        desc: absol.string.randomPhrase(30)
+                    }
+                })
+            }
+        }).addTo(document.body);
+
+        _({
+            style: {
+                padding: '10px'
+            },
+            child: {
+                tag: 'flexiconbutton',
+                props: {
+                    icon: 'span.mdi.mdi-prescription',
+                    text: "Run Tut"
+                },
+                on: {
+                    click: function () {
+                        this.addStyle('display', 'none');
+                        absol.tutor.runScriptFromUrl('./tut2_multi.js')
+                            .then(function () {
+                                this.removeStyle('display');
+                            }.bind(this))
+                            .catch(function (error) {
+                                console.error(error);
+                                this.removeStyle('display');
+                            }.bind(this));
+                    }
+                }
+            }
+        }).addTo(document.body);
+    })();
+
+</script>
+</body>
+</html>

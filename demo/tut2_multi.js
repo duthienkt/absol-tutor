@@ -1,0 +1,1 @@
+userMultiSelectMenu('menu0', [1, 3, 5], "Chọn 1,3,5", "Chọn đúng các số lẻ 1..5")
