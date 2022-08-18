@@ -27,6 +27,9 @@ UserFileInputBox.prototype._waitFile = function () {
     return new Promise(function (resolve, reject) {
         self.highlightElt(elt);
         self.onlyClickTo(elt);
+        if (self.hadWrongAction && self.args.wrongMessage){
+            self.showTooltip(elt, self.args.wrongMessage);
+        }
         var timeout = -1;
 
         function onClick() {
@@ -54,7 +57,10 @@ UserFileInputBox.prototype._waitFile = function () {
             reject();
         }
     }).then(function (ok) {
-        if (!ok) return self._waitFile();
+        if (!ok) {
+            self.hadWrongAction = true;
+            return self._waitFile();
+        }
         return true;
     });
 }
