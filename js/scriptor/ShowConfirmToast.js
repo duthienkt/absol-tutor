@@ -13,15 +13,14 @@ import BaseState from "./BaseState";
  * @extends BaseState
  * @constructor
  */
-function StateShowMessage(){
+function StateShowMessage() {
     BaseState.apply(this, arguments);
 }
 
 OOP.mixClass(StateShowMessage, BaseState);
 
-StateShowMessage.prototype.onStart = function (){
+StateShowMessage.prototype.onStart = function () {
     var command = this.command;
-    console.log(this)
     var title = this.args.title;
     var text = this.args.text;
     var buttonText = this.args.buttonText;
@@ -29,7 +28,7 @@ StateShowMessage.prototype.onStart = function (){
     var avoid = this.args.avoid;
     var pos = 'se';
 
-    if (["se", "sw", "ne", "nw"].indexOf(this.args.avoid) >= 0) {
+    if (["se", "sw", "ne", "nw", 'sc'].indexOf(this.args.avoid) >= 0) {
         pos = avoid;
     }
     var self = this;
@@ -72,7 +71,7 @@ StateShowMessage.prototype.onStart = function (){
 };
 
 
-StateShowMessage.prototype.onStop = function (){
+StateShowMessage.prototype.onStop = function () {
     this.command.$toast.disappear();
 };
 

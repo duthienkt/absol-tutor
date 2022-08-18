@@ -24,7 +24,7 @@ StateShowMessage.prototype.onStart = function () {
     var avoid = this.args.avoid;
     var disappearTimeout = this.args.disappearTimeout;
     var pos = 'se';
-    if (["se", "sw", "ne", "nw"].indexOf(avoid) >= 0) {
+    if (["se", "sw", "ne", "nw", 'sc'].indexOf(avoid) >= 0) {
         pos = avoid;
     }
     this.command.$toast = Toast.make({
