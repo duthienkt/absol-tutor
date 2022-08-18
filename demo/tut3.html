@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tut3</title>
+    <link rel="stylesheet" href="//cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css">
+    <script src="../dist/absol.dependents.js?<?php  echo stat('../dist/absol.dependents.js')['mtime'];?>"></script>
+    <script src="../dist/absol-tutor.js?<?php  echo stat('../dist/absol-tutor.js')['mtime'];?>"></script>
+    <link rel="icon" href="//absol.cf/favicon.ico">
+    <style>
+        html,
+        body,
+        #content {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        #content {
+            overflow: auto;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<script src="bsc_menu_example.js"></script>
+<div id="content"></div>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var contentElt = $('#content');
+
+        function render(o) {
+            return _(o).addTo(contentElt);
+        }
+
+        render('<h2>MultiSelectMenu</h2>');
+        render({
+            tag: 'multiselectmenu',
+            attr:{
+              'data-tutor-id':'msm_1'
+            },
+            props: {
+                items: Array(50).fill(0).map(function (u, i) {
+                    return {
+                        text: 'item' + i,
+                        value: i
+                    }
+                })
+            }
+        });
+        render('br');
+
+        render({
+            tag: 'button',
+            style: {
+                fontWeight: 'bold'
+            },
+            child: { text: "Nhấn vào đây để bắt đầu script" },
+            on: {
+                click: function () {
+                    absol.tutor.runScriptFromUrl('./tut3.js');
+                }
+            }
+        })
+        render('<h2>Text input </h2>');
+        render({
+            tag: 'input',
+            attr: {
+                'data-tutor-id': 'input1'
+            }
+        });
+
+        render('<h2>SelectMenu</h2>');
+        render({
+            tag: 'selectmenu',
+            attr: {
+                'data-tutor-id': 'department_select'
+            },
+            props: {
+                enableSearch: true,
+                items: Array(200).fill(0).map(function (u, i) {
+                    return { text: 'item ' + i, value: i };
+                })
+            }
+        });
+
+        render('<h2>Menu</h2>');
+        render({
+            tag: 'vrootmenu',
+            attr: {
+                'data-tutor-id': 'menu_root'
+            },
+            props: {
+                items: BSC_MENU_EXAMPLE
+            },
+            on: {
+                press: function (event) {
+                    var menuItem = event.menuItem;
+                    if (!menuItem.items)
+                        this.activeTab = -1;
+                }
+            }
+        });
+
+        render('<h2>Date In Year</h2>');
+        render({
+            tag: 'dateinyearinput',
+            attr: {
+                'data-tutor-id': 'diy1'
+            }
+        });
+
+        render('<h2>Date Input</h2>');
+        render({
+            tag: 'dateinput',
+            attr: {
+                'data-tutor-id': 'time_start'
+            },
+            props: {}
+        });
+
+        render('<h2>Calendar Input</h2>');
+        render({
+            tag: 'calendarinput',
+            attr: {
+                'data-tutor-id': 'cd1'
+            },
+            props: {}
+        });
+
+
+        render('<h2>Quick Menu</h2>');
+        var menuProps = {
+            items: [
+                {
+                    text: 'Cut', key: 'extendStyle[color=red]', cmd: 'cut',
+                    extendStyle: {
+                        color: 'red'
+                    },
+                    icon: 'span.mdi.mdi-content-cut'
+                },
+                "================================",
+                { text: 'Sửa', 'data-tutor-id': 'qck_edit', icon: 'span.mdi.mdi-pencil-outline' },
+                { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo', icon: 'span.mdi.mdi-undo' },
+                { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo', icon: 'span.mdi.mdi-redo' },
+
+                { text: 'Copy', key: 'extendClasses[hover-blue]', cmd: 'copy', extendClasses: 'hover-blue' },
+                {
+                    text: 'Paste',
+                    key: 'icon[.mdi.mdi-flash]',
+                    cmd: 'paste',
+                    icon: 'span.mdi.mdi-flash',
+                    extendClasses: 'hover-yellow'
+                },
+                "==============================",
+                { text: 'Find', key: 'iconSrc', cmd: 'find' },
+                { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
+                "=============================",
+                { text: 'Find in Nodes', key: 'Ctrl+Shift+F' },
+                { text: 'Replace in Nodes', iconSrc: 'http://absol.cf/exticons/extra/folder-git.svg', key: 'svgIcon' }
+            ]
+        };
+
+        var quickMenuTrigger = render('<button data-tutor-id="quick1"><span class="mdi mdi-dots-vertical"></span></button>');
+
+        absol.QuickMenu.toggleWhenClick(quickMenuTrigger, {
+            menuProps: menuProps,
+            anchor: 'auto',
+            onSelect: function (menuItem) {
+                console.log(menuItem)
+            }
+        });
+
+        render('<h2>Switch</h2>')
+
+        render({
+            tag: 'switch',
+            attr: {
+                'data-tutor-id': 'sw1'
+            }
+        });
+        render('<h2>Checkbox</h2>');
+        Array(5).fill(0).map(function (u, i) {
+            render({
+                tag: 'checkbox',
+                attr: {
+                    'data-tutor-id': 'cbx-' + (i + 1)
+                },
+                style: {
+                    'margin-right': '30px'
+                },
+                props: {
+                    text: ' ' + (i + 1)
+                }
+            });
+        });
+
+        render('<h2>Radio</h2>');
+        Array(5).fill(0).map(function (u, i) {
+            render({
+                tag: 'radio',
+                attr: {
+                    name: 'abc',
+                    'data-tutor-id': 'rdo-' + (i + 1)
+                },
+                style: {
+                    'margin-right': '30px'
+                },
+                props: {
+                    text: ' ' + (i + 1)
+                }
+            });
+        });
+
+
+
+
+        render('<div style="height: 500px"></div>')
+
+        render('<p>in progress ...</p>');
+
+
+        render('<h2>FileInputBox</h2>');
+        render({
+            tag: 'fileinputbox',
+            attr: {
+                'data-tutor-id': 'fi1'
+            },
+            props: {
+                allowUpload: true,
+                downloadable: true
+            }
+        });
+
+        render('<h2>FileListInput</h2>');
+        render({
+            tag: 'filelistinput',
+            attr: {
+                'data-tutor-id': 'fl1'
+            }
+        });
+
+
+    })();
+
+</script>
+</body>
+</html>
