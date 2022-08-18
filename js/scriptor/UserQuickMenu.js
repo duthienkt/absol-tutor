@@ -120,9 +120,9 @@ UserQuickMenu.prototype.stateClasses['user_begin'] = StateWaitMenu;
 UserQuickMenu.prototype.stateClasses['wait_click'] = StateWaitClick;
 
 UserQuickMenu.prototype.verifyElt = function () {
-    if (!this.elt.classList.contains('as-quick-menu-trigger')) {
-        return new Error('Type error: not a quick-menu trigger');
-    }
+    // if (!this.elt.classList.contains('as-quick-menu-trigger')) {
+    //     return new Error('Type error: not a quick-menu trigger');
+    // }
     return null;
 };
 
