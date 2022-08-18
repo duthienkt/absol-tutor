@@ -31,6 +31,7 @@ import UserFileInputBox from "./UserFileInputBox";
 import UserFileListInput from "./UserFileListInput";
 import Disappear from "./Disappear";
 import QuerySelectorAll from "./QuerySelectorAll";
+import Utils from "./Utils";
 
 var commandList = [
     QuerySelector,
@@ -66,7 +67,8 @@ var commandList = [
     UserFileInputBox,
     UserFileListInput,
     Net,
-    Logger
+    Logger,
+    Utils
 ];
 
 
