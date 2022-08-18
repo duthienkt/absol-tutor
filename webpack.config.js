@@ -42,6 +42,10 @@ module.exports = {
             path.join(__dirname, './node_modules')
         ]
     },
+
+    node: {
+        fs: 'empty'
+    },
     module: {
         rules: [
             {
@@ -61,7 +65,7 @@ module.exports = {
         ]
     },
     optimization: {
-        // We do not want to minimize our code.
+        // We do not want wcIdx minimize our code.
         minimize: false
     },
     devServer: {

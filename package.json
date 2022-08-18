@@ -4,7 +4,7 @@
   "description": "Tutorial Script tool",
   "main": "js/index.js",
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.config.js --public https://frame.absol.cf",
+    "dev": "webpack-dev-server --config webpack.config.js",
     "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production"
   },
   "repository": {
