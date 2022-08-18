@@ -7,6 +7,7 @@ import UserBaseAction from "./UserBaseAction";
 import { $ } from "../dom/Core";
 import TutorEngine from "./TutorEngine";
 import BaseState from "./BaseState";
+import { inheritCommand } from "../engine/TCommand";
 
 
 /***
@@ -199,7 +200,7 @@ function UserInputText() {
     UserBaseAction.apply(this, arguments);
 }
 
-OOP.mixClass(UserInputText, UserBaseAction);
+inheritCommand(UserInputText, UserBaseAction);
 
 UserInputText.prototype.name = 'userInputText';
 UserInputText.prototype.stateClasses['user_begin'] = StateWaitFocus;
