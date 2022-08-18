@@ -1,15 +1,15 @@
 import OOP from "absol/src/HTML5/OOP";
 import Tutor from "../Tutor";
-import {TutorIco} from "../dom/Icon";
+import { TutorIco } from "../dom/Icon";
 import '../../css/tutormaster.css';
-import {openFileDialog} from "absol-acomp/js/utils";
-import {_, $} from '../dom/Core';
+import { openFileDialog } from "absol-acomp/js/utils";
+import { _, $ } from '../dom/Core';
 import FlagManager from "./FlagManager";
 import Toast from "absol-acomp/js/Toast";
 import Inspector from "./Inspector";
 import BaseEditor from "absol-form/js/core/BaseEditor";
 import OnScreenWindow from "absol-acomp/js/OnsScreenWindow";
-import {getScreenSize} from "absol/src/HTML5/Dom";
+import { getScreenSize } from "absol/src/HTML5/Dom";
 import Vec2 from "absol/src/Math/Vec2";
 import SplitEditor from "./SplitEditor";
 
@@ -165,7 +165,16 @@ TutorMaster.prototype.createView = function () {
     this.$editWindow.windowTitle = 'Tutor';
     this.$editWindow.addChild(this.splitEditor.getView());
     this.$editWindow.addTo(document.body);
-    this.$editWindow.$closeBtn.on('click', this.ev_clickCloseScript.bind(this));
+    this.$editWindow.windowActions = [{
+        class: 'as-window-box-header-button-close',
+        icon: 'span.mdi.mdi-close',
+        name: 'close'
+    }];
+    this.$editWindow.on('action', function (event) {
+        if (event.actionData && event.actionData.name === 'close') {
+            this.ev_clickCloseScript(event);
+        }
+    }.bind(this))
     this.splitEditor.setValue(this.script);
 };
 
