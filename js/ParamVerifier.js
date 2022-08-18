@@ -54,5 +54,4 @@ ParamVerifier.prototype.verifyLiteral = function (value){
 
 ParamVerifier.make = function (scope) {
     return new ParamVerifier(scope)
-    ''
 }
