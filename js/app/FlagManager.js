@@ -70,7 +70,13 @@ FlagManager.prototype.createView = function () {
             left: 'calc(100vw - 420px)'
         },
         props: {
-            windowTitle: "Flag Manager"
+            windowTitle: "Flag Manager",
+            windowActions:[
+                {
+                    icon:'span.mdi.mdi-close',
+                    name: 'close'
+                }
+            ]
         },
         child: [
             {
@@ -120,9 +126,10 @@ FlagManager.prototype.createView = function () {
     for (var key in this.flag) {
         this._addRow(key, this.flag[key]);
     }
-    this.$view.$minimizeBtn.addStyle('display', 'none');
-    this.$view.$dockBtn.addStyle('display', 'none');
-    this.$view.$closeBtn.on('click', this.stop.bind(this));
+
+    this.$view.on('action', (event)=> {
+        if (event.actionData.name === 'close') this.stop();
+    });
 };
 
 FlagManager.prototype.onResume = function () {
